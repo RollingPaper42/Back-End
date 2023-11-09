@@ -11,4 +11,9 @@ public class MainController {
     public String helloSpring() {
         return "Hello spring!!!";
     }
+
+    @GetMapping("/login/success")
+    public String loginSuccess() {
+        return "login Success";
+    }
 }

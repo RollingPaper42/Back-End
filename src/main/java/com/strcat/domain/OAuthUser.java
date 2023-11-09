@@ -20,6 +20,8 @@ public class OAuthUser {
         this.oauthId = oauthId;
     }
 
+    public OAuthUser() {}
+
     public long getId() {
         return id;
     }

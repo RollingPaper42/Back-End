@@ -4,6 +4,8 @@ import com.strcat.domain.OAuthUser;
 import com.strcat.domain.User;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 import java.util.Optional;
 
 public class UserRepository {
@@ -14,56 +16,31 @@ public class UserRepository {
         this.entityManager = entityManager;
     }
 
-    public Optional<User> save(User user) {
-        Optional<User> result;
-
-        try {
-            entityManager.persist(user);
-
-            result = Optional.of(user);
-        } catch (Exception err) {
-            result = Optional.empty();
-        }
-
-        return result;
-    }
-
-    public Optional<User> findById(long id) {
-        Optional<User> user;
-
-        try {
-            user = Optional.of(entityManager.find(User.class, id));
-        } catch (Exception err) {
-            user = Optional.empty();
-        }
-
+    public User save(User user) {
+        entityManager.persist(user);
         return user;
     }
 
-    public Optional<OAuthUser> save(OAuthUser oAuthUser) {
-        Optional<OAuthUser> result;
+    public Optional<User> findById(long id) {
+        User user = entityManager.find(User.class, id);
 
-        try {
-            entityManager.persist(oAuthUser);
-            result = Optional.of(oAuthUser);
-        } catch (Exception exception) {
-            result = Optional.empty();
-        }
+        return Optional.ofNullable(user);
+    }
 
-        return result;
+    public OAuthUser save(OAuthUser oAuthUser) {
+        entityManager.persist(oAuthUser);
+
+        return oAuthUser;
     }
 
     public Optional<OAuthUser> findByIdAndProvider(String id, int provider) {
-        Optional<OAuthUser> result;
+        String jpql = "SELECT u FROM OAuthUser u WHERE u.oauthId = :id AND u.provider = :provider";
 
-        try {
-            String jpql = "SELECT u FROM OAuthUser u WHERE u.user.id = :id AND u.provider = :provider";
+        List<OAuthUser> users = entityManager.createQuery(jpql, OAuthUser.class)
+                .setParameter("id", id)
+                .setParameter("provider", provider)
+                .getResultList();
 
-            result = Optional.of(entityManager.createQuery(jpql, OAuthUser.class).getSingleResult());
-        } catch (Exception exception) {
-            result = Optional.empty();
-        }
-
-        return result;
+        return Optional.ofNullable(users.get(0));
     }
 }
