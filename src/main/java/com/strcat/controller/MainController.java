@@ -16,4 +16,7 @@ public class MainController {
     public String loginSuccess() {
         return "login Success";
     }
+
+    @GetMapping("/login/guard")
+    public String guard() { return "guard OK"; }
 }

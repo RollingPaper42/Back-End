@@ -11,7 +11,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.List;
 
 @Transactional
 public class OAuthUserService extends DefaultOAuth2UserService {
@@ -29,7 +29,7 @@ public class OAuthUserService extends DefaultOAuth2UserService {
         OAuth2User oAuth2User = super.loadUser(userRequest);
         String oAuthUserId = oAuth2User.getName();
 
-        Optional<OAuthUser> signUser =
+        List<OAuthUser> signUser =
                 userRepository.findByIdAndProvider(oAuthUserId, providerCode);
 
         if (signUser.isEmpty()) {

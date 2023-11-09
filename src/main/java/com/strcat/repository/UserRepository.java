@@ -33,7 +33,7 @@ public class UserRepository {
         return oAuthUser;
     }
 
-    public Optional<OAuthUser> findByIdAndProvider(String id, int provider) {
+    public List<OAuthUser> findByIdAndProvider(String id, int provider) {
         String jpql = "SELECT u FROM OAuthUser u WHERE u.oauthId = :id AND u.provider = :provider";
 
         List<OAuthUser> users = entityManager.createQuery(jpql, OAuthUser.class)
@@ -41,6 +41,6 @@ public class UserRepository {
                 .setParameter("provider", provider)
                 .getResultList();
 
-        return Optional.ofNullable(users.get(0));
+        return users;
     }
 }
