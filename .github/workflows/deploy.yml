@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main # 메인 브랜치로 푸시 할때마다 스크립트 실행
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build:
