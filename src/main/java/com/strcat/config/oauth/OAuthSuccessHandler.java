@@ -25,6 +25,6 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
                                         Authentication authentication) throws IOException, ServletException {
         String token = jwtUtils.createJwtToken(authentication.getPrincipal().toString());
 
-        response.sendRedirect("http://localhost:8080/login/success?accessToken=" + token);
+        response.sendRedirect("http://rolling-eb-env.eba-pppydmmc.ap-northeast-2.elasticbeanstalk.com/login/success?accessToken=" + token);
     }
 }
