@@ -13,7 +13,6 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Transactional
 public class OAuthUserService extends DefaultOAuth2UserService {
@@ -29,7 +28,7 @@ public class OAuthUserService extends DefaultOAuth2UserService {
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         System.out.println("oauth login: " + userRequest.getClientRegistration().getRegistrationId());
-        int providerCode = OAuthProviderEnum.changeCode(userRequest.getClientRegistration().getRegistrationId());
+        int providerCode = OAuthProviderEnum.toEnum(userRequest.getClientRegistration().getRegistrationId());
         OAuth2User oAuth2User = super.loadUser(userRequest);
         String oAuthUserId = oAuth2User.getName();
 

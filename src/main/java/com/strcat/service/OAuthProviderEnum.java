@@ -14,12 +14,11 @@ public enum OAuthProviderEnum {
         return providerName;
     }
 
-    public static int changeCode(String provider) {
-        if (provider.equals("kakao")) {
-            return KAKAO.ordinal();
-        } else if (provider.equals("google")) {
-            return GOOGLE.ordinal();
-        }
-        throw new IllegalArgumentException("Unknown OAuth Provider");
+    public static int toEnum(String provider) {
+        return switch (provider) {
+            case "kakao" -> KAKAO.ordinal();
+            case "google" -> GOOGLE.ordinal();
+            default -> throw new IllegalArgumentException("Unknown OAuth Provider");
+        };
     }
 }
