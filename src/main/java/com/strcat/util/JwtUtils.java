@@ -38,10 +38,10 @@ public class JwtUtils {
     }
 
     public String parseUserId(String token) {
-       return Jwts.parser()
-               .verifyWith(secretKey)
-               .build()
-               .parseSignedClaims(token).getPayload().getId();
+        return Jwts.parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token).getPayload().getId();
     }
 
     public boolean isValidateToken(String token) {

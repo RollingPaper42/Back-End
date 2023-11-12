@@ -21,7 +21,8 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
     }
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+                                        Authentication authentication) throws IOException, ServletException {
         String token = jwtUtils.createJwtToken(authentication.getPrincipal().toString());
 
         response.sendRedirect("http://localhost:8080/login/success?accessToken=" + token);

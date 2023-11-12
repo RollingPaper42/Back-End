@@ -23,8 +23,8 @@ public class SecurityConfig {
     private final JwtUtils jwtUtils;
 
     String[] WHITE_LIST = {
-      "login/google",
-      "login/kakao",
+            "login/google",
+            "login/kakao",
             "login/success",
     };
 
@@ -38,17 +38,17 @@ public class SecurityConfig {
     @Bean
     protected SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests((authorizeRequest) -> authorizeRequest
-                .requestMatchers(WHITE_LIST).permitAll()
-                .anyRequest().authenticated()
-        ).oauth2Login((oauth) -> oauth
-                .userInfoEndpoint((userInfo) -> userInfo
-                        .userService(oAuthUserService))
+                        .requestMatchers(WHITE_LIST).permitAll()
+                        .anyRequest().authenticated()
+                ).oauth2Login((oauth) -> oauth
+                        .userInfoEndpoint((userInfo) -> userInfo
+                                .userService(oAuthUserService))
                         .successHandler(oAuthSuccessHandler)
                         .failureHandler((request, response, exception) -> {
                             System.out.println("login failure");
                         })
-                .permitAll()
-        ).logout(LogoutConfigurer::permitAll)
+                        .permitAll()
+                ).logout(LogoutConfigurer::permitAll)
                 .sessionManagement((sessionManager) -> sessionManager
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(AbstractHttpConfigurer::disable)
