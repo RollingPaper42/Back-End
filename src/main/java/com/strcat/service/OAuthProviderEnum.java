@@ -1,8 +1,8 @@
 package com.strcat.service;
 
 public enum OAuthProviderEnum {
-    GOOGLE("kakao"),
-    KAKAO("google");
+    GOOGLE("google"),
+    KAKAO("kakao");
 
     private String providerName;
 
