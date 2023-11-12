@@ -37,8 +37,8 @@ public class OAuthUserService extends DefaultOAuth2UserService {
                 oAuthUserRepository.findByOauthIdAndProvider(oAuthUserId, providerCode);
 
         if (signUser.isPresent()) {
-            User user = userRepository.save(new User(0, LocalDateTime.now()));
-            OAuthUser oAuthUser = oAuthUserRepository.save(new OAuthUser(0, user, providerCode, oAuthUserId));
+            User user = userRepository.save(new User(LocalDateTime.now()));
+            OAuthUser oAuthUser = oAuthUserRepository.save(new OAuthUser(user, providerCode, oAuthUserId));
 
             System.out.println("oAuthUser: " + oAuthUser.getOauthId());
             System.out.println("회원가입...");

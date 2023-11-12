@@ -13,8 +13,7 @@ public class OAuthUser {
     int provider;
     String oauthId;
 
-    public OAuthUser(long id, User user, int provider, String oauthId) {
-        this.id = id;
+    public OAuthUser(User user, int provider, String oauthId) {
         this.user = user;
         this.provider = provider;
         this.oauthId = oauthId;

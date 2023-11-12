@@ -12,8 +12,7 @@ public class User {
     @Column(name = "created_at")
     LocalDateTime createdAt;
 
-    public User(long id, LocalDateTime createdAt) {
-        this.id = id;
+    public User(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
