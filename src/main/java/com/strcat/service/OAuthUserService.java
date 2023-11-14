@@ -35,7 +35,7 @@ public class OAuthUserService extends DefaultOAuth2UserService {
         Optional<OAuthUser> signUser =
                 oAuthUserRepository.findByOauthIdAndProvider(oAuthUserId, providerCode);
 
-        if (signUser.isPresent()) {
+        if (signUser.isEmpty()) {
             User user = userRepository.save(new User(LocalDateTime.now()));
             OAuthUser oAuthUser = oAuthUserRepository.save(new OAuthUser(user, providerCode, oAuthUserId));
 
