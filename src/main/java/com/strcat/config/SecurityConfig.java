@@ -4,6 +4,7 @@ import com.strcat.config.oauth.JwtAuthFilter;
 import com.strcat.config.oauth.OAuthSuccessHandler;
 import com.strcat.service.OAuthUserService;
 import com.strcat.util.JwtUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @EnableWebSecurity
 @Configuration
+@Slf4j
 public class SecurityConfig {
     private final OAuthUserService oAuthUserService;
     private final OAuthSuccessHandler oAuthSuccessHandler;
@@ -48,7 +50,7 @@ public class SecurityConfig {
                                 .userService(oAuthUserService))
                         .successHandler(oAuthSuccessHandler)
                         .failureHandler((request, response, exception) -> {
-                            System.out.println("login failure");
+                            log.info("login failure");
                         })
                         .permitAll()
                 ).logout(LogoutConfigurer::permitAll)
