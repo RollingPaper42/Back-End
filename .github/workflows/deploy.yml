@@ -42,7 +42,7 @@ jobs:
 
       - name: Copy Application-Properties
         run: |
-          cp Back-End-Secret/application.properties src/main/resources/application.properties
+          cp Back-end-secret/application.properties src/main/resources/application.properties
 
       - name: Build Gradle
         run: ./gradlew build
