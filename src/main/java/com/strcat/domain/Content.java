@@ -21,19 +21,19 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public class Content {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
 
     @Column(length = 30) // test
-    String writer;
+    private String writer;
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
-    LocalDateTime createdAt;
+    private LocalDateTime createdAt;
 
     @Column(length = 1000, nullable = false)
-    String text;
+    private String text;
 
     @ManyToOne
     @JoinColumn(name = "board_id", nullable = false)
-    Board board;
+    private Board board;
 }

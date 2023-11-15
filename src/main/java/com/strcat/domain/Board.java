@@ -24,19 +24,19 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
 
     @Column(length = 30, nullable = false)
-    String title;
+    private String title;
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
-    LocalDateTime createdAt;
+    private LocalDateTime createdAt;
 
     @ManyToOne()
     @JoinColumn(name = "user_id", nullable = false) // 외래키 컬럼 지정
-    User user;
+    private User user;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
-    List<Content> contents;
+    private List<Content> contents;
 }

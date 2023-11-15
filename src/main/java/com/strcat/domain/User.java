@@ -23,11 +23,11 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
 
     @CreatedDate
     @Column(name ="created_at", nullable = false, updatable = false)
-    LocalDateTime createdAt;
+    private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Board> boards;

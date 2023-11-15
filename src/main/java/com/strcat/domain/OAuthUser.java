@@ -16,17 +16,17 @@ import lombok.NoArgsConstructor;
 public class OAuthUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    private Long id;
 
     @Column(nullable = false)
-    Integer provider;
+    private Integer provider;
 
     @Column(nullable = false)
-    String oauthId;
+    private String oauthId;
 
     @OneToOne
     @JoinColumn(name = "user_id")
-    User user;
+    private User user;
 
     public OAuthUser(User user, int provider, String oauthId) {
         this.user = user;
