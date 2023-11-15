@@ -48,11 +48,16 @@ public class JwtUtils {
         if (token == null || token.isBlank()) {
             return false;
         }
-        return Jwts.parser()
-                .verifyWith(secretKey)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload().getExpiration().after(new Date());
+
+        try {
+            return Jwts.parser()
+                    .verifyWith(secretKey)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload().getExpiration().after(new Date());
+        } catch (Exception exception) {
+            return false;
+        }
     }
 
     public String createJwtToken(String userId) {
