@@ -21,6 +21,7 @@ public class SecurityConfig {
     private final OAuthUserService oAuthUserService;
     private final OAuthSuccessHandler oAuthSuccessHandler;
     private final JwtUtils jwtUtils;
+    private final WebConfig webConfig;
 
     String[] WHITE_LIST = {
             "login/google",
@@ -29,10 +30,12 @@ public class SecurityConfig {
     };
 
     @Autowired
-    public SecurityConfig(OAuthUserService oAuthUserService, OAuthSuccessHandler successHandler, JwtUtils jwtUtils) {
+    public SecurityConfig(OAuthUserService oAuthUserService, OAuthSuccessHandler successHandler, JwtUtils jwtUtils,
+                          WebConfig webConfig) {
         this.oAuthUserService = oAuthUserService;
         this.oAuthSuccessHandler = successHandler;
         this.jwtUtils = jwtUtils;
+        this.webConfig = webConfig;
     }
 
     @Bean
@@ -52,6 +55,7 @@ public class SecurityConfig {
                 .sessionManagement((sessionManager) -> sessionManager
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(AbstractHttpConfigurer::disable)
+                .addFilter(webConfig.corsFilter())
                 .addFilterBefore(new JwtAuthFilter(jwtUtils), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
