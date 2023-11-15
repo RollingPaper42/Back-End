@@ -33,6 +33,5 @@ public class OAuthUserService {
             log.info("회원가입....");
         }
         log.info("로그인....");
-        return oAuth2User;
     }
 }

@@ -32,7 +32,7 @@ public class SecurityConfig {
     };
 
     @Autowired
-    public SecurityConfig(OAuthSuccessHandler successHandler, JwtUtils jwtUtils) {
+    public SecurityConfig(OAuthSuccessHandler successHandler, JwtUtils jwtUtils, WebConfig webConfig) {
         this.oAuthSuccessHandler = successHandler;
         this.jwtUtils = jwtUtils;
         this.webConfig = webConfig;
