@@ -4,6 +4,7 @@ import com.strcat.config.oauth.JwtAuthFilter;
 import com.strcat.config.oauth.OAuthSuccessHandler;
 import com.strcat.service.OAuthUserService;
 import com.strcat.util.JwtUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,9 +19,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @EnableWebSecurity
 @Configuration
+@Slf4j
 public class SecurityConfig {
     private final OAuthSuccessHandler oAuthSuccessHandler;
     private final JwtUtils jwtUtils;
+    private final WebConfig webConfig;
 
     String[] WHITE_LIST = {
             "login/google",
@@ -32,6 +35,7 @@ public class SecurityConfig {
     public SecurityConfig(OAuthSuccessHandler successHandler, JwtUtils jwtUtils) {
         this.oAuthSuccessHandler = successHandler;
         this.jwtUtils = jwtUtils;
+        this.webConfig = webConfig;
     }
 
     @Bean
@@ -44,13 +48,14 @@ public class SecurityConfig {
                                 .userService(new DefaultOAuth2UserService()))
                         .successHandler(oAuthSuccessHandler)
                         .failureHandler((request, response, exception) -> {
-                            System.out.println("login failure");
+                            log.info("login failure");
                         })
                         .permitAll()
                 ).logout(LogoutConfigurer::permitAll)
                 .sessionManagement((sessionManager) -> sessionManager
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(AbstractHttpConfigurer::disable)
+                .addFilter(webConfig.corsFilter())
                 .addFilterBefore(new JwtAuthFilter(jwtUtils), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

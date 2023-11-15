@@ -5,12 +5,13 @@ import com.strcat.domain.User;
 import com.strcat.repository.OAuthUserRepository;
 import com.strcat.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.LocalDateTime;
-
 @Transactional
+@Slf4j
 public class OAuthUserService {
     private final UserRepository userRepository;
     private final OAuthUserRepository oAuthUserRepository;
@@ -29,6 +30,9 @@ public class OAuthUserService {
         if (signUser.isEmpty()) {
             User user = userRepository.save(new User(LocalDateTime.now()));
             oAuthUserRepository.save(new OAuthUser(user, providerCode, oAuthUserId));
+            log.info("회원가입....");
         }
+        log.info("로그인....");
+        return oAuth2User;
     }
 }
