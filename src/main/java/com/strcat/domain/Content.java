@@ -27,7 +27,7 @@ public class Content {
     String writer;
 
     @CreatedDate
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     LocalDateTime createdAt;
 
     @Column(length = 1000, nullable = false)

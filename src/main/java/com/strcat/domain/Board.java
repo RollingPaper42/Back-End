@@ -8,6 +8,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,15 +21,22 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Data
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-public class User {
+public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
+    @Column(length = 30, nullable = false)
+    String title;
+
     @CreatedDate
-    @Column(name ="created_at", nullable = false, updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Board> boards;
+    @ManyToOne()
+    @JoinColumn(name = "user_id", nullable = false) // 외래키 컬럼 지정
+    User user;
+
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
+    List<Content> contents;
 }
