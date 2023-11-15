@@ -1,5 +1,6 @@
 package com.strcat.domain;
 
+import com.strcat.dto.ContentCreateDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -11,6 +12,7 @@ import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -36,4 +38,10 @@ public class Content {
     @ManyToOne
     @JoinColumn(name = "board_id", nullable = false)
     private Board board;
+
+   public Content(String writer, String text, Board board){
+       this.writer = writer;
+       this.text = text;
+       this.board = board;
+   }
 }
