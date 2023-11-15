@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -20,7 +21,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @Slf4j
 public class SecurityConfig {
-    private final OAuthUserService oAuthUserService;
     private final OAuthSuccessHandler oAuthSuccessHandler;
     private final JwtUtils jwtUtils;
     private final WebConfig webConfig;
@@ -32,9 +32,7 @@ public class SecurityConfig {
     };
 
     @Autowired
-    public SecurityConfig(OAuthUserService oAuthUserService, OAuthSuccessHandler successHandler, JwtUtils jwtUtils,
-                          WebConfig webConfig) {
-        this.oAuthUserService = oAuthUserService;
+    public SecurityConfig(OAuthSuccessHandler successHandler, JwtUtils jwtUtils) {
         this.oAuthSuccessHandler = successHandler;
         this.jwtUtils = jwtUtils;
         this.webConfig = webConfig;
@@ -47,7 +45,7 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 ).oauth2Login((oauth) -> oauth
                         .userInfoEndpoint((userInfo) -> userInfo
-                                .userService(oAuthUserService))
+                                .userService(new DefaultOAuth2UserService()))
                         .successHandler(oAuthSuccessHandler)
                         .failureHandler((request, response, exception) -> {
                             log.info("login failure");
