@@ -2,9 +2,10 @@ package com.strcat.dto;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
-@Builder
+@RequiredArgsConstructor
 public class ContentCreateDto {
     private final String writer;
 
