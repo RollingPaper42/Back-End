@@ -8,4 +8,5 @@ import lombok.RequiredArgsConstructor;
 public class CreateContentReqDto {
     private final String writer;
     private final String text;
+    private final String photo;
 }

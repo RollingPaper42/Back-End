@@ -1,6 +1,7 @@
 package com.strcat.controller;
 
 import com.strcat.dto.CreateContentReqDto;
+import com.strcat.exception.NotAcceptableException;
 import com.strcat.service.ContentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -16,6 +17,10 @@ public class BoardController {
     @PostMapping("/{boardId}/content")
     public void createContent(@PathVariable(name = "boardId") String encryptedBoardId,
                               @RequestBody CreateContentReqDto dto) {
-//        contentService.create(dto, boardId);
+        try {
+            contentService.create(dto, encryptedBoardId);
+        } catch (Exception e) {
+            throw new NotAcceptableException();
+        }
     }
 }
