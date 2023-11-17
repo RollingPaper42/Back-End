@@ -1,6 +1,5 @@
 package com.strcat.config.oauth;
 
-import com.strcat.exception.UnauthorizedException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -17,6 +16,5 @@ public class OAuthFailureHandler implements AuthenticationFailureHandler {
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
                                         AuthenticationException exception) throws IOException, ServletException {
         log.info("login failure");
-        throw new UnauthorizedException();
     }
 }
