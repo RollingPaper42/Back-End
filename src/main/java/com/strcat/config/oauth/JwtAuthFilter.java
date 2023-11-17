@@ -11,11 +11,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
 import java.io.IOException;
 import java.util.List;
 
+@Component
 public class JwtAuthFilter extends GenericFilterBean {
     private final JwtUtils jwtUtils;
 
@@ -29,11 +31,16 @@ public class JwtAuthFilter extends GenericFilterBean {
 
         String token = jwtUtils.exportToken(httpServletRequest);
 
+        if (token == null || token.isBlank()) {
+            chain.doFilter(request, response);
+            return ;
+        }
+
         if (jwtUtils.isValidateToken(token)) {
             String oauthId = jwtUtils.parseUserId(token);
 
             Authentication authentication =
-                    new UsernamePasswordAuthenticationToken(oauthId, "", List.of(new SimpleGrantedAuthority("ROLE_USER")));
+                    new UsernamePasswordAuthenticationToken(oauthId, token, List.of(new SimpleGrantedAuthority("ROLE_USER")));
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
         chain.doFilter(request, response);
