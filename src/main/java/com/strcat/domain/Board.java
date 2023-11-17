@@ -39,4 +39,10 @@ public class Board {
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
     private List<Content> contents;
+
+    public Board(String title, User user) {
+        this.title = title;
+        this.user = user;
+    }
+
 }
