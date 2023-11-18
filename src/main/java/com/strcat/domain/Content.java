@@ -1,6 +1,5 @@
 package com.strcat.domain;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -8,9 +7,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
-import java.util.List;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
@@ -20,15 +18,28 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Data
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-public class User {
+public class Content {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(length = 10)
+    private String writer;
+
     @CreatedDate
-    @Column(name ="created_at", nullable = false, updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Board> boards;
+    @Column(length = 1000, nullable = false)
+    private String text;
+
+    @ManyToOne
+    @JoinColumn(name = "board_id", nullable = false)
+    private Board board;
+
+    public Content(String writer, String text, Board board) {
+        this.writer = writer;
+        this.text = text;
+        this.board = board;
+    }
 }

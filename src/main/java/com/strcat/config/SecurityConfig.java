@@ -1,6 +1,7 @@
 package com.strcat.config;
 
 import com.strcat.config.oauth.JwtAuthFilter;
+import com.strcat.config.oauth.OAuthFailureHandler;
 import com.strcat.config.oauth.OAuthSuccessHandler;
 import com.strcat.service.OAuthUserService;
 import com.strcat.util.JwtUtils;
@@ -22,18 +23,21 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Slf4j
 public class SecurityConfig {
     private final OAuthSuccessHandler oAuthSuccessHandler;
+    private final OAuthFailureHandler oAuthFailureHandler;
     private final JwtUtils jwtUtils;
     private final WebConfig webConfig;
 
     String[] WHITE_LIST = {
-            "login/google",
-            "login/kakao",
             "login/success",
     };
 
     @Autowired
-    public SecurityConfig(OAuthSuccessHandler successHandler, JwtUtils jwtUtils, WebConfig webConfig) {
+    public SecurityConfig(OAuthSuccessHandler successHandler,
+                          OAuthFailureHandler failureHandler,
+                          JwtUtils jwtUtils,
+                          WebConfig webConfig) {
         this.oAuthSuccessHandler = successHandler;
+        this.oAuthFailureHandler = failureHandler;
         this.jwtUtils = jwtUtils;
         this.webConfig = webConfig;
     }
@@ -47,9 +51,7 @@ public class SecurityConfig {
                         .userInfoEndpoint((userInfo) -> userInfo
                                 .userService(new DefaultOAuth2UserService()))
                         .successHandler(oAuthSuccessHandler)
-                        .failureHandler((request, response, exception) -> {
-                            log.info("login failure");
-                        })
+                        .failureHandler(oAuthFailureHandler)
                         .permitAll()
                 ).logout(LogoutConfigurer::permitAll)
                 .sessionManagement((sessionManager) -> sessionManager

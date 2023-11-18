@@ -28,7 +28,7 @@ public class OAuthUserService {
                 oAuthUserRepository.findByOauthIdAndProvider(oAuthUserId, providerCode);
 
         if (signUser.isEmpty()) {
-            User user = userRepository.save(new User(LocalDateTime.now()));
+            User user = userRepository.save(new User());
             oAuthUserRepository.save(new OAuthUser(user, providerCode, oAuthUserId));
             log.info("회원가입....");
         }
