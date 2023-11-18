@@ -23,7 +23,7 @@ public class Content {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 30) // test
+    @Column(length = 10) // test
     private String writer;
 
     @CreatedDate
@@ -37,9 +37,9 @@ public class Content {
     @JoinColumn(name = "board_id", nullable = false)
     private Board board;
 
-   public Content(String writer, String text, Board board){
-       this.writer = writer;
-       this.text = text;
-       this.board = board;
-   }
+    public Content(String writer, String text, Board board) {
+        this.writer = writer;
+        this.text = text;
+        this.board = board;
+    }
 }
