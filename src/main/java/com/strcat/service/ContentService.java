@@ -19,16 +19,13 @@ public class ContentService {
     private final AesSecretUtils aesSecretUtils;
 
     public Content create(CreateContentReqDto dto, String encryptedBoardId) throws Exception {
-        // 복호화
         Long boardId = aesSecretUtils.decrypt(encryptedBoardId);
         Optional<Board> optionalBoard = boardRepository.findById(boardId);
 
         if (optionalBoard.isEmpty()) {
             throw new NotAcceptableException();
         }
-
         Board board = optionalBoard.get();
-
         return contentRepository.save(new Content(dto.getWriter(), dto.getText(), board));
     }
 }
