@@ -1,5 +1,6 @@
 package com.strcat.config.oauth;
 
+import com.strcat.domain.User;
 import com.strcat.service.OAuthUserService;
 import com.strcat.util.JwtUtils;
 import jakarta.servlet.ServletException;
@@ -30,11 +31,11 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
         String provider = request.getRequestURI().split("/")[4];
-        String token = jwtUtils.createJwtToken(authentication.getName());
+        User user = oAuthUserService.signIn(authentication.getName(), provider);
+        String token = jwtUtils.createJwtToken(user.getId().toString());
         Cookie cookie = new Cookie("token", token);
 
         log.info("token: " + token);
-        oAuthUserService.signIn(authentication.getName(), provider);
         cookie.setPath("/login/success");
         response.addCookie(cookie);
         response.sendRedirect("http://rolling-eb-env.eba-pppydmmc.ap-northeast-2.elasticbeanstalk.com/login/success");

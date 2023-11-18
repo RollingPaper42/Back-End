@@ -22,7 +22,7 @@ public class OAuthUserService {
         this.oAuthUserRepository = oAuthUserRepository;
     }
 
-    public void signIn(String oAuthUserId, String provider) {
+    public User signIn(String oAuthUserId, String provider) {
         int providerCode = OAuthProviderEnum.toEnum(provider);
         Optional<OAuthUser> signUser =
                 oAuthUserRepository.findByOauthIdAndProvider(oAuthUserId, providerCode);
@@ -31,7 +31,9 @@ public class OAuthUserService {
             User user = userRepository.save(new User());
             oAuthUserRepository.save(new OAuthUser(user, providerCode, oAuthUserId));
             log.info("회원가입....");
+            return user;
         }
         log.info("로그인....");
+        return signUser.get().getUser();
     }
 }
