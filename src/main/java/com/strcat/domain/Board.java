@@ -33,6 +33,9 @@ public class Board {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "background_color", nullable = false)
+    private String backgroundColor;
+
     @ManyToOne()
     @JoinColumn(name = "user_id", nullable = false) // 외래키 컬럼 지정
     private User user;
@@ -40,9 +43,9 @@ public class Board {
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
     private List<Content> contents;
 
-    public Board(String title, User user) {
+    public Board(String title, String backgroundColor, User user) {
         this.title = title;
+        this.backgroundColor = backgroundColor;
         this.user = user;
     }
-
 }

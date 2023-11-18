@@ -44,7 +44,7 @@ public class ContentServiceTest {
     public void beforeEach() {
         User user = new User();
         userRepository.save(user);
-        boardRepository.save(new Board("홍길동", user));
+        boardRepository.save(new Board("홍길동", "dsfds", user));
     }
 
     @Test
