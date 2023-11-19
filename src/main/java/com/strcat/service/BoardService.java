@@ -4,6 +4,7 @@ import com.strcat.domain.Board;
 import com.strcat.domain.User;
 import com.strcat.dto.CreateBoardReqDto;
 import com.strcat.dto.ReadBoardInfoResDto;
+import com.strcat.dto.ReadBoardSummaryResDto;
 import com.strcat.exception.NotAcceptableException;
 import com.strcat.repository.BoardRepository;
 import com.strcat.repository.UserRepository;
@@ -22,12 +23,7 @@ public class BoardService {
     private final AesSecretUtils aesSecretUtils;
 
     public String createBoard(CreateBoardReqDto dto, String token) throws Exception {
-        Long userId = Long.parseLong(jwtUtils.parseUserId(token.substring(7)));
-        Optional<User> user = userRepository.findById(userId);
-
-        if (user.isEmpty()) {
-            throw new NotAcceptableException();
-        }
+        Optional<User> user = getUser(token);
 
         // TODO: group id 유효성 검사
 
@@ -37,17 +33,24 @@ public class BoardService {
 
     // TODO: 삭제 예정
     public ReadBoardInfoResDto readBoardInfo(String encryptedBoardId) throws Exception {
-        Long boardId = aesSecretUtils.decrypt(encryptedBoardId);
-        Optional<Board> optionalBoard = boardRepository.findById(boardId);
-
-        if (optionalBoard.isEmpty()) {
-            throw new NotAcceptableException();
-        }
-        Board board = optionalBoard.get();
+        Board board = getBoard(encryptedBoardId);
         return new ReadBoardInfoResDto(board.getTitle(), board.getBackgroundColor());
     }
 
     public Board readBoard(String encryptedBoardId) throws Exception {
+        return getBoard(encryptedBoardId);
+    }
+
+    public ReadBoardSummaryResDto readSummary(String encryptedBoardId, String token) throws Exception {
+        getUser(token);
+        Board board = getBoard(encryptedBoardId);
+
+        ReadBoardSummaryResDto dto = new ReadBoardSummaryResDto(board.getTitle(), board.getContents().size(),
+                board.calculateTotalContentLength());
+        return dto;
+    }
+
+    private Board getBoard(String encryptedBoardId) throws Exception {
         Long boardId = aesSecretUtils.decrypt(encryptedBoardId);
         Optional<Board> optionalBoard = boardRepository.findById(boardId);
 
@@ -55,6 +58,15 @@ public class BoardService {
             throw new NotAcceptableException();
         }
         return optionalBoard.get();
+    }
 
+    private Optional<User> getUser(String token) {
+        Long userId = Long.parseLong(jwtUtils.parseUserId(token.substring(7)));
+        Optional<User> user = userRepository.findById(userId);
+
+        if (user.isEmpty()) {
+            throw new NotAcceptableException();
+        }
+        return user;
     }
 }
