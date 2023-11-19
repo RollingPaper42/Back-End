@@ -14,6 +14,7 @@ import javax.crypto.SecretKey;
 @Component
 public class JwtUtils {
     private final SecretKey secretKey;
+    private final Long VALID_MINUTES = 300L;
 
     public JwtUtils(@Value("${jwt.secret}") String secretKey) {
         byte[] encoded = Base64.getEncoder().encode(secretKey.getBytes());
@@ -65,8 +66,7 @@ public class JwtUtils {
     }
 
     private String createJwt(String userId) {
-        // 30분
-        long tokenValidTime = Duration.ofMinutes(30).toMillis();
+        long tokenValidTime = Duration.ofMinutes(VALID_MINUTES).toMillis();
 
         return Jwts.builder()
                 .header()
