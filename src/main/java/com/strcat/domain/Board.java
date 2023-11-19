@@ -1,5 +1,6 @@
 package com.strcat.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -36,6 +37,7 @@ public class Board {
     @Column(name = "background_color", nullable = false)
     private String backgroundColor;
 
+    @JsonIgnore
     @ManyToOne()
     @JoinColumn(name = "user_id", nullable = false) // 외래키 컬럼 지정
     private User user;
