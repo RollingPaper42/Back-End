@@ -4,6 +4,7 @@ import com.strcat.domain.Board;
 import com.strcat.dto.CreateBoardReqDto;
 import com.strcat.dto.CreateContentReqDto;
 import com.strcat.dto.ReadBoardInfoResDto;
+import com.strcat.dto.ReadBoardSummaryResDto;
 import com.strcat.service.BoardService;
 import com.strcat.service.ContentService;
 import lombok.RequiredArgsConstructor;
@@ -43,5 +44,11 @@ public class BoardController {
     @GetMapping("/{boardId}/contents")
     public Board readBoard(@PathVariable(name = "boardId") String encryptedBoardId) throws Exception {
         return boardService.readBoard(encryptedBoardId);
+    }
+
+    @GetMapping("/{boardId}/summaries")
+    public ReadBoardSummaryResDto readSummary(@PathVariable(name = "boardId") String encryptedBoardId,
+                                              @RequestHeader("Authorization") String token) throws Exception {
+        return boardService.readSummary(encryptedBoardId, token);
     }
 }

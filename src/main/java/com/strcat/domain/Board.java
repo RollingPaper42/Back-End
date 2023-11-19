@@ -50,4 +50,10 @@ public class Board {
         this.backgroundColor = backgroundColor;
         this.user = user;
     }
+
+    public Long calculateTotalContentLength() {
+        return contents.stream()
+                .mapToLong(content -> content.getText().length())
+                .sum();
+    }
 }
