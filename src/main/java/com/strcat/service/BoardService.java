@@ -22,7 +22,7 @@ public class BoardService {
     private final AesSecretUtils aesSecretUtils;
 
     public String createBoard(CreateBoardReqDto dto, String token) throws Exception {
-        Long userId = Long.parseLong(jwtUtils.parseUserId(token));
+        Long userId = Long.parseLong(jwtUtils.parseUserId(token.substring(7)));
         Optional<User> user = userRepository.findById(userId);
 
         if (user.isEmpty()) {
@@ -55,5 +55,6 @@ public class BoardService {
             throw new NotAcceptableException();
         }
         return optionalBoard.get();
+
     }
 }
