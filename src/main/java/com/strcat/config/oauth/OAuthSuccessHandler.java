@@ -31,6 +31,7 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
         String provider = request.getRequestURI().split("/")[4];
+        // TODO: JWT에 넣는 데이터를 OAuth user id -> User id 로 변경 함으로 인한 jwt 토큰 생성 에러
         User user = oAuthUserService.signIn(authentication.getName(), provider);
         String token = jwtUtils.createJwtToken(user.getId().toString());
         Cookie cookie = new Cookie("token", token);
