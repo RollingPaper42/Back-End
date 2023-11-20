@@ -1,5 +1,6 @@
 package com.strcat.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -33,6 +34,7 @@ public class Content {
     @Column(length = 1000, nullable = false)
     private String text;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "board_id", nullable = false)
     private Board board;
