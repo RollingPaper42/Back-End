@@ -20,6 +20,7 @@ import java.io.IOException;
 public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
     private final JwtUtils jwtUtils;
     private final OAuthUserService oAuthUserService;
+    private final String REDIRECT_URI = "http://rolling-eb-env.eba-pppydmmc.ap-northeast-2.elasticbeanstalk.com/login/success";
 
     @Autowired
     public OAuthSuccessHandler(JwtUtils jwtUtils, OAuthUserService oAuthUserService) {
@@ -31,7 +32,6 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
         String provider = request.getRequestURI().split("/")[4];
-        // TODO: JWT에 넣는 데이터를 OAuth user id -> User id 로 변경 함으로 인한 jwt 토큰 생성 에러
         User user = oAuthUserService.signIn(authentication.getName(), provider);
         String token = jwtUtils.createJwtToken(user.getId().toString());
         Cookie cookie = new Cookie("token", token);
@@ -39,6 +39,6 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
         log.info("token: " + token);
         cookie.setPath("/login/success");
         response.addCookie(cookie);
-        response.sendRedirect("http://rolling-eb-env.eba-pppydmmc.ap-northeast-2.elasticbeanstalk.com/login/success");
+        response.sendRedirect(REDIRECT_URI);
     }
 }
