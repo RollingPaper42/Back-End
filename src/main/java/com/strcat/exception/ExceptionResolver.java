@@ -12,12 +12,12 @@ public class ExceptionResolver {
     @ExceptionHandler(AuthenticationException.class)
     @ResponseBody
     public ResponseEntity<String> handleUnauthorizedException(AuthenticationException exception) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증 실패");
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증에 실패했습니다.");
     }
 
     @ExceptionHandler(NotAcceptableException.class)
     @ResponseBody
     public ResponseEntity<String> handleNotAcceptableException(NotAcceptableException exception) {
-        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("잘못된 요청");
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(exception.getMessage());
     }
 }
