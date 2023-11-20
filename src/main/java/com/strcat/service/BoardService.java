@@ -3,6 +3,7 @@ package com.strcat.service;
 import com.strcat.domain.Board;
 import com.strcat.domain.User;
 import com.strcat.dto.CreateBoardReqDto;
+import com.strcat.dto.ReadBoardInfoResDto;
 import com.strcat.dto.ReadBoardSummaryResDto;
 import com.strcat.exception.NotAcceptableException;
 import com.strcat.repository.BoardRepository;
@@ -21,21 +22,26 @@ public class BoardService {
     private final JwtUtils jwtUtils;
     private final AesSecretUtils aesSecretUtils;
 
-
-    public String createBoard(CreateBoardReqDto dto, String token) {
+    public String createBoard(CreateBoardReqDto dto, String token) throws Exception {
         User user = getUser(token);
 
         // TODO: group id 유효성 검사
 
-        Board board = boardRepository.save(new Board(dto.getTitle(), dto.getTheme(), user));
+        Board board = boardRepository.save(new Board(dto.getTitle(), dto.getBackgroundColor(), user));
         return aesSecretUtils.encrypt(board.getId());
     }
 
-    public Board readBoard(String encryptedBoardId) {
+    // TODO: 삭제 예정
+    public ReadBoardInfoResDto readBoardInfo(String encryptedBoardId) throws Exception {
+        Board board = getBoard(encryptedBoardId);
+        return new ReadBoardInfoResDto(board.getTitle(), board.getBackgroundColor());
+    }
+
+    public Board readBoard(String encryptedBoardId) throws Exception {
         return getBoard(encryptedBoardId);
     }
 
-    public ReadBoardSummaryResDto readSummary(String encryptedBoardId, String token) {
+    public ReadBoardSummaryResDto readSummary(String encryptedBoardId, String token) throws Exception {
         getUser(token);
         Board board = getBoard(encryptedBoardId);
 
@@ -44,12 +50,12 @@ public class BoardService {
         return dto;
     }
 
-    private Board getBoard(String encryptedBoardId) {
+    private Board getBoard(String encryptedBoardId) throws Exception {
         Long boardId = aesSecretUtils.decrypt(encryptedBoardId);
         Optional<Board> optionalBoard = boardRepository.findById(boardId);
 
         if (optionalBoard.isEmpty()) {
-            throw new NotAcceptableException("존재하지 않는 보드입니다.");
+            throw new NotAcceptableException();
         }
         return optionalBoard.get();
     }
@@ -59,7 +65,7 @@ public class BoardService {
         Optional<User> user = userRepository.findById(userId);
 
         if (user.isEmpty()) {
-            throw new NotAcceptableException("존재하지 않는 유저입니다.");
+            throw new NotAcceptableException();
         }
         return user.get();
     }
