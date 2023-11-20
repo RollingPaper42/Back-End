@@ -18,12 +18,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class BoardService {
     private final BoardRepository boardRepository;
-    private final UserRepository userRepository;
-    private final JwtUtils jwtUtils;
     private final AesSecretUtils aesSecretUtils;
+    private final UserService userService;
 
     public String createBoard(CreateBoardReqDto dto, String token) throws Exception {
-        User user = getUser(token);
+        User user = userService.getUser(token);
 
         // TODO: group id 유효성 검사
 
@@ -42,7 +41,7 @@ public class BoardService {
     }
 
     public ReadBoardSummaryResDto readSummary(String encryptedBoardId, String token) throws Exception {
-        getUser(token);
+        userService.getUser(token);
         Board board = getBoard(encryptedBoardId);
 
         ReadBoardSummaryResDto dto = new ReadBoardSummaryResDto(board.getTitle(), board.getContents().size(),
@@ -58,15 +57,5 @@ public class BoardService {
             throw new NotAcceptableException();
         }
         return optionalBoard.get();
-    }
-
-    private User getUser(String token) {
-        Long userId = Long.parseLong(jwtUtils.parseUserId(token.substring(7)));
-        Optional<User> user = userRepository.findById(userId);
-
-        if (user.isEmpty()) {
-            throw new NotAcceptableException();
-        }
-        return user.get();
     }
 }
