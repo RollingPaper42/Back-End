@@ -23,11 +23,11 @@ public class BoardService {
     private final AesSecretUtils aesSecretUtils;
 
     public String createBoard(CreateBoardReqDto dto, String token) throws Exception {
-        Optional<User> user = getUser(token);
+        User user = getUser(token);
 
         // TODO: group id 유효성 검사
 
-        Board board = boardRepository.save(new Board(dto.getTitle(), dto.getBackgroundColor(), user.get()));
+        Board board = boardRepository.save(new Board(dto.getTitle(), dto.getBackgroundColor(), user));
         return aesSecretUtils.encrypt(board.getId());
     }
 
@@ -60,13 +60,13 @@ public class BoardService {
         return optionalBoard.get();
     }
 
-    private Optional<User> getUser(String token) {
+    private User getUser(String token) {
         Long userId = Long.parseLong(jwtUtils.parseUserId(token.substring(7)));
         Optional<User> user = userRepository.findById(userId);
 
         if (user.isEmpty()) {
             throw new NotAcceptableException();
         }
-        return user;
+        return user.get();
     }
 }
