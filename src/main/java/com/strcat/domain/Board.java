@@ -1,5 +1,6 @@
 package com.strcat.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -33,6 +34,10 @@ public class Board {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @Column(name = "background_color", nullable = false)
+    private String backgroundColor;
+
+    @JsonIgnore
     @ManyToOne()
     @JoinColumn(name = "user_id", nullable = false) // 외래키 컬럼 지정
     private User user;
@@ -40,9 +45,15 @@ public class Board {
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
     private List<Content> contents;
 
-    public Board(String title, User user) {
+    public Board(String title, String backgroundColor, User user) {
         this.title = title;
+        this.backgroundColor = backgroundColor;
         this.user = user;
     }
 
+    public Long calculateTotalContentLength() {
+        return contents.stream()
+                .mapToLong(content -> content.getText().length())
+                .sum();
+    }
 }
