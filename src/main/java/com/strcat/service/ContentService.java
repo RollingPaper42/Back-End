@@ -26,6 +26,6 @@ public class ContentService {
             throw new NotAcceptableException("존재하지 않는 보드입니다.");
         }
         Board board = optionalBoard.get();
-        return contentRepository.save(new Content(dto.getWriter(), dto.getText(), board));
+        return contentRepository.save(new Content(dto.getWriter(), dto.getText(), dto.getPhotoUrl(), board));
     }
 }
