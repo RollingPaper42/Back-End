@@ -34,8 +34,8 @@ public class Board {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "background_color", nullable = false)
-    private String backgroundColor;
+    @Column(name = "theme", nullable = false)
+    private String theme;
 
     @JsonIgnore
     @ManyToOne()
@@ -45,9 +45,9 @@ public class Board {
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
     private List<Content> contents;
 
-    public Board(String title, String backgroundColor, User user) {
+    public Board(String title, String theme, User user) {
         this.title = title;
-        this.backgroundColor = backgroundColor;
+        this.theme = theme;
         this.user = user;
     }
 

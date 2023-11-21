@@ -27,14 +27,14 @@ public class BoardService {
 
         // TODO: group id 유효성 검사
 
-        Board board = boardRepository.save(new Board(dto.getTitle(), dto.getBackgroundColor(), user));
+        Board board = boardRepository.save(new Board(dto.getTitle(), dto.getTheme(), user));
         return aesSecretUtils.encrypt(board.getId());
     }
 
     // TODO: 삭제 예정
     public ReadBoardInfoResDto readBoardInfo(String encryptedBoardId) throws Exception {
         Board board = getBoard(encryptedBoardId);
-        return new ReadBoardInfoResDto(board.getTitle(), board.getBackgroundColor());
+        return new ReadBoardInfoResDto(board.getTitle(), board.getTheme());
     }
 
     public Board readBoard(String encryptedBoardId) throws Exception {

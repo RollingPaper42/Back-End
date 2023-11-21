@@ -7,5 +7,5 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ReadBoardInfoResDto {
     private final String title;
-    private final String backgroundColor;
+    private final String theme;
 }
