@@ -40,12 +40,6 @@ public class BoardController {
         return boardService.createBoard(dto, token);
     }
 
-    // 삭제 예정
-    @GetMapping("/{boardId}")
-    public ReadBoardInfoResDto readBoardInfo(@PathVariable(name = "boardId") String encryptedBoardId) {
-        return boardService.readBoardInfo(encryptedBoardId);
-    }
-
     @GetMapping("/{boardId}/contents")
     public Board readBoard(@PathVariable(name = "boardId") String encryptedBoardId) {
         return boardService.readBoard(encryptedBoardId);
