@@ -3,7 +3,6 @@ package com.strcat.service;
 import com.strcat.domain.Board;
 import com.strcat.domain.User;
 import com.strcat.dto.CreateBoardReqDto;
-import com.strcat.dto.ReadBoardInfoResDto;
 import com.strcat.dto.ReadBoardSummaryResDto;
 import com.strcat.exception.NotAcceptableException;
 import com.strcat.repository.BoardRepository;
