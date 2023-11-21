@@ -19,7 +19,7 @@ public class UserService {
         Optional<User> user = userRepository.findById(userId);
 
         if (user.isEmpty()) {
-            throw new NotAcceptableException();
+            throw new NotAcceptableException("유저가 존재하지 않습니다.");
         }
         return user.get();
     }
