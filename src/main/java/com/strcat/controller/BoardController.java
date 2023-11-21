@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -35,7 +34,7 @@ public class BoardController {
 
     @PostMapping
     public String createBoard(@RequestHeader("Authorization") String token,
-                              @RequestBody CreateBoardReqDto dto) {
+                              @RequestBody CreateBoardReqDto dto) throws Exception {
         return boardService.createBoard(dto, token);
     }
 
@@ -46,7 +45,7 @@ public class BoardController {
 
     @GetMapping("/{boardId}/summaries")
     public ReadBoardSummaryResDto readSummary(@PathVariable(name = "boardId") String encryptedBoardId,
-                                              @RequestHeader("Authorization") String token) {
+                                              @RequestHeader("Authorization") String token) throws Exception {
         return boardService.readSummary(encryptedBoardId, token);
     }
 
