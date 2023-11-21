@@ -23,4 +23,10 @@ public class UserService {
         }
         return user.get();
     }
+
+    public boolean isLogin(String token) {
+        Long userId = Long.parseLong(jwtUtils.parseUserId(token.substring(7)));
+        Optional<User> user = userRepository.findById(userId);
+        return user.isPresent();
+    }
 }
