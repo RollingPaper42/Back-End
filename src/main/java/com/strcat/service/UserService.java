@@ -25,7 +25,12 @@ public class UserService {
     }
 
     public boolean isLogin(String token) {
-        Long userId = Long.parseLong(jwtUtils.parseUserId(token.substring(7)));
+        String tokenCode = token.substring(7);
+        if (!jwtUtils.isValidateToken(tokenCode)) {
+            return false;
+        }
+
+        Long userId = Long.parseLong(jwtUtils.parseUserId(tokenCode));
         Optional<User> user = userRepository.findById(userId);
         return user.isPresent();
     }
