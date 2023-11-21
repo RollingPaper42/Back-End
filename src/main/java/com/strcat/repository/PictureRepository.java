@@ -27,7 +27,7 @@ public class PictureRepository {
                 .build();
     }
 
-    public String postPicture(String boardId, long photoId, MultipartFile picture) {
+    public String postPicture(String boardId, MultipartFile picture) {
         String key = String.format("pictures/strcat:%s:%d:%s", boardId, System.currentTimeMillis(), picture.getOriginalFilename());
 
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
