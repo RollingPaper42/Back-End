@@ -18,7 +18,7 @@ public class BoardService {
     private final AesSecretUtils aesSecretUtils;
     private final UserService userService;
 
-    public String createBoard(CreateBoardReqDto dto, String token) throws Exception {
+    public String createBoard(CreateBoardReqDto dto, String token) {
         User user = userService.getUser(token);
 
         // TODO: group id 유효성 검사
@@ -31,7 +31,7 @@ public class BoardService {
         return getBoard(encryptedBoardId);
     }
 
-    public ReadBoardSummaryResDto readSummary(String encryptedBoardId, String token) throws Exception {
+    public ReadBoardSummaryResDto readSummary(String encryptedBoardId, String token) {
         userService.getUser(token);
         Board board = getBoard(encryptedBoardId);
 
