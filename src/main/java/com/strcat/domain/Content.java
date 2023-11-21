@@ -34,14 +34,18 @@ public class Content {
     @Column(length = 1000, nullable = false)
     private String text;
 
+    @Column
+    private String photoUrl;
+
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "board_id", nullable = false)
     private Board board;
 
-    public Content(String writer, String text, Board board) {
+    public Content(String writer, String text, String photoUrl, Board board) {
         this.writer = writer;
         this.text = text;
         this.board = board;
+        this.photoUrl = photoUrl;
     }
 }
