@@ -10,9 +10,8 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class PictureService {
     private final PictureRepository pictureRepository;
-    private final AesSecretUtils aesSecretUtils;
 
     public String postPicture(String encryptedBoardId, MultipartFile picture) {
-        return pictureRepository.postPicture(aesSecretUtils.decrypt(encryptedBoardId).toString(), picture);
+        return pictureRepository.postPicture(encryptedBoardId, picture);
     }
 }

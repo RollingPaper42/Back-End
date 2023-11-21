@@ -27,7 +27,7 @@ public class PictureRepository {
     }
 
     public String postPicture(String boardId, MultipartFile picture) {
-        String key = String.format("pictures/strcat:%s:%s", boardId, picture.getName() + ".png");
+        String key = String.format("pictures/strcat:%s:%s", boardId, picture.getOriginalFilename());
 
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(BUCKET_NAME)
