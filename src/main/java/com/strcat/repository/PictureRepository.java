@@ -26,8 +26,8 @@ public class PictureRepository {
                 .build();
     }
 
-    public String postPicture(long boardId, long contentId, MultipartFile picture) {
-        String key = String.format("pictures/strcat:%02d:%02d:%s", boardId, contentId, picture.getName() + ".png");
+    public String postPicture(String boardId, MultipartFile picture) {
+        String key = String.format("pictures/strcat:%s:%s", boardId, picture.getName() + ".png");
 
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(BUCKET_NAME)
@@ -39,9 +39,10 @@ public class PictureRepository {
         try {
             s3Client.putObject(putObjectRequest,
                     RequestBody.fromBytes(picture.getBytes()));
-
+            log.info("사진 저장에 성공 했습니다.");
         } catch (Exception exception) {
-            throw new NotAcceptableException(/*TODO: 에러 메세지 추가*/);
+            log.info("사진 저장에 실패 했습니다." + "\n" + exception.getMessage());
+            throw new NotAcceptableException("사진 저장에 실패했습니다.");
         }
 
         return generateUrl(key);

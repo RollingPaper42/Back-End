@@ -12,7 +12,7 @@ public class PictureService {
     private final PictureRepository pictureRepository;
     private final AesSecretUtils aesSecretUtils;
 
-    public String postPicture(String encryptedBoardId, String contentId, MultipartFile picture) {
-        pictureRepository.postPicture(aesSecretUtils.decrypt(encryptedBoardId), contentId, picture);
+    public String postPicture(String encryptedBoardId, MultipartFile picture) {
+        return pictureRepository.postPicture(aesSecretUtils.decrypt(encryptedBoardId).toString(), picture);
     }
 }

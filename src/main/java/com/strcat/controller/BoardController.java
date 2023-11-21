@@ -56,11 +56,10 @@ public class BoardController {
                                               @RequestHeader("Authorization") String token) {
         return boardService.readSummary(encryptedBoardId, token);
     }
-//    http://localhost:8080/boards/Vvs_JTGorbxqVWXr6aH0cg==/contents/1/pictures
-    @PostMapping("/{boardId}/contents/{contentId}/pictures")
+
+    @PostMapping("/{boardId}/contents/pictures")
     public String createPicture(@PathVariable(name = "boardId") String encryptedBoardId,
-                                @PathVariable String contentId,
                                 @RequestParam MultipartFile picture) {
-        return pictureService.postPicture(encryptedBoardId, contentId, picture);
+        return pictureService.postPicture(encryptedBoardId, picture);
     }
 }
