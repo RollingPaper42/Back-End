@@ -36,7 +36,7 @@ public class AesSecretUtils {
             byte[] encrypted = Base64.getEncoder().encode(encodedBytes);
             return new String(encrypted, StandardCharsets.UTF_8).replace('/', '_');
         } catch (Exception e) {
-            throw new NotAcceptableException();
+            throw new NotAcceptableException("암호화에 실패했습니다.");
         }
     }
 
@@ -47,7 +47,7 @@ public class AesSecretUtils {
             byte[] decrypted = cipher.doFinal(decodedBytes);
             return Long.parseLong(new String(decrypted, StandardCharsets.UTF_8));
         } catch (Exception e) {
-            throw new NotAcceptableException();
+            throw new NotAcceptableException("복호화에 실패했습니다.");
         }
     }
 }
