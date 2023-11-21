@@ -22,7 +22,8 @@ public class BoardService {
     private final JwtUtils jwtUtils;
     private final AesSecretUtils aesSecretUtils;
 
-    public String createBoard(CreateBoardReqDto dto, String token) throws Exception {
+
+    public String createBoard(CreateBoardReqDto dto, String token) {
         User user = getUser(token);
 
         // TODO: group id 유효성 검사
@@ -32,16 +33,16 @@ public class BoardService {
     }
 
     // TODO: 삭제 예정
-    public ReadBoardInfoResDto readBoardInfo(String encryptedBoardId) throws Exception {
+    public ReadBoardInfoResDto readBoardInfo(String encryptedBoardId) {
         Board board = getBoard(encryptedBoardId);
         return new ReadBoardInfoResDto(board.getTitle(), board.getTheme());
     }
 
-    public Board readBoard(String encryptedBoardId) throws Exception {
+    public Board readBoard(String encryptedBoardId) {
         return getBoard(encryptedBoardId);
     }
 
-    public ReadBoardSummaryResDto readSummary(String encryptedBoardId, String token) throws Exception {
+    public ReadBoardSummaryResDto readSummary(String encryptedBoardId, String token) {
         getUser(token);
         Board board = getBoard(encryptedBoardId);
 
@@ -50,12 +51,12 @@ public class BoardService {
         return dto;
     }
 
-    private Board getBoard(String encryptedBoardId) throws Exception {
+    private Board getBoard(String encryptedBoardId) {
         Long boardId = aesSecretUtils.decrypt(encryptedBoardId);
         Optional<Board> optionalBoard = boardRepository.findById(boardId);
 
         if (optionalBoard.isEmpty()) {
-            throw new NotAcceptableException();
+            throw new NotAcceptableException("존재하지 않는 보드입니다.");
         }
         return optionalBoard.get();
     }
@@ -65,7 +66,7 @@ public class BoardService {
         Optional<User> user = userRepository.findById(userId);
 
         if (user.isEmpty()) {
-            throw new NotAcceptableException();
+            throw new NotAcceptableException("존재하지 않는 유저입니다.");
         }
         return user.get();
     }

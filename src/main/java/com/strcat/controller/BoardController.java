@@ -25,30 +25,30 @@ public class BoardController {
 
     @PostMapping("/{boardId}/contents")
     public void createContent(@PathVariable(name = "boardId") String encryptedBoardId,
-                              @RequestBody CreateContentReqDto dto) throws Exception {
+                              @RequestBody CreateContentReqDto dto) {
         contentService.create(dto, encryptedBoardId);
     }
 
     @PostMapping
     public String createBoard(@RequestHeader("Authorization") String token,
-                              @RequestBody CreateBoardReqDto dto) throws Exception{
+                              @RequestBody CreateBoardReqDto dto) {
         return boardService.createBoard(dto, token);
     }
 
     // 삭제 예정
     @GetMapping("/{boardId}")
-    public ReadBoardInfoResDto readBoardInfo(@PathVariable(name = "boardId") String encryptedBoardId) throws Exception {
+    public ReadBoardInfoResDto readBoardInfo(@PathVariable(name = "boardId") String encryptedBoardId) {
         return boardService.readBoardInfo(encryptedBoardId);
     }
 
     @GetMapping("/{boardId}/contents")
-    public Board readBoard(@PathVariable(name = "boardId") String encryptedBoardId) throws Exception {
+    public Board readBoard(@PathVariable(name = "boardId") String encryptedBoardId) {
         return boardService.readBoard(encryptedBoardId);
     }
 
     @GetMapping("/{boardId}/summaries")
     public ReadBoardSummaryResDto readSummary(@PathVariable(name = "boardId") String encryptedBoardId,
-                                              @RequestHeader("Authorization") String token) throws Exception {
+                                              @RequestHeader("Authorization") String token) {
         return boardService.readSummary(encryptedBoardId, token);
     }
 }

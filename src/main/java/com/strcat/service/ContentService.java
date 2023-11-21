@@ -18,12 +18,12 @@ public class ContentService {
     private final BoardRepository boardRepository;
     private final AesSecretUtils aesSecretUtils;
 
-    public Content create(CreateContentReqDto dto, String encryptedBoardId) throws Exception {
+    public Content create(CreateContentReqDto dto, String encryptedBoardId) {
         Long boardId = aesSecretUtils.decrypt(encryptedBoardId);
         Optional<Board> optionalBoard = boardRepository.findById(boardId);
 
         if (optionalBoard.isEmpty()) {
-            throw new NotAcceptableException();
+            throw new NotAcceptableException("존재하지 않는 보드입니다.");
         }
         Board board = optionalBoard.get();
         return contentRepository.save(new Content(dto.getWriter(), dto.getText(), board));

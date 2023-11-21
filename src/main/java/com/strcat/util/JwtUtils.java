@@ -1,15 +1,15 @@
 package com.strcat.util;
 
+import com.strcat.exception.NotAcceptableException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
 import java.time.Duration;
 import java.util.Base64;
 import java.util.Date;
 import javax.crypto.SecretKey;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 @Component
 public class JwtUtils {
@@ -39,10 +39,14 @@ public class JwtUtils {
     }
 
     public String parseUserId(String token) {
-        return Jwts.parser()
-                .verifyWith(secretKey)
-                .build()
-                .parseSignedClaims(token).getPayload().getId();
+        try {
+            return Jwts.parser()
+                    .verifyWith(secretKey)
+                    .build()
+                    .parseSignedClaims(token).getPayload().getId();
+        } catch (Exception e) {
+            throw new NotAcceptableException("잘못된 토큰 형식입니다.");
+        }
     }
 
     public boolean isValidateToken(String token) {

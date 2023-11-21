@@ -1,6 +1,6 @@
 package com.strcat.util;
 
-import java.net.URLEncoder;
+import com.strcat.exception.NotAcceptableException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import javax.crypto.Cipher;
@@ -29,19 +29,25 @@ public class AesSecretUtils {
         return cipher;
     }
 
-    public String encrypt(Long data) throws Exception {
-        Cipher cipher = cipherInit(Cipher.ENCRYPT_MODE);
-        byte[] encodedBytes = cipher.doFinal(data.toString().getBytes());
-        byte[] encrypted = Base64.getEncoder().encode(encodedBytes);
-
-        return new String(encrypted, StandardCharsets.UTF_8).replace('/', '_');
+    public String encrypt(Long data) {
+        try {
+            Cipher cipher = cipherInit(Cipher.ENCRYPT_MODE);
+            byte[] encodedBytes = cipher.doFinal(data.toString().getBytes());
+            byte[] encrypted = Base64.getEncoder().encode(encodedBytes);
+            return new String(encrypted, StandardCharsets.UTF_8).replace('/', '_');
+        } catch (Exception e) {
+            throw new NotAcceptableException("암호화에 실패했습니다.");
+        }
     }
 
-    public Long decrypt(String encryptedData) throws Exception {
-        Cipher cipher = cipherInit(Cipher.DECRYPT_MODE);
-        byte[] decodedBytes = Base64.getDecoder().decode(encryptedData.replace('_', '/').getBytes());
-        byte[] decrypted = cipher.doFinal(decodedBytes);
-
-        return Long.parseLong(new String(decrypted, StandardCharsets.UTF_8));
+    public Long decrypt(String encryptedData) {
+        try {
+            Cipher cipher = cipherInit(Cipher.DECRYPT_MODE);
+            byte[] decodedBytes = Base64.getDecoder().decode(encryptedData.replace('_', '/').getBytes());
+            byte[] decrypted = cipher.doFinal(decodedBytes);
+            return Long.parseLong(new String(decrypted, StandardCharsets.UTF_8));
+        } catch (Exception e) {
+            throw new NotAcceptableException("복호화에 실패했습니다.");
+        }
     }
 }
