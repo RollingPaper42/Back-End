@@ -35,7 +35,7 @@ public class SecurityConfig {
 
 
     String[] WHITE_LIST = {
-            "login/success",
+            "login/*",
     };
 
     @Autowired
