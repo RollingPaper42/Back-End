@@ -3,7 +3,6 @@ package com.strcat.controller;
 import com.strcat.domain.Board;
 import com.strcat.dto.CreateBoardReqDto;
 import com.strcat.dto.CreateContentReqDto;
-import com.strcat.dto.ReadBoardInfoResDto;
 import com.strcat.dto.ReadBoardSummaryResDto;
 import com.strcat.service.BoardService;
 import com.strcat.service.ContentService;
