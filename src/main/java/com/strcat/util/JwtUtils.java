@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtUtils {
     private final SecretKey secretKey;
-    private final Long VALID_MINUTES = 300L;
+    private final Long VALID_MINUTES = 300L; // TODO: 시간 변경 300 -> 60
 
     public JwtUtils(@Value("${jwt.secret}") String secretKey) {
         byte[] encoded = Base64.getEncoder().encode(secretKey.getBytes());
