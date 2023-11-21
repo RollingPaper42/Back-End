@@ -1,10 +1,12 @@
 package com.strcat.service;
 
 import com.strcat.domain.Board;
+import com.strcat.domain.BoardGroup;
 import com.strcat.domain.User;
 import com.strcat.dto.CreateBoardReqDto;
 import com.strcat.dto.ReadBoardSummaryResDto;
 import com.strcat.exception.NotAcceptableException;
+import com.strcat.repository.BoardGroupRepository;
 import com.strcat.repository.BoardRepository;
 import com.strcat.util.AesSecretUtils;
 import java.util.Optional;
@@ -15,15 +17,19 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class BoardService {
     private final BoardRepository boardRepository;
+    private final BoardGroupRepository boardGroupRepository;
     private final AesSecretUtils aesSecretUtils;
     private final UserService userService;
 
-    public String createBoard(CreateBoardReqDto dto, String token) throws Exception {
+    public String createBoard(CreateBoardReqDto dto, String token) {
+        Board board;
         User user = userService.getUser(token);
-
-        // TODO: group id 유효성 검사
-
-        Board board = boardRepository.save(new Board(dto.getTitle(), dto.getTheme(), user));
+        if (dto.getGroupId() != null) {
+            BoardGroup boardGroup = getBoardGroup(dto.getGroupId());
+            board = boardRepository.save(new Board(boardGroup, dto.getTitle(), dto.getTheme(), user));
+        } else {
+            board = boardRepository.save(new Board(dto.getTitle(), dto.getTheme(), user));
+        }
         return aesSecretUtils.encrypt(board.getId());
     }
 
@@ -31,7 +37,7 @@ public class BoardService {
         return getBoard(encryptedBoardId);
     }
 
-    public ReadBoardSummaryResDto readSummary(String encryptedBoardId, String token) throws Exception {
+    public ReadBoardSummaryResDto readSummary(String encryptedBoardId, String token) {
         userService.getUser(token);
         Board board = getBoard(encryptedBoardId);
 
@@ -48,5 +54,15 @@ public class BoardService {
             throw new NotAcceptableException("존재하지 않는 보드입니다.");
         }
         return optionalBoard.get();
+    }
+
+    private BoardGroup getBoardGroup(String encryptedBoardGroupId) {
+        Long boardGroupId = aesSecretUtils.decrypt(encryptedBoardGroupId);
+        Optional<BoardGroup> boardGroup = boardGroupRepository.findById(boardGroupId);
+
+        if (boardGroup.isEmpty()) {
+            throw new NotAcceptableException("존재하지 않는 보드 그룹입니다.");
+        }
+        return boardGroup.get();
     }
 }
