@@ -31,7 +31,7 @@ public class BoardController {
 
     @PostMapping
     public String createBoard(@RequestHeader("Authorization") String token,
-                              @RequestBody CreateBoardReqDto dto) {
+                              @RequestBody CreateBoardReqDto dto) throws Exception {
         return boardService.createBoard(dto, token);
     }
 
@@ -48,7 +48,7 @@ public class BoardController {
 
     @GetMapping("/{boardId}/summaries")
     public ReadBoardSummaryResDto readSummary(@PathVariable(name = "boardId") String encryptedBoardId,
-                                              @RequestHeader("Authorization") String token) {
+                                              @RequestHeader("Authorization") String token) throws Exception {
         return boardService.readSummary(encryptedBoardId, token);
     }
 }
