@@ -29,11 +29,4 @@ public class MainController {
     public String guard() {
         return "guard OK";
     }
-
-    @PostMapping("/picture/test")
-    public String test(@RequestParam("picture") MultipartFile picture) {
-        log.debug("picture API Called");
-        System.out.println("picture API Called");
-        return pictureRepository.postPicture(1L, 1L, picture);
-    }
 }
