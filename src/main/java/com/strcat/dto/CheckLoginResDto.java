@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class ReadBoardInfoResDto {
-    private final String title;
-    private final String theme;
+public class CheckLoginResDto {
+    private final boolean login;
 }
