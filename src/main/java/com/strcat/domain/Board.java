@@ -38,14 +38,26 @@ public class Board {
     private String theme;
 
     @JsonIgnore
-    @ManyToOne()
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false) // 외래키 컬럼 지정
     private User user;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
     private List<Content> contents;
 
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "board_group_id")
+    private BoardGroup boardGroup;
+
     public Board(String title, String theme, User user) {
+        this.title = title;
+        this.theme = theme;
+        this.user = user;
+    }
+
+    public Board(BoardGroup boardGroup, String title, String theme, User user) {
+        this.boardGroup = boardGroup;
         this.title = title;
         this.theme = theme;
         this.user = user;
