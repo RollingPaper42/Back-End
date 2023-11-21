@@ -2,7 +2,6 @@ package com.strcat.controller;
 
 import com.strcat.dto.CheckLoginResDto;
 import com.strcat.service.UserService;
-import com.strcat.util.JwtUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
