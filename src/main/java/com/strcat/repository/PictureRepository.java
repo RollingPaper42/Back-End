@@ -8,6 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
@@ -26,8 +27,8 @@ public class PictureRepository {
                 .build();
     }
 
-    public String postPicture(long boardId, long contentId, MultipartFile picture) {
-        String key = String.format("pictures/strcat:%02d:%02d:%s", boardId, contentId, picture.getName() + ".png");
+    public String postPicture(String boardId, long photoId, MultipartFile picture) {
+        String key = String.format("pictures/strcat:%s:%d:%s", boardId, photoId, picture.getOriginalFilename());
 
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(BUCKET_NAME)
@@ -41,7 +42,7 @@ public class PictureRepository {
                     RequestBody.fromBytes(picture.getBytes()));
 
         } catch (Exception exception) {
-            throw new NotAcceptableException(/*TODO: 에러 메세지 추가*/);
+            throw new NotAcceptableException("사진 저장 실패");
         }
 
         return generateUrl(key);

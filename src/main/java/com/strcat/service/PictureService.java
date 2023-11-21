@@ -1,7 +1,7 @@
 package com.strcat.service;
 
+import com.strcat.repository.ContentRepository;
 import com.strcat.repository.PictureRepository;
-import com.strcat.util.AesSecretUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -10,9 +10,10 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class PictureService {
     private final PictureRepository pictureRepository;
-    private final AesSecretUtils aesSecretUtils;
+    private final ContentRepository contentRepository;
 
-    public String postPicture(String encryptedBoardId, String contentId, MultipartFile picture) {
-        pictureRepository.postPicture(aesSecretUtils.decrypt(encryptedBoardId), contentId, picture);
+    public String postPicture(String encryptedBoardId, MultipartFile picture) {
+        long photoId = contentRepository.countExistPhoto();
+        return pictureRepository.postPicture(encryptedBoardId, photoId, picture);
     }
 }
