@@ -28,12 +28,6 @@ public class BoardService {
         return aesSecretUtils.encrypt(board.getId());
     }
 
-    // TODO: 삭제 예정
-    public ReadBoardInfoResDto readBoardInfo(String encryptedBoardId) {
-        Board board = getBoard(encryptedBoardId);
-        return new ReadBoardInfoResDto(board.getTitle(), board.getTheme());
-    }
-
     public Board readBoard(String encryptedBoardId) {
         return getBoard(encryptedBoardId);
     }
