@@ -4,12 +4,8 @@ import com.strcat.config.oauth.JwtAuthFilter;
 import com.strcat.config.oauth.JwtAuthenticationEntryPoint;
 import com.strcat.config.oauth.OAuthFailureHandler;
 import com.strcat.config.oauth.OAuthSuccessHandler;
-//import com.strcat.config.oauth.UnauthorizedExceptionHandlerFilter;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -17,11 +13,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.servlet.HandlerExceptionResolver;
 
 @EnableWebSecurity
 @Configuration
@@ -36,6 +30,12 @@ public class SecurityConfig {
 
     String[] WHITE_LIST = {
             "login/*",
+            "swagger-ui/index.html",
+            "swagger-resources",
+            "swagger-resources/**",
+            "favicon.ico",
+            "v3/api-docs/**",
+            "swagger-ui/**"
     };
 
     @Autowired
