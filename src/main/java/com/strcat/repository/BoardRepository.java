@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BoardRepository extends JpaRepository<Board, Long> {
-    public List<Board> findByBoardGroupId(Long boardGroupId);
+    List<Board> findByBoardGroupId(Long boardGroupId);
 }

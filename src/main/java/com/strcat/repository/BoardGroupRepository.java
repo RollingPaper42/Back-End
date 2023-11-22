@@ -16,5 +16,5 @@ public interface BoardGroupRepository extends JpaRepository<BoardGroup, Long> {
             LEFT JOIN BoardGroup boardGroup ON board.boardGroup.id = boardGroup.id
             WHERE boardGroup.id = (:boardGroupId)
             """)
-    public List<ReadBoardGroupBoardInfoResDto> findBoardInfo(@Param("boardGroupId") Long boardGroupId);
+    List<ReadBoardGroupBoardInfoResDto> findBoardInfo(@Param("boardGroupId") Long boardGroupId);
 }
