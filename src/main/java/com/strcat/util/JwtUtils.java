@@ -16,6 +16,15 @@ public class JwtUtils {
     private final SecretKey secretKey;
     private final Long VALID_MINUTES = 300L; // TODO: 시간 변경 300 -> 60
 
+    public String removeBearerString(String token) {
+        if (token == null
+                || token.isBlank()
+                || token.length() < 7) {
+            return "";
+        }
+        return token.substring(7);
+    }
+
     public JwtUtils(@Value("${jwt.secret}") String secretKey) {
         byte[] encoded = Base64.getEncoder().encode(secretKey.getBytes());
 
@@ -25,15 +34,17 @@ public class JwtUtils {
     public String exportToken(HttpServletRequest request) {
         String rawToken = request.getHeader("Authorization");
 
-        if (rawToken == null) {
+        if (rawToken == null
+                || rawToken.isBlank()
+                || rawToken.length() < 6) {
             return "";
         }
 
-        String bearer = rawToken.substring(0, 6);
+        String prefix = rawToken.substring(0, 6);
         String token = "";
 
-        if (bearer.equals("Bearer")) {
-            token = rawToken.substring(7);
+        if (prefix.equals("Bearer")) {
+            token = removeBearerString(rawToken);
         }
         return token;
     }
