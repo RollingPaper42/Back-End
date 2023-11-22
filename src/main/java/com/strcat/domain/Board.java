@@ -47,7 +47,7 @@ public class Board {
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "board_group_id")
+    @JoinColumn(name = "group_id")
     private BoardGroup boardGroup;
 
     public Board(String title, String theme, User user) {
