@@ -34,14 +34,14 @@ public class BoardGroupController {
 
     @GetMapping("/{boardGroupId}/boards")
     public List<Board> readBoardGroupContent(@PathVariable(name = "boardGroupId") String encryptedBoardGroupId) {
-        return boardGroupService.readBoardGroupContent(encryptedBoardGroupId);
+        return boardGroupService.readBoards(encryptedBoardGroupId);
     }
 
     @GetMapping("/{boardGroupId}/summaries")
     public ReadBoardGroupSummaryResDto readBoardGroupSummary(
             @PathVariable(name = "boardGroupId") String encryptedBoardGroupId,
             @RequestHeader("Authorization") String token) {
-        return boardGroupService.readBoardGroupSummary(encryptedBoardGroupId, token);
+        return boardGroupService.readSummary(encryptedBoardGroupId, token);
     }
 
 }

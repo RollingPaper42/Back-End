@@ -36,12 +36,12 @@ public class BoardGroupService {
         return new ReadBoardGroupResDto(boardGroup.getTitle(), boardInfo);
     }
 
-    public List<Board> readBoardGroupContent(String encryptedBoardGroupId) {
+    public List<Board> readBoards(String encryptedBoardGroupId) {
         BoardGroup boardGroup = getBoardGroup(encryptedBoardGroupId);
         return boardGroup.getBoards();
     }
 
-    public ReadBoardGroupSummaryResDto readBoardGroupSummary(String encryptedBoardGroupId, String token) {
+    public ReadBoardGroupSummaryResDto readSummary(String encryptedBoardGroupId, String token) {
         userService.getUser(token);
         BoardGroup boardGroup = getBoardGroup(encryptedBoardGroupId);
         List<Board> boards = boardGroup.getBoards();
