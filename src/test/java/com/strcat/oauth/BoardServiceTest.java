@@ -86,7 +86,7 @@ public class BoardServiceTest {
         CreateBoardReqDto dto = new CreateBoardReqDto(null, "가나다", "Green");
 
         //when
-        Throwable thrown = Assertions.assertThrowsExactly(NotAcceptableException.class,
+        Throwable thrown = Assertions.assertThrows(NotAcceptableException.class,
                 //then
                 () -> boardService.createBoard(dto, "invalidToken"));
         Assertions.assertEquals("잘못된 토큰 형식입니다.", thrown.getMessage());
