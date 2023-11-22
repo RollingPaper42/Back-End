@@ -74,7 +74,8 @@ public class BoardServiceTest {
         //when
         Throwable thrown = Assertions.assertThrows(DataIntegrityViolationException.class, () ->
                 //then
-                boardService.createBoard(dto, token));
+                boardService.createBoard(dto, token)
+        );
         Assertions.assertTrue(thrown.getMessage().contains("Data too long"));
     }
 
@@ -88,7 +89,8 @@ public class BoardServiceTest {
         //when
         Throwable thrown = Assertions.assertThrows(NotAcceptableException.class, () ->
                 //then
-                boardService.createBoard(dto, "invalidToken"));
+                boardService.createBoard(dto, "invalidToken")
+        );
         Assertions.assertEquals("잘못된 토큰 형식입니다.", thrown.getMessage());
     }
 
@@ -116,7 +118,8 @@ public class BoardServiceTest {
         //when
         Throwable thrown = Assertions.assertThrows(NotAcceptableException.class, () ->
                 //then
-                boardService.readBoard(invalidUrl));
+                boardService.readBoard(invalidUrl)
+        );
         Assertions.assertEquals("복호화에 실패했습니다.", thrown.getMessage());
     }
 
@@ -130,8 +133,8 @@ public class BoardServiceTest {
         //when
         Throwable thrown = Assertions.assertThrows(NotAcceptableException.class, () ->
                 //then
-                boardService.readBoard(validNotExistUrl));
-
+                boardService.readBoard(validNotExistUrl)
+        );
         Assertions.assertEquals("존재하지 않는 보드입니다.", thrown.getMessage());
     }
 
