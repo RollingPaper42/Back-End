@@ -1,5 +1,6 @@
 package com.strcat.exception;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.AuthenticationException;
@@ -19,5 +20,11 @@ public class ExceptionResolver {
     @ResponseBody
     public ResponseEntity<String> handleNotAcceptableException(NotAcceptableException exception) {
         return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(exception.getMessage());
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    @ResponseBody
+    public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException exception) {
+        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("데이터 형식이 잘못 됐습니다.");
     }
 }
