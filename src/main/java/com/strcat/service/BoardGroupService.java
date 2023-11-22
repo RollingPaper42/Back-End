@@ -44,14 +44,10 @@ public class BoardGroupService {
     public ReadBoardGroupSummaryResDto readBoardGroupSummary(String encryptedBoardGroupId, String token) {
         userService.getUser(token);
         BoardGroup boardGroup = getBoardGroup(encryptedBoardGroupId);
-        List<Board> boards = getBoards(boardGroup.getId());
+        List<Board> boards = boardGroup.getBoards();
         return new ReadBoardGroupSummaryResDto(boardGroup.getTitle(),
                 boards.stream().mapToLong(board -> board.getContents().size()).sum(), boards.size(),
                 boardGroup.calculateTotalContentLength(boards));
-    }
-
-    private List<Board> getBoards(Long boardGroupId) {
-        return boardRepository.findByBoardGroupId(boardGroupId);
     }
 
     private BoardGroup getBoardGroup(String encryptedBoardGroupId) {
