@@ -2,11 +2,13 @@ package com.strcat.service;
 
 import com.strcat.domain.Board;
 import com.strcat.domain.User;
+import com.strcat.dto.ReadMyBoardInfoResDto;
 import com.strcat.dto.CreateBoardReqDto;
 import com.strcat.dto.ReadBoardSummaryResDto;
 import com.strcat.exception.NotAcceptableException;
 import com.strcat.repository.BoardRepository;
 import com.strcat.util.AesSecretUtils;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -38,6 +40,11 @@ public class BoardService {
         ReadBoardSummaryResDto dto = new ReadBoardSummaryResDto(board.getTitle(), board.getContents().size(),
                 board.calculateTotalContentLength());
         return dto;
+    }
+
+    public List<ReadMyBoardInfoResDto> readMyBoardInfo(String token) {
+        User user = userService.getUser(token);
+        return boardRepository.findByUserId(user.getId());
     }
 
     private Board getBoard(String encryptedBoardId) {
