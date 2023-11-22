@@ -10,10 +10,11 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BoardGroupRepository extends JpaRepository<BoardGroup, Long> {
-    @Query(value = "select " +
-            "new com.strcat.dto.ReadBoardGroupBoardInfoResDto(board.id, board.title, board.theme) " +
-            "from Board board " +
-            "left join BoardGroup boardGroup on board.boardGroup.id = boardGroup.id " +
-            "where boardGroup.id = (:boardGroupId)")
+    @Query(value = """
+            SELECT new com.strcat.dto.ReadBoardGroupBoardInfoResDto(board.id, board.title, board.theme)
+            FROM Board board
+            LEFT JOIN BoardGroup boardGroup ON board.boardGroup.id = boardGroup.id
+            WHERE boardGroup.id = (:boardGroupId)
+            """)
     public List<ReadBoardGroupBoardInfoResDto> findBoardInfo(@Param("boardGroupId") Long boardGroupId);
 }
