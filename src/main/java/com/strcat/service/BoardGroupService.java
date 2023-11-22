@@ -51,7 +51,7 @@ public class BoardGroupService {
     }
 
     private List<Board> getBoards(Long boardGroupId) {
-        return boardRepository.findByBoardGroup_Id(boardGroupId);
+        return boardRepository.findByBoardGroupId(boardGroupId);
     }
 
     private BoardGroup getBoardGroup(String encryptedBoardGroupId) {
