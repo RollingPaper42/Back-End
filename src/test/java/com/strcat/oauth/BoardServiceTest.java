@@ -78,7 +78,7 @@ public class BoardServiceTest {
         Assertions.assertTrue(thrown.getMessage().contains("Data too long"));
     }
 
-//    @ParameterizedTest
+    //    @ParameterizedTest
 //    @ValueSource(strings = {"", "1", "12", "123", "1234", "12345", "123456", "1234567", "1234567890"})
     @Test
     public void 잘못된토큰일때보드생성실패(/*String invalidToken*/) {
@@ -86,9 +86,9 @@ public class BoardServiceTest {
         CreateBoardReqDto dto = new CreateBoardReqDto(null, "가나다", "Green");
 
         //when
-        Throwable thrown = Assertions.assertThrows(NotAcceptableException.class,
+        Throwable thrown = Assertions.assertThrows(NotAcceptableException.class, () ->
                 //then
-                () -> boardService.createBoard(dto, "invalidToken"));
+                boardService.createBoard(dto, "invalidToken"));
         Assertions.assertEquals("잘못된 토큰 형식입니다.", thrown.getMessage());
     }
 
