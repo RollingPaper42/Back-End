@@ -7,7 +7,6 @@ import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,9 +25,12 @@ public class User {
     private Long id;
 
     @CreatedDate
-    @Column(name ="created_at", nullable = false, updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Board> boards;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<BoardGroup> boardGroups;
 }
