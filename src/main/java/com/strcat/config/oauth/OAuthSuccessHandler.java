@@ -4,7 +4,6 @@ import com.strcat.domain.User;
 import com.strcat.service.OAuthUserService;
 import com.strcat.util.JwtUtils;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +19,7 @@ import java.io.IOException;
 public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
     private final JwtUtils jwtUtils;
     private final OAuthUserService oAuthUserService;
-    private final String REDIRECT_URI = "http://rolling-eb-env.eba-pppydmmc.ap-northeast-2.elasticbeanstalk.com/login/success";
+    private final String REDIRECT_URI = "http://localhost:3000/login/check";
 
     @Autowired
     public OAuthSuccessHandler(JwtUtils jwtUtils, OAuthUserService oAuthUserService) {
@@ -34,11 +33,9 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
         String provider = request.getRequestURI().split("/")[4];
         User user = oAuthUserService.signIn(authentication.getName(), provider);
         String token = jwtUtils.createJwtToken(user.getId().toString());
-        Cookie cookie = new Cookie("token", token);
 
         log.info("token: " + token);
-        cookie.setPath("/login/success");
-        response.addCookie(cookie);
-        response.sendRedirect(REDIRECT_URI);
+
+        response.sendRedirect(String.format("%s?token=%s", REDIRECT_URI, token));
     }
 }
