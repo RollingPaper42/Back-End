@@ -7,6 +7,8 @@ import com.strcat.dto.ReadBoardSummaryResDto;
 import com.strcat.service.BoardService;
 import com.strcat.service.ContentService;
 import com.strcat.service.PictureService;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +28,7 @@ public class BoardController {
     private final BoardService boardService;
     private final PictureService pictureService;
 
+
     @PostMapping("/{boardId}/contents")
     public void createContent(@PathVariable(name = "boardId") String encryptedBoardId,
                               @RequestBody CreateContentReqDto dto) {
@@ -33,8 +36,9 @@ public class BoardController {
     }
 
     @PostMapping
-    public String createBoard(@RequestHeader("Authorization") String token,
-                              @RequestBody CreateBoardReqDto dto) throws Exception {
+    @SecurityRequirement(name = "Bearer Authentication")
+    public String createBoard(@Parameter(hidden = true) @RequestHeader("Authorization") String token,
+                              @RequestBody CreateBoardReqDto dto) {
         return boardService.createBoard(dto, token);
     }
 
@@ -44,8 +48,9 @@ public class BoardController {
     }
 
     @GetMapping("/{boardId}/summaries")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ReadBoardSummaryResDto readSummary(@PathVariable(name = "boardId") String encryptedBoardId,
-                                              @RequestHeader("Authorization") String token) throws Exception {
+                                              @Parameter(hidden = true) @RequestHeader("Authorization") String token) {
         return boardService.readSummary(encryptedBoardId, token);
     }
 
