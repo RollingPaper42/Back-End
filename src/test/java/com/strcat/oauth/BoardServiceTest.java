@@ -6,6 +6,7 @@ import com.strcat.domain.User;
 import com.strcat.dto.CreateBoardReqDto;
 import com.strcat.dto.ReadBoardSummaryResDto;
 import com.strcat.exception.NotAcceptableException;
+import com.strcat.repository.BoardGroupRepository;
 import com.strcat.repository.BoardRepository;
 import com.strcat.repository.ContentRepository;
 import com.strcat.repository.UserRepository;
@@ -30,20 +31,22 @@ public class BoardServiceTest {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
     private final ContentRepository contentRepository;
+    //    private final BoardGroupRepository boardGroupRepository;
     private final JwtUtils jwtUtils;
     private final AesSecretUtils aesSecretUtils;
     private String token;
 
     @Autowired
     public BoardServiceTest(BoardRepository boardRepository, UserRepository userRepository,
-                            ContentRepository contentRepository) {
+                            ContentRepository contentRepository, BoardGroupRepository boardGroupRepository) {
         this.boardRepository = boardRepository;
         this.userRepository = userRepository;
         this.contentRepository = contentRepository;
         this.jwtUtils = new JwtUtils("testtesttesttesttesttesttesttesttesttest");
         this.aesSecretUtils = new AesSecretUtils("MyTestCode-32CharacterTestAPIKey");
+//        this.boardGroupRepository = boardGroupRepository;
         UserService userService = new UserService(userRepository, jwtUtils);
-        this.boardService = new BoardService(boardRepository, aesSecretUtils, userService);
+        this.boardService = new BoardService(boardRepository, boardGroupRepository, aesSecretUtils, userService);
     }
 
     @BeforeEach
