@@ -59,7 +59,7 @@ public class ContentServiceTest {
         Content result = contentService.create(dto, encryptedBoardId);
 
         //then
-        assertThat(result.getBoard().getId()).isEqualTo(1L);
+        assertThat(result.getBoard().getId()).isEqualTo(board.getId());
         assertThat(result.getText()).isEqualTo("안녕! 만나서 반가워. 행복하길 바래~");
         assertThat(result.getWriter()).isEqualTo("철수");
     }
