@@ -10,7 +10,6 @@ import com.strcat.exception.NotAcceptableException;
 import com.strcat.repository.BoardGroupRepository;
 import com.strcat.util.AesSecretUtils;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,7 +30,7 @@ public class BoardGroupService {
     public ReadBoardGroupResDto readBoardGroup(String encryptedBoardGroupId, String token) {
         User user = userService.getUser(token);
         BoardGroup boardGroup = getBoardGroup(encryptedBoardGroupId);
-        Boolean isOwner = Objects.equals(boardGroup.getUser().getId(), user.getId());
+        Boolean isOwner = boardGroup.getUser().getId().equals(user.getId());
         return new ReadBoardGroupResDto(boardGroup.getTitle(), isOwner, boardGroup.getBoards());
     }
 

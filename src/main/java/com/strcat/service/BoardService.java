@@ -10,7 +10,6 @@ import com.strcat.exception.NotAcceptableException;
 import com.strcat.repository.BoardGroupRepository;
 import com.strcat.repository.BoardRepository;
 import com.strcat.util.AesSecretUtils;
-import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -38,7 +37,7 @@ public class BoardService {
     public ReadBoardResDto readBoard(String encryptedBoardId, String token) {
         User user = userService.getUser(token);
         Board board = getBoard(encryptedBoardId);
-        Boolean isOwner = Objects.equals(user.getId(), board.getUser().getId());
+        Boolean isOwner = user.getId().equals(board.getUser().getId());
         return new ReadBoardResDto(isOwner, board);
     }
 
