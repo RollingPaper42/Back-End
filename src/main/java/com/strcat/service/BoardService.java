@@ -41,7 +41,7 @@ public class BoardService {
         userService.getUser(token);
         Board board = getBoard(encryptedBoardId);
 
-        return new ReadBoardSummaryResDto(board.getTitle(), board.getContents().size(),
+        return new ReadBoardSummaryResDto(board.getTitle(), board.getTheme(), board.getContents().size(),
                 board.calculateTotalContentLength());
     }
 
