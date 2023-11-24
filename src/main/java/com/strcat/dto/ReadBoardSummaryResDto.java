@@ -11,6 +11,7 @@ import lombok.ToString;
 @ToString
 public class ReadBoardSummaryResDto {
     private final String title;
+    private final String theme;
     private final Integer contentCount;
     private final Long contentTextCount;
 }
