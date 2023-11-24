@@ -8,7 +8,6 @@ import com.strcat.dto.ReadBoardGroupResDto;
 import com.strcat.dto.ReadBoardGroupSummaryResDto;
 import com.strcat.exception.NotAcceptableException;
 import com.strcat.repository.BoardGroupRepository;
-import com.strcat.repository.BoardRepository;
 import com.strcat.util.AesSecretUtils;
 import java.util.List;
 import java.util.Optional;
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class BoardGroupService {
     private final BoardGroupRepository boardGroupRepository;
-    private final BoardRepository boardRepository;
     private final UserService userService;
     private final AesSecretUtils aesSecretUtils;
 
@@ -29,9 +27,11 @@ public class BoardGroupService {
         return aesSecretUtils.encrypt(boardGroup.getId());
     }
 
-    public ReadBoardGroupResDto readBoardGroup(String encryptedBoardGroupId) {
+    public ReadBoardGroupResDto readBoardGroup(String encryptedBoardGroupId, String token) {
+        User user = userService.getUser(token);
         BoardGroup boardGroup = getBoardGroup(encryptedBoardGroupId);
-        return new ReadBoardGroupResDto(boardGroup.getTitle(), boardGroup.getBoards());
+        Boolean isOwner = boardGroup.getUser().getId().equals(user.getId());
+        return new ReadBoardGroupResDto(boardGroup.getTitle(), isOwner, boardGroup.getBoards());
     }
 
     public ReadBoardGroupSummaryResDto readSummary(String encryptedBoardGroupId, String token) {

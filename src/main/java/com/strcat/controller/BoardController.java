@@ -1,8 +1,8 @@
 package com.strcat.controller;
 
-import com.strcat.domain.Board;
 import com.strcat.dto.CreateBoardReqDto;
 import com.strcat.dto.CreateContentReqDto;
+import com.strcat.dto.ReadBoardResDto;
 import com.strcat.dto.ReadBoardSummaryResDto;
 import com.strcat.service.BoardService;
 import com.strcat.service.ContentService;
@@ -43,8 +43,9 @@ public class BoardController {
     }
 
     @GetMapping("/{boardId}/contents")
-    public Board readBoard(@PathVariable(name = "boardId") String encryptedBoardId) {
-        return boardService.readBoard(encryptedBoardId);
+    public ReadBoardResDto readBoard(@RequestHeader("Authorization") String token,
+                                     @PathVariable(name = "boardId") String encryptedBoardId) {
+        return boardService.readBoard(encryptedBoardId, token);
     }
 
     @GetMapping("/{boardId}/summaries")

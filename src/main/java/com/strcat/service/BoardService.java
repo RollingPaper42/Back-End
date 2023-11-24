@@ -4,6 +4,7 @@ import com.strcat.domain.Board;
 import com.strcat.domain.BoardGroup;
 import com.strcat.domain.User;
 import com.strcat.dto.CreateBoardReqDto;
+import com.strcat.dto.ReadBoardResDto;
 import com.strcat.dto.ReadBoardSummaryResDto;
 import com.strcat.exception.NotAcceptableException;
 import com.strcat.repository.BoardGroupRepository;
@@ -33,8 +34,11 @@ public class BoardService {
         return aesSecretUtils.encrypt(board.getId());
     }
 
-    public Board readBoard(String encryptedBoardId) {
-        return getBoard(encryptedBoardId);
+    public ReadBoardResDto readBoard(String encryptedBoardId, String token) {
+        User user = userService.getUser(token);
+        Board board = getBoard(encryptedBoardId);
+        Boolean isOwner = user.getId().equals(board.getUser().getId());
+        return new ReadBoardResDto(isOwner, board);
     }
 
     public ReadBoardSummaryResDto readSummary(String encryptedBoardId, String token) {
