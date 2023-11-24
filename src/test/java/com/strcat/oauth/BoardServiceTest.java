@@ -146,7 +146,7 @@ public class BoardServiceTest {
         //given
         CreateBoardReqDto dto = new CreateBoardReqDto(null, "가나다", "Green");
         String encryptedUrl = boardService.createBoard(dto, token);
-        ReadBoardSummaryResDto expect = new ReadBoardSummaryResDto("가나다", 0, 0L);
+        ReadBoardSummaryResDto expect = new ReadBoardSummaryResDto("가나다", "Green", 0, 0L);
 
         //when
         ReadBoardSummaryResDto result = boardService.readSummary(encryptedUrl, token);
@@ -164,7 +164,7 @@ public class BoardServiceTest {
         Content content = new Content("test", "test", "test.jpg", board);
         contentRepository.save(content);
         board.getContents().add(content); // contents에 자동으로 content 추가가 안됨...
-        ReadBoardSummaryResDto expect = new ReadBoardSummaryResDto("가나다", 1, 4L);
+        ReadBoardSummaryResDto expect = new ReadBoardSummaryResDto("가나다", "Green", 1, 4L);
 
         //when
         ReadBoardSummaryResDto result = boardService.readSummary(encryptedUrl, token);
