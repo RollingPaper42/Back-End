@@ -12,6 +12,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -43,7 +44,7 @@ public class Board {
     private User user;
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
-    private List<Content> contents;
+    private List<Content> contents = new ArrayList<>();
 
     @JsonIgnore
     @ManyToOne

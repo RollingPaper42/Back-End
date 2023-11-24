@@ -4,7 +4,6 @@ import com.strcat.domain.Board;
 import com.strcat.domain.BoardGroup;
 import com.strcat.domain.User;
 import com.strcat.dto.CreateBoardGroupReqDto;
-import com.strcat.dto.ReadBoardGroupBoardInfoResDto;
 import com.strcat.dto.ReadBoardGroupResDto;
 import com.strcat.dto.ReadBoardGroupSummaryResDto;
 import com.strcat.exception.NotAcceptableException;
@@ -32,13 +31,7 @@ public class BoardGroupService {
 
     public ReadBoardGroupResDto readBoardGroup(String encryptedBoardGroupId) {
         BoardGroup boardGroup = getBoardGroup(encryptedBoardGroupId);
-        List<ReadBoardGroupBoardInfoResDto> boardInfo = boardGroupRepository.findBoardInfo(boardGroup.getId());
-        return new ReadBoardGroupResDto(boardGroup.getTitle(), boardInfo);
-    }
-
-    public List<Board> readBoards(String encryptedBoardGroupId) {
-        BoardGroup boardGroup = getBoardGroup(encryptedBoardGroupId);
-        return boardGroup.getBoards();
+        return new ReadBoardGroupResDto(boardGroup.getTitle(), boardGroup.getBoards());
     }
 
     public ReadBoardGroupSummaryResDto readSummary(String encryptedBoardGroupId, String token) {
