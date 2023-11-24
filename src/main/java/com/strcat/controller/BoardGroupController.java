@@ -26,8 +26,9 @@ public class BoardGroupController {
     }
 
     @GetMapping("/{boardGroupId}/boards")
-    public ReadBoardGroupResDto readBoardGroup(@PathVariable(name = "boardGroupId") String encryptedBoardGroupId) {
-        return boardGroupService.readBoardGroup(encryptedBoardGroupId);
+    public ReadBoardGroupResDto readBoardGroup(@RequestHeader("Authorization") String token,
+                                               @PathVariable(name = "boardGroupId") String encryptedBoardGroupId) {
+        return boardGroupService.readBoardGroup(encryptedBoardGroupId, token);
     }
 
     @GetMapping("/{boardGroupId}/summaries")

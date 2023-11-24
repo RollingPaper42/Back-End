@@ -9,5 +9,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ReadBoardGroupResDto {
     private final String title;
+    private final Boolean isOwner;
     private final List<Board> boards;
 }
