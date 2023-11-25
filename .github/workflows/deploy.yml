@@ -43,6 +43,7 @@ jobs:
 
       - name: Copy Application-Properties
         run: |
+          mkdir src/main/resources
           cp Back-end-secret/application.properties src/main/resources/application.properties
 
       - name: Build Gradle
