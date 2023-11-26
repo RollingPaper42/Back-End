@@ -4,6 +4,7 @@ import com.strcat.domain.Board;
 import com.strcat.domain.Content;
 import com.strcat.domain.User;
 import com.strcat.dto.CreateBoardReqDto;
+import com.strcat.dto.ReadBoardResDto;
 import com.strcat.dto.ReadBoardSummaryResDto;
 import com.strcat.exception.NotAcceptableException;
 import com.strcat.repository.BoardGroupRepository;
@@ -105,10 +106,10 @@ public class BoardServiceTest {
         Board expect = boardRepository.findAll().get(0);
 
         //when
-        Board result = boardService.readBoard(encryptedUrl);
+        ReadBoardResDto result = boardService.readBoard(encryptedUrl, token);
 
         //then
-        Assertions.assertEquals(expect, result);
+        Assertions.assertEquals(expect, result.getBoard());
     }
 
     @Test
@@ -121,7 +122,7 @@ public class BoardServiceTest {
         //when
         Throwable thrown = Assertions.assertThrows(NotAcceptableException.class, () ->
                 //then
-                boardService.readBoard(invalidUrl)
+                boardService.readBoard(invalidUrl, token)
         );
         Assertions.assertEquals("복호화에 실패했습니다.", thrown.getMessage());
     }
@@ -136,7 +137,7 @@ public class BoardServiceTest {
         //when
         Throwable thrown = Assertions.assertThrows(NotAcceptableException.class, () ->
                 //then
-                boardService.readBoard(validNotExistUrl)
+                boardService.readBoard(validNotExistUrl, token)
         );
         Assertions.assertEquals("존재하지 않는 보드입니다.", thrown.getMessage());
     }
@@ -160,10 +161,10 @@ public class BoardServiceTest {
         //given
         CreateBoardReqDto dto = new CreateBoardReqDto(null, "가나다", "Green");
         String encryptedUrl = boardService.createBoard(dto, token);
-        Board board = boardService.readBoard(encryptedUrl);
-        Content content = new Content("test", "test", "test.jpg", board);
+        ReadBoardResDto boardRes = boardService.readBoard(encryptedUrl, token);
+        Content content = new Content("test", "test", "test.jpg", boardRes.getBoard());
         contentRepository.save(content);
-        board.getContents().add(content); // contents에 자동으로 content 추가가 안됨...
+        boardRes.getBoard().getContents().add(content); // contents에 자동으로 content 추가가 안됨...
         ReadBoardSummaryResDto expect = new ReadBoardSummaryResDto("가나다", "Green", 1, 4L);
 
         //when
