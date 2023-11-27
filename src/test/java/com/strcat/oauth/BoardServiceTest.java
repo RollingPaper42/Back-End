@@ -4,8 +4,10 @@ import com.strcat.domain.Board;
 import com.strcat.domain.Content;
 import com.strcat.domain.User;
 import com.strcat.dto.CreateBoardReqDto;
+import com.strcat.dto.ReadBoardResDto;
 import com.strcat.dto.ReadBoardSummaryResDto;
 import com.strcat.exception.NotAcceptableException;
+import com.strcat.repository.BoardGroupRepository;
 import com.strcat.repository.BoardRepository;
 import com.strcat.repository.ContentRepository;
 import com.strcat.repository.UserRepository;
@@ -30,20 +32,22 @@ public class BoardServiceTest {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
     private final ContentRepository contentRepository;
+    //    private final BoardGroupRepository boardGroupRepository;
     private final JwtUtils jwtUtils;
     private final AesSecretUtils aesSecretUtils;
     private String token;
 
     @Autowired
     public BoardServiceTest(BoardRepository boardRepository, UserRepository userRepository,
-                            ContentRepository contentRepository) {
+                            ContentRepository contentRepository, BoardGroupRepository boardGroupRepository) {
         this.boardRepository = boardRepository;
         this.userRepository = userRepository;
         this.contentRepository = contentRepository;
         this.jwtUtils = new JwtUtils("testtesttesttesttesttesttesttesttesttest");
         this.aesSecretUtils = new AesSecretUtils("MyTestCode-32CharacterTestAPIKey");
+//        this.boardGroupRepository = boardGroupRepository;
         UserService userService = new UserService(userRepository, jwtUtils);
-        this.boardService = new BoardService(boardRepository, aesSecretUtils, userService);
+        this.boardService = new BoardService(boardRepository, boardGroupRepository, aesSecretUtils, userService);
     }
 
     @BeforeEach
@@ -102,10 +106,10 @@ public class BoardServiceTest {
         Board expect = boardRepository.findAll().get(0);
 
         //when
-        Board result = boardService.readBoard(encryptedUrl);
+        ReadBoardResDto result = boardService.readBoard(encryptedUrl, token);
 
         //then
-        Assertions.assertEquals(expect, result);
+        Assertions.assertEquals(expect, result.getBoard());
     }
 
     @Test
@@ -118,7 +122,7 @@ public class BoardServiceTest {
         //when
         Throwable thrown = Assertions.assertThrows(NotAcceptableException.class, () ->
                 //then
-                boardService.readBoard(invalidUrl)
+                boardService.readBoard(invalidUrl, token)
         );
         Assertions.assertEquals("복호화에 실패했습니다.", thrown.getMessage());
     }
@@ -133,7 +137,7 @@ public class BoardServiceTest {
         //when
         Throwable thrown = Assertions.assertThrows(NotAcceptableException.class, () ->
                 //then
-                boardService.readBoard(validNotExistUrl)
+                boardService.readBoard(validNotExistUrl, token)
         );
         Assertions.assertEquals("존재하지 않는 보드입니다.", thrown.getMessage());
     }
@@ -143,7 +147,7 @@ public class BoardServiceTest {
         //given
         CreateBoardReqDto dto = new CreateBoardReqDto(null, "가나다", "Green");
         String encryptedUrl = boardService.createBoard(dto, token);
-        ReadBoardSummaryResDto expect = new ReadBoardSummaryResDto("가나다", 0, 0L);
+        ReadBoardSummaryResDto expect = new ReadBoardSummaryResDto("가나다", "Green", 0, 0L);
 
         //when
         ReadBoardSummaryResDto result = boardService.readSummary(encryptedUrl, token);
@@ -157,11 +161,11 @@ public class BoardServiceTest {
         //given
         CreateBoardReqDto dto = new CreateBoardReqDto(null, "가나다", "Green");
         String encryptedUrl = boardService.createBoard(dto, token);
-        Board board = boardService.readBoard(encryptedUrl);
-        Content content = new Content("test", "test", "test.jpg", board);
+        ReadBoardResDto boardRes = boardService.readBoard(encryptedUrl, token);
+        Content content = new Content("test", "test", "test.jpg", boardRes.getBoard());
         contentRepository.save(content);
-        board.getContents().add(content); // contents에 자동으로 content 추가가 안됨...
-        ReadBoardSummaryResDto expect = new ReadBoardSummaryResDto("가나다", 1, 4L);
+        boardRes.getBoard().getContents().add(content); // contents에 자동으로 content 추가가 안됨...
+        ReadBoardSummaryResDto expect = new ReadBoardSummaryResDto("가나다", "Green", 1, 4L);
 
         //when
         ReadBoardSummaryResDto result = boardService.readSummary(encryptedUrl, token);

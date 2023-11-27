@@ -1,10 +1,14 @@
 package com.strcat.controller;
 
-import com.strcat.domain.Board;
 import com.strcat.dto.CreateBoardGroupReqDto;
 import com.strcat.dto.ReadBoardGroupResDto;
 import com.strcat.dto.ReadBoardGroupSummaryResDto;
 import com.strcat.service.BoardGroupService;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +19,13 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "보드 그룹")
+@ApiResponses({
+        @ApiResponse(responseCode = "200", description = "성공"),
+        @ApiResponse(responseCode = "401", description = "인증 실패"),
+        @ApiResponse(responseCode = "406", description = "잘못된 요청"),
+        @ApiResponse(responseCode = "500", description = "서버 에러"),
+})
 @RestController
 @RequestMapping("/board-groups")
 @RequiredArgsConstructor
@@ -22,25 +33,24 @@ public class BoardGroupController {
     private final BoardGroupService boardGroupService;
 
     @PostMapping
-    public String createGroup(@RequestHeader("Authorization") String token,
-                              @RequestBody CreateBoardGroupReqDto dto) {
+    @SecurityRequirement(name = "Bearer Authentication")
+    public String createGroup(
+            @Parameter(hidden = true) @RequestHeader("Authorization") String token,
+            @RequestBody CreateBoardGroupReqDto dto) {
         return boardGroupService.create(dto, token);
     }
 
-    @GetMapping("/{boardGroupId}")
-    public ReadBoardGroupResDto readBoardGroup(@PathVariable(name = "boardGroupId") String encryptedBoardGroupId) {
-        return boardGroupService.readBoardGroup(encryptedBoardGroupId);
-    }
-
     @GetMapping("/{boardGroupId}/boards")
-    public List<Board> readBoardGroupContent(@PathVariable(name = "boardGroupId") String encryptedBoardGroupId) {
-        return boardGroupService.readBoards(encryptedBoardGroupId);
+    public ReadBoardGroupResDto readBoardGroup(@RequestHeader("Authorization") String token,
+                                               @PathVariable(name = "boardGroupId") String encryptedBoardGroupId) {
+        return boardGroupService.readBoardGroup(encryptedBoardGroupId, token);
     }
 
     @GetMapping("/{boardGroupId}/summaries")
+    @SecurityRequirement(name = "Bearer Authentication")
     public ReadBoardGroupSummaryResDto readBoardGroupSummary(
             @PathVariable(name = "boardGroupId") String encryptedBoardGroupId,
-            @RequestHeader("Authorization") String token) {
+            @Parameter(hidden = true) @RequestHeader("Authorization") String token) {
         return boardGroupService.readSummary(encryptedBoardGroupId, token);
     }
 

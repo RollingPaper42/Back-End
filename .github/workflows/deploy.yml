@@ -43,6 +43,7 @@ jobs:
 
       - name: Copy Application-Properties
         run: |
+          mkdir -p src/main/resources
           cp Back-end-secret/application.properties src/main/resources/application.properties
 
       - name: Build Gradle
@@ -61,6 +62,7 @@ jobs:
           mkdir -p deploy
           cp build/libs/*-0.0.1-SNAPSHOT.jar deploy/application.jar
           cp Procfile deploy/Procfile
+          cp Back-end-secret/application-prod.properties deploy/application-prod.properties
           cp -r .ebextensions deploy/.ebextensions
           cd deploy && zip -r deploy.zip .
 

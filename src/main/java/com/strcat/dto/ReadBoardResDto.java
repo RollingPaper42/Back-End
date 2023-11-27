@@ -1,14 +1,12 @@
 package com.strcat.dto;
 
 import com.strcat.domain.Board;
-import java.util.List;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class ReadBoardGroupResDto {
-    private final String title;
+public class ReadBoardResDto {
     private final Boolean isOwner;
-    private final List<Board> boards;
+    private final Board board;
 }
