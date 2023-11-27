@@ -6,11 +6,14 @@ import com.strcat.domain.User;
 import com.strcat.dto.CreateBoardReqDto;
 import com.strcat.dto.ReadBoardResDto;
 import com.strcat.dto.ReadBoardSummaryResDto;
+import com.strcat.dto.ReadMyBoardInfoResDto;
 import com.strcat.exception.NotAcceptableException;
 import com.strcat.repository.BoardGroupRepository;
 import com.strcat.repository.BoardRepository;
 import com.strcat.util.AesSecretUtils;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +24,21 @@ public class BoardService {
     private final BoardGroupRepository boardGroupRepository;
     private final AesSecretUtils aesSecretUtils;
     private final UserService userService;
+
+    public List<Board> findByUserId(Long userId) {
+        return boardRepository.findByUserId(userId);
+    }
+
+    public List<ReadMyBoardInfoResDto> readMyBoardInfo(String token) {
+        User user = userService.getUser(token);
+        List<Board> boards = findByUserId(user.getId());
+        return boards.stream()
+                .map(board -> new ReadMyBoardInfoResDto(aesSecretUtils.encrypt(
+                        board.getId()),
+                        board.getTitle(),
+                        board.getTheme()))
+                .collect(Collectors.toList());
+    }
 
     public String createBoard(CreateBoardReqDto dto, String token) {
         Board board;
