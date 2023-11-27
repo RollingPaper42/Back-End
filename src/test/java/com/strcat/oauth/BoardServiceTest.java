@@ -18,6 +18,8 @@ import com.strcat.util.JwtUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
@@ -83,9 +85,8 @@ public class BoardServiceTest {
         Assertions.assertTrue(thrown.getMessage().contains("Data too long"));
     }
 
-    //    @ParameterizedTest
-//    @ValueSource(strings = {"", "1", "12", "123", "1234", "12345", "123456", "1234567", "1234567890"})
-    @Test
+    @ParameterizedTest
+    @ValueSource(strings = {"", "1", "12", "123", "1234", "12345", "123456", "1234567", "1234567890"})
     public void 잘못된토큰일때보드생성실패(/*String invalidToken*/) {
         //given
         CreateBoardReqDto dto = new CreateBoardReqDto(null, "가나다", "Green");
