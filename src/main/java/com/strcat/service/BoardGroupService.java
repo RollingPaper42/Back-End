@@ -10,6 +10,7 @@ import com.strcat.dto.TmpReadMyBoardGroupInfoResDto;
 import com.strcat.exception.NotAcceptableException;
 import com.strcat.repository.BoardGroupRepository;
 import com.strcat.util.AesSecretUtils;
+import com.strcat.util.JwtUtils;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -22,6 +23,7 @@ public class BoardGroupService {
     private final BoardGroupRepository boardGroupRepository;
     private final UserService userService;
     private final AesSecretUtils aesSecretUtils;
+    private final JwtUtils jwtUtils;
 
     public String create(CreateBoardGroupReqDto dto, String token) {
         User user = userService.getUser(token);
@@ -30,10 +32,14 @@ public class BoardGroupService {
     }
 
     public ReadBoardGroupResDto readBoardGroup(String encryptedBoardGroupId, String token) {
-        User user = userService.getUser(token);
         BoardGroup boardGroup = getBoardGroup(encryptedBoardGroupId);
-        Boolean isOwner = boardGroup.getUser().getId().equals(user.getId());
-        return new ReadBoardGroupResDto(boardGroup.getTitle(), isOwner, boardGroup.getBoards());
+        try {
+            Long userId = Long.parseLong(jwtUtils.parseUserId(jwtUtils.removeBearerString(token)));
+            Boolean isOwner = userId.equals(boardGroup.getUser().getId());
+            return new ReadBoardGroupResDto(boardGroup.getTitle(), isOwner, boardGroup.getBoards());
+        } catch (NotAcceptableException e) {
+            return new ReadBoardGroupResDto(boardGroup.getTitle(), false, boardGroup.getBoards());
+        }
     }
 
     public ReadBoardGroupSummaryResDto readSummary(String encryptedBoardGroupId, String token) {
