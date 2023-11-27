@@ -42,7 +42,7 @@ public class BoardController {
     private final PictureService pictureService;
 
 
-    @PostMapping("/{boardId}/contents")
+    @PostMapping("/{boardId}")
     public Long createContent(@PathVariable(name = "boardId") String encryptedBoardId,
                               @RequestBody CreateContentReqDto dto) {
         return contentService.create(dto, encryptedBoardId).getId();
@@ -55,7 +55,7 @@ public class BoardController {
         return boardService.createBoard(dto, token);
     }
 
-    @GetMapping("/{boardId}/contents")
+    @GetMapping("/{boardId}")
     public ReadBoardResDto readBoard(@RequestHeader("Authorization") String token,
                                      @PathVariable(name = "boardId") String encryptedBoardId) {
         return boardService.readBoard(encryptedBoardId, token);
@@ -68,7 +68,7 @@ public class BoardController {
         return boardService.readSummary(encryptedBoardId, token);
     }
 
-    @PostMapping("/{boardId}/contents/pictures")
+    @PostMapping("/{boardId}/pictures")
     public String createPicture(@PathVariable(name = "boardId") String encryptedBoardId,
                                 @RequestParam MultipartFile picture) {
         return pictureService.postPicture(encryptedBoardId, picture);
