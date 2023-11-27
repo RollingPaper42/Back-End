@@ -55,7 +55,7 @@ public class BoardController {
         return boardService.createBoard(dto, token);
     }
 
-    @GetMapping("/{boardId}/contents")
+    @GetMapping("/{boardId}")
     public ReadBoardResDto readBoard(@RequestHeader("Authorization") String token,
                                      @PathVariable(name = "boardId") String encryptedBoardId) {
         return boardService.readBoard(encryptedBoardId, token);

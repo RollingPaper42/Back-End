@@ -40,7 +40,7 @@ public class BoardGroupController {
         return boardGroupService.create(dto, token);
     }
 
-    @GetMapping("/{boardGroupId}/boards")
+    @GetMapping("/{boardGroupId}")
     public ReadBoardGroupResDto readBoardGroup(@RequestHeader("Authorization") String token,
                                                @PathVariable(name = "boardGroupId") String encryptedBoardGroupId) {
         return boardGroupService.readBoardGroup(encryptedBoardGroupId, token);
