@@ -54,12 +54,14 @@ public class BoardService {
 
     public ReadBoardResDto readBoard(String encryptedBoardId, String token) {
         Board board = getBoard(encryptedBoardId);
-        if (!token.isBlank()) {
-            User user = userService.getUser(token);
-            Boolean isOwner = user.getId().equals(board.getUser().getId());
-            return new ReadBoardResDto(isOwner, board);
+        User user;
+        try {
+            user = userService.getUser(token);
+        } catch (NotAcceptableException e) {
+            return new ReadBoardResDto(false, board);
         }
-        return new ReadBoardResDto(false, board);
+        Boolean isOwner = user.getId().equals(board.getUser().getId());
+        return new ReadBoardResDto(isOwner, board);
     }
 
     public ReadBoardSummaryResDto readSummary(String encryptedBoardId, String token) {

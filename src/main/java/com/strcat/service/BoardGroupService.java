@@ -31,12 +31,14 @@ public class BoardGroupService {
 
     public ReadBoardGroupResDto readBoardGroup(String encryptedBoardGroupId, String token) {
         BoardGroup boardGroup = getBoardGroup(encryptedBoardGroupId);
-        if (!token.isBlank()) {
-            User user = userService.getUser(token);
-            Boolean isOwner = boardGroup.getUser().getId().equals(user.getId());
-            return new ReadBoardGroupResDto(boardGroup.getTitle(), isOwner, boardGroup.getBoards());
+        User user;
+        try {
+            user = userService.getUser(token);
+        } catch (NotAcceptableException e) {
+            return new ReadBoardGroupResDto(boardGroup.getTitle(), false, boardGroup.getBoards());
         }
-        return new ReadBoardGroupResDto(boardGroup.getTitle(), false, boardGroup.getBoards());
+        Boolean isOwner = boardGroup.getUser().getId().equals(user.getId());
+        return new ReadBoardGroupResDto(boardGroup.getTitle(), isOwner, boardGroup.getBoards());
     }
 
     public ReadBoardGroupSummaryResDto readSummary(String encryptedBoardGroupId, String token) {
