@@ -6,11 +6,13 @@ import com.strcat.domain.User;
 import com.strcat.dto.CreateBoardGroupReqDto;
 import com.strcat.dto.ReadBoardGroupResDto;
 import com.strcat.dto.ReadBoardGroupSummaryResDto;
+import com.strcat.dto.TmpReadMyBoardGroupInfoResDto;
 import com.strcat.exception.NotAcceptableException;
 import com.strcat.repository.BoardGroupRepository;
 import com.strcat.util.AesSecretUtils;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -41,6 +43,17 @@ public class BoardGroupService {
         return new ReadBoardGroupSummaryResDto(boardGroup.getTitle(),
                 boards.stream().mapToLong(board -> board.getContents().size()).sum(), boards.size(),
                 boardGroup.calculateTotalContentLength(boards));
+    }
+
+    public List<TmpReadMyBoardGroupInfoResDto> readMyBoardGroupInfo(String token) {
+        User user = userService.getUser(token);
+        List<BoardGroup> boardGroups = boardGroupRepository.findByUserId(user.getId());
+
+        // 테스트를 위해 우선 바로 암호화 해서 보내주는 방식으로 구현함
+        return boardGroups.stream()
+                .map(boardGroup -> new TmpReadMyBoardGroupInfoResDto(aesSecretUtils.encrypt(boardGroup.getId()),
+                        boardGroup.getTitle()))
+                .collect(Collectors.toList());
     }
 
     private BoardGroup getBoardGroup(String encryptedBoardGroupId) {
