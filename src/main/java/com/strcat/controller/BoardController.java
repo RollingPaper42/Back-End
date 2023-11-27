@@ -43,9 +43,9 @@ public class BoardController {
 
 
     @PostMapping("/{boardId}/contents")
-    public void createContent(@PathVariable(name = "boardId") String encryptedBoardId,
+    public Long createContent(@PathVariable(name = "boardId") String encryptedBoardId,
                               @RequestBody CreateContentReqDto dto) {
-        contentService.create(dto, encryptedBoardId);
+        return contentService.create(dto, encryptedBoardId).getId();
     }
 
     @PostMapping
