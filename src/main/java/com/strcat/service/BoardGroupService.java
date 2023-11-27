@@ -30,10 +30,13 @@ public class BoardGroupService {
     }
 
     public ReadBoardGroupResDto readBoardGroup(String encryptedBoardGroupId, String token) {
-        User user = userService.getUser(token);
         BoardGroup boardGroup = getBoardGroup(encryptedBoardGroupId);
-        Boolean isOwner = boardGroup.getUser().getId().equals(user.getId());
-        return new ReadBoardGroupResDto(boardGroup.getTitle(), isOwner, boardGroup.getBoards());
+        if (!token.isBlank()) {
+            User user = userService.getUser(token);
+            Boolean isOwner = boardGroup.getUser().getId().equals(user.getId());
+            return new ReadBoardGroupResDto(boardGroup.getTitle(), isOwner, boardGroup.getBoards());
+        }
+        return new ReadBoardGroupResDto(boardGroup.getTitle(), false, boardGroup.getBoards());
     }
 
     public ReadBoardGroupSummaryResDto readSummary(String encryptedBoardGroupId, String token) {
