@@ -33,14 +33,13 @@ public class BoardGroupService {
 
     public ReadBoardGroupResDto readBoardGroup(String encryptedBoardGroupId, String token) {
         BoardGroup boardGroup = getBoardGroup(encryptedBoardGroupId);
-        Long userId;
         try {
-            userId = Long.parseLong(jwtUtils.parseUserId(jwtUtils.removeBearerString(token)));
+            Long userId = Long.parseLong(jwtUtils.parseUserId(jwtUtils.removeBearerString(token)));
+            Boolean isOwner = userId.equals(boardGroup.getUser().getId());
+            return new ReadBoardGroupResDto(boardGroup.getTitle(), isOwner, boardGroup.getBoards());
         } catch (NotAcceptableException e) {
             return new ReadBoardGroupResDto(boardGroup.getTitle(), false, boardGroup.getBoards());
         }
-        Boolean isOwner = userId.equals(boardGroup.getUser().getId());
-        return new ReadBoardGroupResDto(boardGroup.getTitle(), isOwner, boardGroup.getBoards());
     }
 
     public ReadBoardGroupSummaryResDto readSummary(String encryptedBoardGroupId, String token) {

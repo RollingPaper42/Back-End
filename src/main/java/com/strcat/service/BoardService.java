@@ -56,14 +56,13 @@ public class BoardService {
 
     public ReadBoardResDto readBoard(String encryptedBoardId, String token) {
         Board board = getBoard(encryptedBoardId);
-        Long userId;
         try {
-            userId = Long.parseLong(jwtUtils.parseUserId(jwtUtils.removeBearerString(token)));
+            Long userId = Long.parseLong(jwtUtils.parseUserId(jwtUtils.removeBearerString(token)));
+            Boolean isOwner = userId.equals(board.getUser().getId());
+            return new ReadBoardResDto(isOwner, board);
         } catch (NotAcceptableException e) {
             return new ReadBoardResDto(false, board);
         }
-        Boolean isOwner = userId.equals(board.getUser().getId());
-        return new ReadBoardResDto(isOwner, board);
     }
 
     public ReadBoardSummaryResDto readSummary(String encryptedBoardId, String token) {
