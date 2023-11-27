@@ -68,7 +68,7 @@ public class BoardController {
         return boardService.readSummary(encryptedBoardId, token);
     }
 
-    @PostMapping("/{boardId}/pictures")
+    @PostMapping("/{boardId}/contents/pictures")
     public String createPicture(@PathVariable(name = "boardId") String encryptedBoardId,
                                 @RequestParam MultipartFile picture) {
         return pictureService.postPicture(encryptedBoardId, picture);

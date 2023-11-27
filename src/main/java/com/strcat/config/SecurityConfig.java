@@ -37,7 +37,7 @@ public class SecurityConfig {
             "v3/api-docs/**",
             "swagger-ui/**",
             "boards/*",
-            "boards/*/pictures",
+            "boards/*/contents/pictures",
             "board-groups/*"
     };
 
