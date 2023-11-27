@@ -1,8 +1,8 @@
 package com.strcat.controller;
 
 
-import com.strcat.dto.TmpReadMyBoardGroupInfoResDto;
 import com.strcat.dto.ReadMyBoardInfoResDto;
+import com.strcat.dto.TmpReadMyBoardGroupInfoResDto;
 import com.strcat.service.BoardGroupService;
 import com.strcat.service.BoardService;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -24,7 +24,8 @@ public class UserController {
     public List<ReadMyBoardInfoResDto> readMyBoardInfo(
             @Parameter(hidden = true) @RequestHeader("Authorization") String token) {
         return boardService.readMyBoardInfo(token);
-    
+    }
+
     @GetMapping("/board-groups")
     public List<TmpReadMyBoardGroupInfoResDto> readMyBoardGroupInfo(
             @Parameter(hidden = true) @RequestHeader("Authorization") String token) {
