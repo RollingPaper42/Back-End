@@ -42,7 +42,7 @@ public class BoardController {
     private final PictureService pictureService;
 
 
-    @PostMapping("/{boardId}")
+    @PostMapping("/{boardId}/contents")
     public Long createContent(@PathVariable(name = "boardId") String encryptedBoardId,
                               @RequestBody CreateContentReqDto dto) {
         return contentService.create(dto, encryptedBoardId).getId();
