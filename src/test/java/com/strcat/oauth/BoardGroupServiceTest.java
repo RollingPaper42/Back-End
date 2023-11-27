@@ -100,7 +100,7 @@ public class BoardGroupServiceTest {
     }
 
     @Test
-    public void 보드존재요약성공() {
+    public void 보드존재시요약성공() {
         //given
         CreateBoardGroupReqDto dto = new CreateBoardGroupReqDto("testGroup");
         String encryptedId = boardGroupService.create(dto, token);
