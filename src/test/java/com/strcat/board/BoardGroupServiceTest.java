@@ -54,7 +54,7 @@ public class BoardGroupServiceTest {
         this.boardRepository = boardRepository;
         this.contentRepository = contentRepository;
         UserService userService = new UserService(userRepository, jwtUtils);
-        this.boardGroupService = new BoardGroupService(boardGroupRepository, userService, aesSecretUtils);
+        this.boardGroupService = new BoardGroupService(boardGroupRepository, userService, aesSecretUtils, jwtUtils);
     }
 
     @BeforeEach
