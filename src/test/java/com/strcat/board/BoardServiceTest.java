@@ -1,4 +1,4 @@
-package com.strcat.oauth;
+package com.strcat.board;
 
 import com.strcat.domain.Board;
 import com.strcat.domain.Content;
