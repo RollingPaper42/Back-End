@@ -169,6 +169,7 @@ public class BoardGroupServiceTest {
             );
             Assertions.assertEquals("잘못된 토큰 형식입니다.", exception.getMessage());
         }
+    }
 
     @Nested
     class 존재하지않는유저인경우실패 {
