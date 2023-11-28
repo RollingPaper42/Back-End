@@ -11,6 +11,7 @@ import com.strcat.exception.NotAcceptableException;
 import com.strcat.repository.BoardGroupRepository;
 import com.strcat.repository.BoardRepository;
 import com.strcat.util.SecureDataUtils;
+import com.strcat.util.JwtUtils;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -24,6 +25,7 @@ public class BoardService {
     private final BoardGroupRepository boardGroupRepository;
     private final SecureDataUtils secureDataUtils;
     private final UserService userService;
+    private final JwtUtils jwtUtils;
 
     public List<Board> findByUserId(Long userId) {
         return boardRepository.findByUserId(userId);
@@ -53,10 +55,14 @@ public class BoardService {
     }
 
     public ReadBoardResDto readBoard(String encryptedBoardId, String token) {
-        User user = userService.getUser(token);
         Board board = getBoard(encryptedBoardId);
-        Boolean isOwner = user.getId().equals(board.getUser().getId());
-        return new ReadBoardResDto(isOwner, board);
+        try {
+            Long userId = Long.parseLong(jwtUtils.parseUserId(jwtUtils.removeBearerString(token)));
+            Boolean isOwner = userId.equals(board.getUser().getId());
+            return new ReadBoardResDto(isOwner, board);
+        } catch (NotAcceptableException e) {
+            return new ReadBoardResDto(false, board);
+        }
     }
 
     public ReadBoardSummaryResDto readSummary(String encryptedBoardId, String token) {

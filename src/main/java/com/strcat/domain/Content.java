@@ -12,11 +12,13 @@ import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Data
+@ToString(exclude = {"board"})
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class Content {

@@ -11,9 +11,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import net.minidev.json.annotate.JsonIgnore;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -37,8 +39,9 @@ public class BoardGroup {
     @Column(length = 30, nullable = false)
     private String title;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "boardGroup", cascade = CascadeType.ALL)
-    private List<Board> boards;
+    private List<Board> boards = new ArrayList<>();
 
     public BoardGroup(String title, User user) {
         this.title = title;
