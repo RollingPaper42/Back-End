@@ -54,7 +54,7 @@ public class BoardGroupServiceTest {
         this.boardRepository = boardRepository;
         this.contentRepository = contentRepository;
         UserService userService = new UserService(userRepository, jwtUtils);
-        this.boardGroupService = new BoardGroupService(boardGroupRepository, userService, aesSecretUtils);
+        this.boardGroupService = new BoardGroupService(boardGroupRepository, userService, aesSecretUtils, jwtUtils);
     }
 
     @BeforeEach
@@ -141,7 +141,7 @@ public class BoardGroupServiceTest {
     }
 
     @Nested
-    class 잘못된토큰인경우실패 {
+    class 잘못된토큰인경우 {
         @ParameterizedTest
         @MethodSource("com.strcat.utils.TestUtils#generateInvalidToken")
         public void 생성(String invalidToken) {
@@ -169,24 +169,10 @@ public class BoardGroupServiceTest {
             );
             Assertions.assertEquals("잘못된 토큰 형식입니다.", exception.getMessage());
         }
-
-        @ParameterizedTest
-        @MethodSource("com.strcat.utils.TestUtils#generateInvalidToken")
-        public void 조회(String invalidToken) {
-            //given
-            String validEncryptedId = aesSecretUtils.encrypt(1L);
-
-            //when
-            Exception exception = Assertions.assertThrows(NotAcceptableException.class, () ->
-                    //then
-                    boardGroupService.readBoardGroup(validEncryptedId, invalidToken)
-            );
-            Assertions.assertEquals("잘못된 토큰 형식입니다.", exception.getMessage());
-        }
     }
 
     @Nested
-    class 존재하지않는유저인경우실패 {
+    class 존재하지않는유저인경우 {
         @Test
         public void 생성() {
             //given
@@ -201,19 +187,6 @@ public class BoardGroupServiceTest {
             Assertions.assertEquals("유저가 존재하지 않습니다.", exception.getMessage());
         }
 
-        @Test
-        public void 조회() {
-            //given
-            String validNotExistToken = jwtUtils.createJwtToken("12345");
-            String validEncryptedId = aesSecretUtils.encrypt(1L);
-
-            //when
-            Exception exception = Assertions.assertThrows(NotAcceptableException.class, () ->
-                    //then
-                    boardGroupService.readBoardGroup(validEncryptedId, "Bearer " + validNotExistToken)
-            );
-            Assertions.assertEquals("유저가 존재하지 않습니다.", exception.getMessage());
-        }
 
         @Test
         public void 요약() {
@@ -231,7 +204,7 @@ public class BoardGroupServiceTest {
     }
 
     @Nested
-    class 보드그룹이존재하지않는경우실패 {
+    class 보드그룹이존재하지않는경우 {
         @Test
         public void 조회() {
             //given
