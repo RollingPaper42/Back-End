@@ -47,11 +47,16 @@ public class BoardService {
         User user = userService.getUser(token);
         if (dto.getGroupId() != null) {
             BoardGroup boardGroup = getBoardGroup(dto.getGroupId());
-            board = boardRepository.save(new Board(boardGroup, dto.getTitle(), dto.getTheme(), user));
+            board = new Board(boardGroup, dto.getTitle(), dto.getTheme(), user);
         } else {
-            board = boardRepository.save(new Board(dto.getTitle(), dto.getTheme(), user));
+            board = new Board(dto.getTitle(), dto.getTheme(), user);
         }
-        return secureDataUtils.encrypt(board.getId());
+        board = boardRepository.save(board);
+
+        String encryptedBoardId = secureDataUtils.encrypt(board.getId());
+        board.setEncryptedId(encryptedBoardId);
+        boardRepository.save(board);
+        return encryptedBoardId;
     }
 
     public ReadBoardResDto readBoard(String encryptedBoardId, String token) {

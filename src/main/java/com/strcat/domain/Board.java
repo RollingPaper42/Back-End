@@ -40,7 +40,7 @@ public class Board {
     @Column(name = "theme", nullable = false)
     private String theme;
 
-    @Column(name = "encrypted_id", columnDefinition = "TEXT", nullable = false, unique = true)
+    @Column(name = "encrypted_id", columnDefinition = "TEXT", unique = true)
     private String encryptedId;
 
     @JsonIgnore
