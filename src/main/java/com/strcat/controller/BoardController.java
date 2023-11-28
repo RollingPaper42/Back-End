@@ -38,6 +38,12 @@ public class BoardController {
     private final BoardService boardService;
     private final PictureService pictureService;
 
+    @PostMapping
+    @SecurityRequirement(name = "Bearer Authentication")
+    public String createBoard(@Parameter(hidden = true) @RequestHeader("Authorization") String token,
+                              @RequestBody CreateBoardReqDto dto) {
+        return boardService.createBoard(dto, token);
+    }
 
     @PostMapping("/{boardId}/contents")
     public Long createContent(@PathVariable(name = "boardId") String encryptedBoardId,
@@ -45,11 +51,10 @@ public class BoardController {
         return contentService.create(dto, encryptedBoardId).getId();
     }
 
-    @PostMapping
-    @SecurityRequirement(name = "Bearer Authentication")
-    public String createBoard(@Parameter(hidden = true) @RequestHeader("Authorization") String token,
-                              @RequestBody CreateBoardReqDto dto) {
-        return boardService.createBoard(dto, token);
+    @PostMapping("/{boardId}/contents/pictures")
+    public String createPicture(@PathVariable(name = "boardId") String encryptedBoardId,
+                                @RequestParam MultipartFile picture) {
+        return pictureService.postPicture(encryptedBoardId, picture);
     }
 
     @GetMapping("/{boardId}")
@@ -64,11 +69,5 @@ public class BoardController {
     public ReadBoardSummaryResDto readSummary(@PathVariable(name = "boardId") String encryptedBoardId,
                                               @Parameter(hidden = true) @RequestHeader("Authorization") String token) {
         return boardService.readSummary(encryptedBoardId, token);
-    }
-
-    @PostMapping("/{boardId}/contents/pictures")
-    public String createPicture(@PathVariable(name = "boardId") String encryptedBoardId,
-                                @RequestParam MultipartFile picture) {
-        return pictureService.postPicture(encryptedBoardId, picture);
     }
 }
