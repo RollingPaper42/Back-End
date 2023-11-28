@@ -6,7 +6,7 @@ import com.strcat.dto.CreateContentReqDto;
 import com.strcat.exception.NotAcceptableException;
 import com.strcat.repository.BoardRepository;
 import com.strcat.repository.ContentRepository;
-import com.strcat.util.AesSecretUtils;
+import com.strcat.util.SecureDataUtils;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,10 +16,10 @@ import org.springframework.stereotype.Service;
 public class ContentService {
     private final ContentRepository contentRepository;
     private final BoardRepository boardRepository;
-    private final AesSecretUtils aesSecretUtils;
+    private final SecureDataUtils secureDataUtils;
 
     public Content create(CreateContentReqDto dto, String encryptedBoardId) {
-        Long boardId = aesSecretUtils.decrypt(encryptedBoardId);
+        Long boardId = secureDataUtils.decrypt(encryptedBoardId);
         Optional<Board> optionalBoard = boardRepository.findById(boardId);
 
         if (optionalBoard.isEmpty()) {

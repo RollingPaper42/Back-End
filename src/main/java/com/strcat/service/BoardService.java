@@ -10,7 +10,7 @@ import com.strcat.dto.ReadMyBoardInfoResDto;
 import com.strcat.exception.NotAcceptableException;
 import com.strcat.repository.BoardGroupRepository;
 import com.strcat.repository.BoardRepository;
-import com.strcat.util.AesSecretUtils;
+import com.strcat.util.SecureDataUtils;
 import com.strcat.util.JwtUtils;
 import java.util.List;
 import java.util.Optional;
@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 public class BoardService {
     private final BoardRepository boardRepository;
     private final BoardGroupRepository boardGroupRepository;
-    private final AesSecretUtils aesSecretUtils;
+    private final SecureDataUtils secureDataUtils;
     private final UserService userService;
     private final JwtUtils jwtUtils;
 
@@ -35,7 +35,7 @@ public class BoardService {
         User user = userService.getUser(token);
         List<Board> boards = findByUserId(user.getId());
         return boards.stream()
-                .map(board -> new ReadMyBoardInfoResDto(aesSecretUtils.encrypt(
+                .map(board -> new ReadMyBoardInfoResDto(secureDataUtils.encrypt(
                         board.getId()),
                         board.getTitle(),
                         board.getTheme()))
@@ -51,7 +51,7 @@ public class BoardService {
         } else {
             board = boardRepository.save(new Board(dto.getTitle(), dto.getTheme(), user));
         }
-        return aesSecretUtils.encrypt(board.getId());
+        return secureDataUtils.encrypt(board.getId());
     }
 
     public ReadBoardResDto readBoard(String encryptedBoardId, String token) {
@@ -74,7 +74,7 @@ public class BoardService {
     }
 
     private Board getBoard(String encryptedBoardId) {
-        Long boardId = aesSecretUtils.decrypt(encryptedBoardId);
+        Long boardId = secureDataUtils.decrypt(encryptedBoardId);
         Optional<Board> optionalBoard = boardRepository.findById(boardId);
 
         if (optionalBoard.isEmpty()) {
@@ -84,7 +84,7 @@ public class BoardService {
     }
 
     private BoardGroup getBoardGroup(String encryptedBoardGroupId) {
-        Long boardGroupId = aesSecretUtils.decrypt(encryptedBoardGroupId);
+        Long boardGroupId = secureDataUtils.decrypt(encryptedBoardGroupId);
         Optional<BoardGroup> boardGroup = boardGroupRepository.findById(boardGroupId);
 
         if (boardGroup.isEmpty()) {

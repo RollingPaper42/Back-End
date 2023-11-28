@@ -14,8 +14,8 @@ import com.strcat.repository.ContentRepository;
 import com.strcat.repository.UserRepository;
 import com.strcat.service.BoardGroupService;
 import com.strcat.service.UserService;
-import com.strcat.util.AesSecretUtils;
 import com.strcat.util.JwtUtils;
+import com.strcat.util.SecureDataUtils;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +35,7 @@ public class BoardGroupServiceTest {
     private final BoardGroupService boardGroupService;
     private final BoardGroupRepository boardGroupRepository;
     private final BoardRepository boardRepository;
-    private final AesSecretUtils aesSecretUtils;
+    private final SecureDataUtils secureDataUtils;
     private final JwtUtils jwtUtils;
     private final UserRepository userRepository;
     private final ContentRepository contentRepository;
@@ -48,13 +48,13 @@ public class BoardGroupServiceTest {
                                  BoardRepository boardRepository,
                                  ContentRepository contentRepository) {
         this.boardGroupRepository = boardGroupRepository;
-        this.aesSecretUtils = new AesSecretUtils("MyTestCode-32CharacterTestAPIKey");
+        this.secureDataUtils = new SecureDataUtils("MyTestCode-32CharacterTestAPIKey");
         this.jwtUtils = new JwtUtils("testtesttesttesttesttesttesttesttesttest");
         this.userRepository = userRepository;
         this.boardRepository = boardRepository;
         this.contentRepository = contentRepository;
         UserService userService = new UserService(userRepository, jwtUtils);
-        this.boardGroupService = new BoardGroupService(boardGroupRepository, userService, aesSecretUtils, jwtUtils);
+        this.boardGroupService = new BoardGroupService(boardGroupRepository, userService, secureDataUtils, jwtUtils);
     }
 
     @BeforeEach
@@ -73,7 +73,7 @@ public class BoardGroupServiceTest {
 
             //when
             String encryptedId = boardGroupService.create(dto, token);
-            BoardGroup result = boardGroupRepository.findById(aesSecretUtils.decrypt(encryptedId))
+            BoardGroup result = boardGroupRepository.findById(secureDataUtils.decrypt(encryptedId))
                     .orElse(new BoardGroup("fail", user));
 
             //then
@@ -85,7 +85,7 @@ public class BoardGroupServiceTest {
             //given
             CreateBoardGroupReqDto dto = new CreateBoardGroupReqDto("testGroup");
             String encryptedId = boardGroupService.create(dto, token);
-            BoardGroup boardGroup = boardGroupRepository.findById(aesSecretUtils.decrypt(encryptedId)).get();
+            BoardGroup boardGroup = boardGroupRepository.findById(secureDataUtils.decrypt(encryptedId)).get();
             Board board = boardRepository.save(
                     new Board(boardGroup, "testBoard", "Green", user));
             Content content = contentRepository.save(new Content("testWriter", "test", "example.org", board));
@@ -107,7 +107,7 @@ public class BoardGroupServiceTest {
             //given
             CreateBoardGroupReqDto dto = new CreateBoardGroupReqDto("testGroup");
             String encryptedId = boardGroupService.create(dto, token);
-            BoardGroup boardGroup = boardGroupRepository.findById(aesSecretUtils.decrypt(encryptedId)).get();
+            BoardGroup boardGroup = boardGroupRepository.findById(secureDataUtils.decrypt(encryptedId)).get();
             Board board = boardRepository.save(
                     new Board(boardGroup, "testBoard", "Green", user));
             Content content = contentRepository.save(new Content("testWriter", "test", "example.org", board));
@@ -141,7 +141,7 @@ public class BoardGroupServiceTest {
     }
 
     @Nested
-    class 잘못된토큰인경우 {
+    class 잘못된토큰인경우실패 {
         @ParameterizedTest
         @MethodSource("com.strcat.utils.TestUtils#generateInvalidToken")
         public void 생성(String invalidToken) {
@@ -160,7 +160,7 @@ public class BoardGroupServiceTest {
         @MethodSource("com.strcat.utils.TestUtils#generateInvalidToken")
         public void 요약(String invalidToken) {
             //given
-            String validEncryptedId = aesSecretUtils.encrypt(1L);
+            String validEncryptedId = secureDataUtils.encrypt(1L);
 
             //when
             Exception exception = Assertions.assertThrows(NotAcceptableException.class, () ->
@@ -172,7 +172,7 @@ public class BoardGroupServiceTest {
     }
 
     @Nested
-    class 존재하지않는유저인경우 {
+    class 존재하지않는유저인경우실패 {
         @Test
         public void 생성() {
             //given
@@ -187,12 +187,11 @@ public class BoardGroupServiceTest {
             Assertions.assertEquals("유저가 존재하지 않습니다.", exception.getMessage());
         }
 
-
         @Test
         public void 요약() {
             //given
             String validNotExistToken = jwtUtils.createJwtToken("12345");
-            String validEncryptedId = aesSecretUtils.encrypt(1L);
+            String validEncryptedId = secureDataUtils.encrypt(1L);
 
             //when
             Exception exception = Assertions.assertThrows(NotAcceptableException.class, () ->
@@ -204,11 +203,11 @@ public class BoardGroupServiceTest {
     }
 
     @Nested
-    class 보드그룹이존재하지않는경우 {
+    class 보드그룹이존재하지않는경우실패 {
         @Test
         public void 조회() {
             //given
-            String validNotExistEncryptedId = aesSecretUtils.encrypt(12345L);
+            String validNotExistEncryptedId = secureDataUtils.encrypt(12345L);
 
             //when
             Exception exception = Assertions.assertThrows(NotAcceptableException.class, () ->
@@ -221,7 +220,7 @@ public class BoardGroupServiceTest {
         @Test
         public void 요약() {
             //given
-            String validNotExistEncryptedId = aesSecretUtils.encrypt(12345L);
+            String validNotExistEncryptedId = secureDataUtils.encrypt(12345L);
 
             //when
             Exception exception = Assertions.assertThrows(NotAcceptableException.class, () ->

@@ -13,7 +13,7 @@ import com.strcat.repository.ContentRepository;
 import com.strcat.repository.UserRepository;
 import com.strcat.service.BoardService;
 import com.strcat.service.UserService;
-import com.strcat.util.AesSecretUtils;
+import com.strcat.util.SecureDataUtils;
 import com.strcat.util.JwtUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,7 +35,7 @@ public class BoardServiceTest {
     private final UserRepository userRepository;
     private final ContentRepository contentRepository;
     private final JwtUtils jwtUtils;
-    private final AesSecretUtils aesSecretUtils;
+    private final SecureDataUtils secureDataUtils;
     private String token;
 
     @Autowired
@@ -45,9 +45,9 @@ public class BoardServiceTest {
         this.userRepository = userRepository;
         this.contentRepository = contentRepository;
         this.jwtUtils = new JwtUtils("testtesttesttesttesttesttesttesttesttest");
-        this.aesSecretUtils = new AesSecretUtils("MyTestCode-32CharacterTestAPIKey");
+        this.secureDataUtils = new SecureDataUtils("MyTestCode-32CharacterTestAPIKey");
         UserService userService = new UserService(userRepository, jwtUtils);
-        this.boardService = new BoardService(boardRepository, boardGroupRepository, aesSecretUtils, userService, jwtUtils);
+        this.boardService = new BoardService(boardRepository, boardGroupRepository, secureDataUtils, userService, jwtUtils);
     }
 
     @BeforeEach
@@ -67,7 +67,7 @@ public class BoardServiceTest {
         Board board = boardRepository.findAll().get(0);
 
         //then
-        Assertions.assertEquals(board.getId(), aesSecretUtils.decrypt(encryptedUrl));
+        Assertions.assertEquals(board.getId(), secureDataUtils.decrypt(encryptedUrl));
     }
 
     @Test
@@ -131,7 +131,7 @@ public class BoardServiceTest {
         //given
         CreateBoardReqDto dto = new CreateBoardReqDto(null, "가나다", "Green");
         boardService.createBoard(dto, token);
-        String validNotExistUrl = aesSecretUtils.encrypt(Long.MAX_VALUE);
+        String validNotExistUrl = secureDataUtils.encrypt(Long.MAX_VALUE);
 
         //when
         Throwable thrown = Assertions.assertThrows(NotAcceptableException.class, () ->
