@@ -35,7 +35,7 @@ public class BoardGroup {
     @Column(length = 30, nullable = false)
     private String title;
 
-    @Column(name = "encrypted_id", columnDefinition = "TEXT", nullable = false, unique = true)
+    @Column(name = "encrypted_id", columnDefinition = "TEXT", unique = true)
     private String encryptedId;
 
     @ManyToOne
