@@ -34,7 +34,6 @@ public class BoardServiceTest {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
     private final ContentRepository contentRepository;
-    //    private final BoardGroupRepository boardGroupRepository;
     private final JwtUtils jwtUtils;
     private final AesSecretUtils aesSecretUtils;
     private String token;
@@ -47,9 +46,8 @@ public class BoardServiceTest {
         this.contentRepository = contentRepository;
         this.jwtUtils = new JwtUtils("testtesttesttesttesttesttesttesttesttest");
         this.aesSecretUtils = new AesSecretUtils("MyTestCode-32CharacterTestAPIKey");
-//        this.boardGroupRepository = boardGroupRepository;
         UserService userService = new UserService(userRepository, jwtUtils);
-        this.boardService = new BoardService(boardRepository, boardGroupRepository, aesSecretUtils, userService);
+        this.boardService = new BoardService(boardRepository, boardGroupRepository, aesSecretUtils, userService, jwtUtils);
     }
 
     @BeforeEach
