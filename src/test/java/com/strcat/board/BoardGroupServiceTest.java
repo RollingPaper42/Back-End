@@ -16,7 +16,6 @@ import com.strcat.service.BoardGroupService;
 import com.strcat.service.UserService;
 import com.strcat.util.AesSecretUtils;
 import com.strcat.util.JwtUtils;
-import com.strcat.utils.TestUtils;
 import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,7 +23,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
@@ -162,12 +160,12 @@ public class BoardGroupServiceTest {
         @MethodSource("com.strcat.utils.TestUtils#generateInvalidToken")
         public void 요약(String invalidToken) {
             //given
-            CreateBoardGroupReqDto dto = new CreateBoardGroupReqDto("testGroup");
+            String validEncryptedId = aesSecretUtils.encrypt(1L);
 
             //when
             Exception exception = Assertions.assertThrows(NotAcceptableException.class, () ->
                     //then
-                    boardGroupService.readSummary(aesSecretUtils.encrypt(1L), invalidToken)
+                    boardGroupService.readSummary(validEncryptedId, invalidToken)
             );
             Assertions.assertEquals("잘못된 토큰 형식입니다.", exception.getMessage());
         }
@@ -176,12 +174,12 @@ public class BoardGroupServiceTest {
         @MethodSource("com.strcat.utils.TestUtils#generateInvalidToken")
         public void 조회(String invalidToken) {
             //given
-            CreateBoardGroupReqDto dto = new CreateBoardGroupReqDto("testGroup");
+            String validEncryptedId = aesSecretUtils.encrypt(1L);
 
             //when
             Exception exception = Assertions.assertThrows(NotAcceptableException.class, () ->
                     //then
-                    boardGroupService.readBoardGroup(aesSecretUtils.encrypt(1L), invalidToken)
+                    boardGroupService.readBoardGroup(validEncryptedId, invalidToken)
             );
             Assertions.assertEquals("잘못된 토큰 형식입니다.", exception.getMessage());
         }
