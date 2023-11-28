@@ -20,10 +20,6 @@ public class SecureDataUtils {
         this.iv = secretKey.substring(0, 16);
     }
 
-    private String getCurrentTime() {
-        return Instant.now().toString();
-    }
-
     public String encrypt(Long data) {
         final String SEPARATOR = ",";
         try {
@@ -35,10 +31,6 @@ public class SecureDataUtils {
         } catch (Exception e) {
             throw new NotAcceptableException("암호화에 실패했습니다.");
         }
-    }
-
-    private Long getIdFromRawDataToLong(String rawData) {
-        return Long.parseLong(rawData.split(",")[0]);
     }
 
     public Long decrypt(String encryptedData) {
@@ -59,5 +51,13 @@ public class SecureDataUtils {
         IvParameterSpec ivParameterSpec = new IvParameterSpec(iv.getBytes());
         cipher.init(mode, keySpec, ivParameterSpec);
         return cipher;
+    }
+
+    private Long getIdFromRawDataToLong(String rawData) {
+        return Long.parseLong(rawData.split(",")[0]);
+    }
+
+    private String getCurrentTime() {
+        return Instant.now().toString();
     }
 }
