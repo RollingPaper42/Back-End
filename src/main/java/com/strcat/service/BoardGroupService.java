@@ -28,7 +28,11 @@ public class BoardGroupService {
     public String create(CreateBoardGroupReqDto dto, String token) {
         User user = userService.getUser(token);
         BoardGroup boardGroup = boardGroupRepository.save(new BoardGroup(dto.getTitle(), user));
-        return secureDataUtils.encrypt(boardGroup.getId());
+
+        String encryptedId = secureDataUtils.encrypt(boardGroup.getId());
+        boardGroup.setEncryptedId(encryptedId);
+        boardGroupRepository.save(boardGroup);
+        return encryptedId;
     }
 
     public ReadBoardGroupResDto readBoardGroup(String encryptedBoardGroupId, String token) {
