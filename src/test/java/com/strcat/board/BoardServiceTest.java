@@ -1,4 +1,4 @@
-package com.strcat.oauth;
+package com.strcat.board;
 
 import com.strcat.domain.Board;
 import com.strcat.domain.Content;
@@ -18,6 +18,8 @@ import com.strcat.util.JwtUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
@@ -32,7 +34,6 @@ public class BoardServiceTest {
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
     private final ContentRepository contentRepository;
-    //    private final BoardGroupRepository boardGroupRepository;
     private final JwtUtils jwtUtils;
     private final AesSecretUtils aesSecretUtils;
     private String token;
@@ -45,9 +46,8 @@ public class BoardServiceTest {
         this.contentRepository = contentRepository;
         this.jwtUtils = new JwtUtils("testtesttesttesttesttesttesttesttesttest");
         this.aesSecretUtils = new AesSecretUtils("MyTestCode-32CharacterTestAPIKey");
-//        this.boardGroupRepository = boardGroupRepository;
         UserService userService = new UserService(userRepository, jwtUtils);
-        this.boardService = new BoardService(boardRepository, boardGroupRepository, aesSecretUtils, userService);
+        this.boardService = new BoardService(boardRepository, boardGroupRepository, aesSecretUtils, userService, jwtUtils);
     }
 
     @BeforeEach
@@ -83,17 +83,16 @@ public class BoardServiceTest {
         Assertions.assertTrue(thrown.getMessage().contains("Data too long"));
     }
 
-    //    @ParameterizedTest
-//    @ValueSource(strings = {"", "1", "12", "123", "1234", "12345", "123456", "1234567", "1234567890"})
-    @Test
-    public void 잘못된토큰일때보드생성실패(/*String invalidToken*/) {
+    @ParameterizedTest
+    @ValueSource(strings = {"", "1", "12", "123", "1234", "12345", "123456", "1234567", "1234567890"})
+    public void 잘못된토큰일때보드생성실패(String invalidToken) {
         //given
         CreateBoardReqDto dto = new CreateBoardReqDto(null, "가나다", "Green");
 
         //when
         Throwable thrown = Assertions.assertThrows(NotAcceptableException.class, () ->
                 //then
-                boardService.createBoard(dto, "invalidToken")
+                boardService.createBoard(dto, invalidToken)
         );
         Assertions.assertEquals("잘못된 토큰 형식입니다.", thrown.getMessage());
     }

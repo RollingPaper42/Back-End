@@ -1,4 +1,4 @@
-package com.strcat.oauth;
+package com.strcat.board;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
