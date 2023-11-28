@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,8 +39,9 @@ public class BoardGroupController {
         return boardGroupService.create(dto, token);
     }
 
-    @GetMapping("/{boardGroupId}/boards")
-    public ReadBoardGroupResDto readBoardGroup(@RequestHeader("Authorization") String token,
+    @GetMapping("/{boardGroupId}")
+    @SecurityRequirement(name = "Bearer Authentication")
+    public ReadBoardGroupResDto readBoardGroup(@Parameter(hidden = true) @RequestHeader("Authorization") String token,
                                                @PathVariable(name = "boardGroupId") String encryptedBoardGroupId) {
         return boardGroupService.readBoardGroup(encryptedBoardGroupId, token);
     }

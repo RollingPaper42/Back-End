@@ -19,7 +19,7 @@ import java.io.IOException;
 public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
     private final JwtUtils jwtUtils;
     private final OAuthUserService oAuthUserService;
-    private final String REDIRECT_URI = "http://localhost:3000/login/check";
+    private final String REDIRECT_URI = "https://strcat.me/login/check";
 
     @Autowired
     public OAuthSuccessHandler(JwtUtils jwtUtils, OAuthUserService oAuthUserService) {

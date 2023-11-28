@@ -3,16 +3,18 @@ package com.strcat.service;
 import com.strcat.domain.Board;
 import com.strcat.domain.BoardGroup;
 import com.strcat.domain.User;
-import com.strcat.dto.ReadMyBoardInfoResDto;
 import com.strcat.dto.CreateBoardReqDto;
 import com.strcat.dto.ReadBoardResDto;
 import com.strcat.dto.ReadBoardSummaryResDto;
+import com.strcat.dto.ReadMyBoardInfoResDto;
 import com.strcat.exception.NotAcceptableException;
 import com.strcat.repository.BoardGroupRepository;
 import com.strcat.repository.BoardRepository;
-import com.strcat.util.AesSecretUtils;
+import com.strcat.util.SecureDataUtils;
+import com.strcat.util.JwtUtils;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,8 +23,24 @@ import org.springframework.stereotype.Service;
 public class BoardService {
     private final BoardRepository boardRepository;
     private final BoardGroupRepository boardGroupRepository;
-    private final AesSecretUtils aesSecretUtils;
+    private final SecureDataUtils secureDataUtils;
     private final UserService userService;
+    private final JwtUtils jwtUtils;
+
+    public List<Board> findByUserId(Long userId) {
+        return boardRepository.findByUserId(userId);
+    }
+
+    public List<ReadMyBoardInfoResDto> readMyBoardInfo(String token) {
+        User user = userService.getUser(token);
+        List<Board> boards = findByUserId(user.getId());
+        return boards.stream()
+                .map(board -> new ReadMyBoardInfoResDto(secureDataUtils.encrypt(
+                        board.getId()),
+                        board.getTitle(),
+                        board.getTheme()))
+                .collect(Collectors.toList());
+    }
 
     public String createBoard(CreateBoardReqDto dto, String token) {
         Board board;
@@ -33,14 +51,18 @@ public class BoardService {
         } else {
             board = boardRepository.save(new Board(dto.getTitle(), dto.getTheme(), user));
         }
-        return aesSecretUtils.encrypt(board.getId());
+        return secureDataUtils.encrypt(board.getId());
     }
 
     public ReadBoardResDto readBoard(String encryptedBoardId, String token) {
-        User user = userService.getUser(token);
         Board board = getBoard(encryptedBoardId);
-        Boolean isOwner = user.getId().equals(board.getUser().getId());
-        return new ReadBoardResDto(isOwner, board);
+        try {
+            Long userId = Long.parseLong(jwtUtils.parseUserId(jwtUtils.removeBearerString(token)));
+            Boolean isOwner = userId.equals(board.getUser().getId());
+            return new ReadBoardResDto(isOwner, board);
+        } catch (NotAcceptableException e) {
+            return new ReadBoardResDto(false, board);
+        }
     }
 
     public ReadBoardSummaryResDto readSummary(String encryptedBoardId, String token) {
@@ -51,13 +73,8 @@ public class BoardService {
                 board.calculateTotalContentLength());
     }
 
-    public List<ReadMyBoardInfoResDto> readMyBoardInfo(String token) {
-        User user = userService.getUser(token);
-        return boardRepository.findByUserId(user.getId());
-    }
-
     private Board getBoard(String encryptedBoardId) {
-        Long boardId = aesSecretUtils.decrypt(encryptedBoardId);
+        Long boardId = secureDataUtils.decrypt(encryptedBoardId);
         Optional<Board> optionalBoard = boardRepository.findById(boardId);
 
         if (optionalBoard.isEmpty()) {
@@ -67,7 +84,7 @@ public class BoardService {
     }
 
     private BoardGroup getBoardGroup(String encryptedBoardGroupId) {
-        Long boardGroupId = aesSecretUtils.decrypt(encryptedBoardGroupId);
+        Long boardGroupId = secureDataUtils.decrypt(encryptedBoardGroupId);
         Optional<BoardGroup> boardGroup = boardGroupRepository.findById(boardGroupId);
 
         if (boardGroup.isEmpty()) {

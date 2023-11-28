@@ -1,4 +1,4 @@
-package com.strcat.oauth;
+package com.strcat.board;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -10,7 +10,7 @@ import com.strcat.repository.BoardRepository;
 import com.strcat.repository.ContentRepository;
 import com.strcat.repository.UserRepository;
 import com.strcat.service.ContentService;
-import com.strcat.util.AesSecretUtils;
+import com.strcat.util.SecureDataUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,7 +26,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 public class ContentServiceTest {
     private BoardRepository boardRepository;
     private UserRepository userRepository;
-    private AesSecretUtils aesSecretUtils;
+    private SecureDataUtils secureDataUtils;
     private ContentService contentService;
 
     @Autowired
@@ -36,8 +36,8 @@ public class ContentServiceTest {
     ) {
         this.boardRepository = boardRepository;
         this.userRepository = userRepository;
-        this.aesSecretUtils = new AesSecretUtils("MyTestCode-32CharacterTestAPIKey");
-        this.contentService = new ContentService(contentRepository, boardRepository, aesSecretUtils);
+        this.secureDataUtils = new SecureDataUtils("MyTestCode-32CharacterTestAPIKey");
+        this.contentService = new ContentService(contentRepository, boardRepository, secureDataUtils);
     }
 
     @BeforeEach
@@ -52,7 +52,7 @@ public class ContentServiceTest {
     public void content저장테스트() throws Exception {
         //given
         Board board = boardRepository.findAll().get(0);
-        String encryptedBoardId = aesSecretUtils.encrypt(board.getId());
+        String encryptedBoardId = secureDataUtils.encrypt(board.getId());
         CreateContentReqDto dto = new CreateContentReqDto("철수", "안녕! 만나서 반가워. 행복하길 바래~", "photo");
 
         //when
@@ -69,7 +69,7 @@ public class ContentServiceTest {
     public void content_writer_길이_테스트() throws Exception {
         //given
         Board board = boardRepository.findAll().get(0);
-        String encryptedBoardId = aesSecretUtils.encrypt(board.getId());
+        String encryptedBoardId = secureDataUtils.encrypt(board.getId());
         CreateContentReqDto dto = new CreateContentReqDto(
                 "0123456789012345678901234567890", "안녕! 만나서 반가워. 행복하길 바래~", "photo");
 

@@ -6,11 +6,14 @@ import com.strcat.domain.User;
 import com.strcat.dto.CreateBoardGroupReqDto;
 import com.strcat.dto.ReadBoardGroupResDto;
 import com.strcat.dto.ReadBoardGroupSummaryResDto;
+import com.strcat.dto.TmpReadMyBoardGroupInfoResDto;
 import com.strcat.exception.NotAcceptableException;
 import com.strcat.repository.BoardGroupRepository;
-import com.strcat.util.AesSecretUtils;
+import com.strcat.util.SecureDataUtils;
+import com.strcat.util.JwtUtils;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,19 +22,24 @@ import org.springframework.stereotype.Service;
 public class BoardGroupService {
     private final BoardGroupRepository boardGroupRepository;
     private final UserService userService;
-    private final AesSecretUtils aesSecretUtils;
+    private final SecureDataUtils secureDataUtils;
+    private final JwtUtils jwtUtils;
 
     public String create(CreateBoardGroupReqDto dto, String token) {
         User user = userService.getUser(token);
         BoardGroup boardGroup = boardGroupRepository.save(new BoardGroup(dto.getTitle(), user));
-        return aesSecretUtils.encrypt(boardGroup.getId());
+        return secureDataUtils.encrypt(boardGroup.getId());
     }
 
     public ReadBoardGroupResDto readBoardGroup(String encryptedBoardGroupId, String token) {
-        User user = userService.getUser(token);
         BoardGroup boardGroup = getBoardGroup(encryptedBoardGroupId);
-        Boolean isOwner = boardGroup.getUser().getId().equals(user.getId());
-        return new ReadBoardGroupResDto(boardGroup.getTitle(), isOwner, boardGroup.getBoards());
+        try {
+            Long userId = Long.parseLong(jwtUtils.parseUserId(jwtUtils.removeBearerString(token)));
+            Boolean isOwner = userId.equals(boardGroup.getUser().getId());
+            return new ReadBoardGroupResDto(boardGroup.getTitle(), isOwner, boardGroup.getBoards());
+        } catch (NotAcceptableException e) {
+            return new ReadBoardGroupResDto(boardGroup.getTitle(), false, boardGroup.getBoards());
+        }
     }
 
     public ReadBoardGroupSummaryResDto readSummary(String encryptedBoardGroupId, String token) {
@@ -43,8 +51,19 @@ public class BoardGroupService {
                 boardGroup.calculateTotalContentLength(boards));
     }
 
+    public List<TmpReadMyBoardGroupInfoResDto> readMyBoardGroupInfo(String token) {
+        User user = userService.getUser(token);
+        List<BoardGroup> boardGroups = boardGroupRepository.findByUserId(user.getId());
+
+        // 테스트를 위해 우선 바로 암호화 해서 보내주는 방식으로 구현함
+        return boardGroups.stream()
+                .map(boardGroup -> new TmpReadMyBoardGroupInfoResDto(secureDataUtils.encrypt(boardGroup.getId()),
+                        boardGroup.getTitle()))
+                .collect(Collectors.toList());
+    }
+
     private BoardGroup getBoardGroup(String encryptedBoardGroupId) {
-        Long boardGroupId = aesSecretUtils.decrypt(encryptedBoardGroupId);
+        Long boardGroupId = secureDataUtils.decrypt(encryptedBoardGroupId);
         Optional<BoardGroup> boardGroup = boardGroupRepository.findById(boardGroupId);
 
         if (boardGroup.isEmpty()) {
