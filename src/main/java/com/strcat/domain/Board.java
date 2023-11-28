@@ -40,6 +40,9 @@ public class Board {
     @Column(name = "theme", nullable = false)
     private String theme;
 
+    @Column(name = "encrypted_id", columnDefinition = "TEXT", nullable = false, unique = true)
+    private String encryptedId;
+
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false) // 외래키 컬럼 지정
