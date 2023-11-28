@@ -157,6 +157,34 @@ public class BoardGroupServiceTest {
             );
             Assertions.assertEquals("잘못된 토큰 형식입니다.", exception.getMessage());
         }
+
+        @ParameterizedTest
+        @MethodSource("com.strcat.utils.TestUtils#generateInvalidToken")
+        public void 요약(String invalidToken) {
+            //given
+            CreateBoardGroupReqDto dto = new CreateBoardGroupReqDto("testGroup");
+
+            //when
+            Exception exception = Assertions.assertThrows(NotAcceptableException.class, () ->
+                    //then
+                    boardGroupService.readSummary(aesSecretUtils.encrypt(1L), invalidToken)
+            );
+            Assertions.assertEquals("잘못된 토큰 형식입니다.", exception.getMessage());
+        }
+
+        @ParameterizedTest
+        @MethodSource("com.strcat.utils.TestUtils#generateInvalidToken")
+        public void 조회(String invalidToken) {
+            //given
+            CreateBoardGroupReqDto dto = new CreateBoardGroupReqDto("testGroup");
+
+            //when
+            Exception exception = Assertions.assertThrows(NotAcceptableException.class, () ->
+                    //then
+                    boardGroupService.readBoardGroup(aesSecretUtils.encrypt(1L), invalidToken)
+            );
+            Assertions.assertEquals("잘못된 토큰 형식입니다.", exception.getMessage());
+        }
     }
 
     @Nested
