@@ -37,8 +37,7 @@ public class BoardService {
         return boards.stream()
                 .map(board -> new ReadMyBoardInfoResDto(secureDataUtils.encrypt(
                         board.getId()),
-                        board.getTitle(),
-                        board.getTheme()))
+                        board.getTitle()))
                 .collect(Collectors.toList());
     }
 
