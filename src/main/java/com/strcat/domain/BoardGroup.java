@@ -32,12 +32,15 @@ public class BoardGroup {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @Column(length = 30, nullable = false)
+    private String title;
+
+    @Column(name = "encrypted_id", columnDefinition = "TEXT", unique = true)
+    private String encryptedId;
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-
-    @Column(length = 30, nullable = false)
-    private String title;
 
     @JsonIgnore
     @OneToMany(mappedBy = "boardGroup", cascade = CascadeType.ALL)

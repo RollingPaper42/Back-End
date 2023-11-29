@@ -53,5 +53,4 @@ public class BoardGroupController {
             @Parameter(hidden = true) @RequestHeader("Authorization") String token) {
         return boardGroupService.readSummary(encryptedBoardGroupId, token);
     }
-
 }

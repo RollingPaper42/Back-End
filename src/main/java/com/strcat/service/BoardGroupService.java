@@ -28,7 +28,11 @@ public class BoardGroupService {
     public String create(CreateBoardGroupReqDto dto, String token) {
         User user = userService.getUser(token);
         BoardGroup boardGroup = boardGroupRepository.save(new BoardGroup(dto.getTitle(), user));
-        return secureDataUtils.encrypt(boardGroup.getId());
+
+        String encryptedId = secureDataUtils.encrypt(boardGroup.getId());
+        boardGroup.setEncryptedId(encryptedId);
+        boardGroupRepository.save(boardGroup);
+        return encryptedId;
     }
 
     public ReadBoardGroupResDto readBoardGroup(String encryptedBoardGroupId, String token) {
@@ -36,9 +40,11 @@ public class BoardGroupService {
         try {
             Long userId = Long.parseLong(jwtUtils.parseUserId(jwtUtils.removeBearerString(token)));
             Boolean isOwner = userId.equals(boardGroup.getUser().getId());
-            return new ReadBoardGroupResDto(boardGroup.getTitle(), isOwner, boardGroup.getBoards());
+            return new ReadBoardGroupResDto(boardGroup.getTitle(), boardGroup.getEncryptedId(), isOwner,
+                    boardGroup.getBoards());
         } catch (NotAcceptableException e) {
-            return new ReadBoardGroupResDto(boardGroup.getTitle(), false, boardGroup.getBoards());
+            return new ReadBoardGroupResDto(boardGroup.getTitle(), boardGroup.getEncryptedId(), false,
+                    boardGroup.getBoards());
         }
     }
 

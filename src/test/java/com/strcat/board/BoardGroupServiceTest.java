@@ -88,12 +88,14 @@ public class BoardGroupServiceTest {
             BoardGroup boardGroup = boardGroupRepository.findById(secureDataUtils.decrypt(encryptedId)).get();
             Board board = boardRepository.save(
                     new Board(boardGroup, "testBoard", "Green", user));
-            Content content = contentRepository.save(new Content("testWriter", "test", "example.org", board));
+            Content content = contentRepository.save(new Content("testWriter", "test",
+                    "example.org", board));
 
             boardGroup.getBoards().add(board);
             board.getContents().add(content);
 
-            ReadBoardGroupResDto expect = new ReadBoardGroupResDto("testGroup", true, List.of(board));
+            ReadBoardGroupResDto expect = new ReadBoardGroupResDto("testGroup", boardGroup.getEncryptedId(),
+                    true, List.of(board));
 
             //when
             ReadBoardGroupResDto result = boardGroupService.readBoardGroup(encryptedId, token);
