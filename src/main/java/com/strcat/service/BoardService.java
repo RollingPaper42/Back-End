@@ -6,7 +6,7 @@ import com.strcat.domain.User;
 import com.strcat.dto.CreateBoardReqDto;
 import com.strcat.dto.ReadBoardResDto;
 import com.strcat.dto.ReadBoardSummaryResDto;
-import com.strcat.dto.ReadMyBoardInfoResDto;
+import com.strcat.dto.ReadMyInfoResDto;
 import com.strcat.exception.NotAcceptableException;
 import com.strcat.repository.BoardGroupRepository;
 import com.strcat.repository.BoardRepository;
@@ -31,11 +31,11 @@ public class BoardService {
         return boardRepository.findByUserId(userId);
     }
 
-    public List<ReadMyBoardInfoResDto> readMyBoardInfo(String token) {
+    public List<ReadMyInfoResDto> readMyBoardInfo(String token) {
         User user = userService.getUser(token);
         List<Board> boards = findByUserId(user.getId());
         return boards.stream()
-                .map(board -> new ReadMyBoardInfoResDto(secureDataUtils.encrypt(
+                .map(board -> new ReadMyInfoResDto(secureDataUtils.encrypt(
                         board.getId()),
                         board.getTitle()))
                 .collect(Collectors.toList());
