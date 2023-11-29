@@ -27,7 +27,7 @@ public class SecureDataUtils {
             String input = data.toString() + SEPARATOR + getCurrentTime();
             byte[] encodedBytes = cipher.doFinal(input.getBytes());
             byte[] encrypted = Base64.getEncoder().encode(encodedBytes);
-            return new String(encrypted, StandardCharsets.UTF_8).replace('/', '_');
+            return new String(encrypted, StandardCharsets.UTF_8).replace('/', '_').replace('+', '-');
         } catch (Exception e) {
             throw new NotAcceptableException("암호화에 실패했습니다.");
         }
@@ -36,7 +36,9 @@ public class SecureDataUtils {
     public Long decrypt(String encryptedData) {
         try {
             Cipher cipher = cipherInit(Cipher.DECRYPT_MODE);
-            byte[] decodedBytes = Base64.getDecoder().decode(encryptedData.replace('_', '/').getBytes());
+
+            byte[] decodedBytes = Base64.getDecoder()
+                    .decode(encryptedData.replace('_', '/').replace('-', '+').getBytes());
             byte[] decrypted = cipher.doFinal(decodedBytes);
             return getIdFromRawDataToLong(new String(decrypted, StandardCharsets.UTF_8));
         } catch (Exception e) {
