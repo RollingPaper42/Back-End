@@ -13,7 +13,7 @@ import lombok.ToString;
 @RequiredArgsConstructor
 public class ReadBoardGroupResDto {
     private final String title;
-    private final String encryptedId;
+    private final String id;
     private final Boolean isOwner;
     private final List<Board> boards;
 }
