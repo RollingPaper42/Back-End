@@ -101,7 +101,7 @@ public class BoardGroupServiceTest {
             board.getContents().add(content);
 
             ReadBoardGroupResDto expect = new ReadBoardGroupResDto("testGroup", boardGroup.getEncryptedId(),
-                    true, List.of(boardService.fetchBoardResponse(board.getEncryptedId())));
+                    true, boardService.convertToBoardResponse(boardGroup.getBoards()));
 
             //when
             ReadBoardGroupResDto result = boardGroupService.readBoardGroup(encryptedId, token);
