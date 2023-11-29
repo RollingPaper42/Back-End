@@ -60,7 +60,8 @@ public class BoardService {
     }
 
     public ReadBoardResDto readBoard(String encryptedBoardId, String token) {
-        BoardResponse boardResponse = fetchBoardResponse(encryptedBoardId);
+        Board board = getBoard(encryptedBoardId);
+        BoardResponse boardResponse = fetchBoardResponse(board);
         try {
             Long userId = Long.parseLong(jwtUtils.parseUserId(jwtUtils.removeBearerString(token)));
             User user = userService.getUser(token);
@@ -89,13 +90,12 @@ public class BoardService {
         return optionalBoard.get();
     }
 
-    public BoardResponse fetchBoardResponse(String encryptedBoardId) {
-        Board board = getBoard(encryptedBoardId);
+    public BoardResponse fetchBoardResponse(Board board) {
         return new BoardResponse(board.getEncryptedId(),
                 board.getTitle(), board.getTheme(), board.getContents());
     }
 
-    public List<BoardResponse> convertToBoardResponse(List<Board> boards) {
+    public List<BoardResponse> fetchBoardResponses(List<Board> boards) {
         return boards.stream()
                 .map(board -> new BoardResponse(board.getEncryptedId(), board.getTitle(), board.getTheme(),
                         board.getContents()))

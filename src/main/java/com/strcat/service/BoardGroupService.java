@@ -3,7 +3,6 @@ package com.strcat.service;
 import com.strcat.domain.Board;
 import com.strcat.domain.BoardGroup;
 import com.strcat.domain.User;
-import com.strcat.dto.BoardResponse;
 import com.strcat.dto.CreateBoardGroupReqDto;
 import com.strcat.dto.ReadBoardGroupResDto;
 import com.strcat.dto.ReadBoardGroupSummaryResDto;
@@ -43,10 +42,10 @@ public class BoardGroupService {
             Long userId = Long.parseLong(jwtUtils.parseUserId(jwtUtils.removeBearerString(token)));
             Boolean isOwner = userId.equals(boardGroup.getUser().getId());
             return new ReadBoardGroupResDto(boardGroup.getTitle(), boardGroup.getEncryptedId(), isOwner,
-                    boardService.convertToBoardResponse(boardGroup.getBoards()));
+                    boardService.fetchBoardResponses(boardGroup.getBoards()));
         } catch (NotAcceptableException e) {
             return new ReadBoardGroupResDto(boardGroup.getTitle(), boardGroup.getEncryptedId(), false,
-                    boardService.convertToBoardResponse(boardGroup.getBoards()));
+                    boardService.fetchBoardResponses(boardGroup.getBoards()));
         }
     }
 
