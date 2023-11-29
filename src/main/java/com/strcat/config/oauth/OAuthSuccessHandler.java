@@ -6,25 +6,27 @@ import com.strcat.util.JwtUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
-
-import java.io.IOException;
 
 @Component
 @Slf4j
 public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
     private final JwtUtils jwtUtils;
     private final OAuthUserService oAuthUserService;
-    private final String REDIRECT_URI = "https://strcat.me/login/check";
+    private final String REDIRECT_URI;
 
     @Autowired
-    public OAuthSuccessHandler(JwtUtils jwtUtils, OAuthUserService oAuthUserService) {
+    public OAuthSuccessHandler(JwtUtils jwtUtils, OAuthUserService oAuthUserService,
+                               @Value("redirect_uri") String REDIRECT_URI) {
         this.jwtUtils = jwtUtils;
         this.oAuthUserService = oAuthUserService;
+        this.REDIRECT_URI = REDIRECT_URI;
     }
 
     @Override
