@@ -3,6 +3,7 @@ package com.strcat.board;
 import com.strcat.domain.Board;
 import com.strcat.domain.Content;
 import com.strcat.domain.User;
+import com.strcat.dto.BoardResponse;
 import com.strcat.dto.CreateBoardReqDto;
 import com.strcat.dto.ReadBoardResDto;
 import com.strcat.dto.ReadBoardSummaryResDto;
@@ -15,6 +16,7 @@ import com.strcat.service.BoardService;
 import com.strcat.service.UserService;
 import com.strcat.util.SecureDataUtils;
 import com.strcat.util.JwtUtils;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,7 +49,8 @@ public class BoardServiceTest {
         this.jwtUtils = new JwtUtils("testtesttesttesttesttesttesttesttesttest");
         this.secureDataUtils = new SecureDataUtils("MyTestCode-32CharacterTestAPIKey");
         UserService userService = new UserService(userRepository, jwtUtils);
-        this.boardService = new BoardService(boardRepository, boardGroupRepository, secureDataUtils, userService, jwtUtils);
+        this.boardService = new BoardService(boardRepository, boardGroupRepository, secureDataUtils, userService,
+                jwtUtils);
     }
 
     @BeforeEach
@@ -102,13 +105,15 @@ public class BoardServiceTest {
         //given
         CreateBoardReqDto dto = new CreateBoardReqDto(null, "가나다", "Green");
         String encryptedUrl = boardService.createBoard(dto, token);
-        Board expect = boardRepository.findAll().get(0);
+        Board board = boardRepository.findAll().get(0);
+        ReadBoardResDto expect = new ReadBoardResDto(true,
+                new BoardResponse(board.getEncryptedId(), board.getTitle(), board.getTheme(), board.getContents()));
 
         //when
         ReadBoardResDto result = boardService.readBoard(encryptedUrl, token);
 
         //then
-        Assertions.assertEquals(expect, result.getBoard());
+        Assertions.assertEquals(expect, result);
     }
 
     @Test

@@ -91,7 +91,7 @@ public class BoardService {
 
     public BoardResponse fetchBoardResponse(String encryptedBoardId) {
         Board board = getBoard(encryptedBoardId);
-        return new BoardResponse(secureDataUtils.encrypt(board.getId()),
+        return new BoardResponse(board.getEncryptedId(),
                 board.getTitle(), board.getTheme(), board.getContents());
     }
 
