@@ -4,7 +4,6 @@ import com.strcat.domain.Board;
 import com.strcat.domain.BoardGroup;
 import com.strcat.domain.Content;
 import com.strcat.domain.User;
-import com.strcat.dto.BoardResponse;
 import com.strcat.dto.CreateBoardGroupReqDto;
 import com.strcat.dto.ReadBoardGroupResDto;
 import com.strcat.dto.ReadBoardGroupSummaryResDto;
@@ -18,7 +17,6 @@ import com.strcat.service.BoardService;
 import com.strcat.service.UserService;
 import com.strcat.util.JwtUtils;
 import com.strcat.util.SecureDataUtils;
-import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -101,7 +99,7 @@ public class BoardGroupServiceTest {
             board.getContents().add(content);
 
             ReadBoardGroupResDto expect = new ReadBoardGroupResDto("testGroup", boardGroup.getEncryptedId(),
-                    true, boardService.convertToBoardResponse(boardGroup.getBoards()));
+                    true, boardService.fetchBoardResponses(boardGroup.getBoards()));
 
             //when
             ReadBoardGroupResDto result = boardGroupService.readBoardGroup(encryptedId, token);
