@@ -36,8 +36,7 @@ public class BoardService {
         User user = userService.getUser(token);
         List<Board> boards = findByUserId(user.getId());
         return boards.stream()
-                .map(board -> new ReadMyInfoResDto(secureDataUtils.encrypt(
-                        board.getId()),
+                .map(board -> new ReadMyInfoResDto(board.getEncryptedId(),
                         board.getTitle()))
                 .collect(Collectors.toList());
     }
