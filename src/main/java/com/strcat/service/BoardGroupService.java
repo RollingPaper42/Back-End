@@ -62,9 +62,8 @@ public class BoardGroupService {
         User user = userService.getUser(token);
         List<BoardGroup> boardGroups = boardGroupRepository.findByUserId(user.getId());
 
-        // 테스트를 위해 우선 바로 암호화 해서 보내주는 방식으로 구현함
         return boardGroups.stream()
-                .map(boardGroup -> new ReadMyInfoResDto(secureDataUtils.encrypt(boardGroup.getId()),
+                .map(boardGroup -> new ReadMyInfoResDto(boardGroup.getEncryptedId(),
                         boardGroup.getTitle()))
                 .collect(Collectors.toList());
     }
