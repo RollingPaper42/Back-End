@@ -23,7 +23,7 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
 
     @Autowired
     public OAuthSuccessHandler(JwtUtils jwtUtils, OAuthUserService oAuthUserService,
-                               @Value("redirect_uri") String REDIRECT_URI) {
+                               @Value("${redirect_uri}") String REDIRECT_URI) {
         this.jwtUtils = jwtUtils;
         this.oAuthUserService = oAuthUserService;
         this.REDIRECT_URI = REDIRECT_URI;
