@@ -6,7 +6,7 @@ import com.strcat.domain.User;
 import com.strcat.dto.CreateBoardGroupReqDto;
 import com.strcat.dto.ReadBoardGroupResDto;
 import com.strcat.dto.ReadBoardGroupSummaryResDto;
-import com.strcat.dto.TmpReadMyBoardGroupInfoResDto;
+import com.strcat.dto.ReadMyInfoResDto;
 import com.strcat.exception.NotAcceptableException;
 import com.strcat.repository.BoardGroupRepository;
 import com.strcat.util.SecureDataUtils;
@@ -57,13 +57,13 @@ public class BoardGroupService {
                 boardGroup.calculateTotalContentLength(boards));
     }
 
-    public List<TmpReadMyBoardGroupInfoResDto> readMyBoardGroupInfo(String token) {
+    public List<ReadMyInfoResDto> readMyBoardGroupInfo(String token) {
         User user = userService.getUser(token);
         List<BoardGroup> boardGroups = boardGroupRepository.findByUserId(user.getId());
 
         // 테스트를 위해 우선 바로 암호화 해서 보내주는 방식으로 구현함
         return boardGroups.stream()
-                .map(boardGroup -> new TmpReadMyBoardGroupInfoResDto(secureDataUtils.encrypt(boardGroup.getId()),
+                .map(boardGroup -> new ReadMyInfoResDto(secureDataUtils.encrypt(boardGroup.getId()),
                         boardGroup.getTitle()))
                 .collect(Collectors.toList());
     }
