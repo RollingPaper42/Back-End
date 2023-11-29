@@ -4,6 +4,7 @@ import com.strcat.domain.Board;
 import com.strcat.domain.BoardGroup;
 import com.strcat.domain.Content;
 import com.strcat.domain.User;
+import com.strcat.dto.BoardResponse;
 import com.strcat.dto.CreateBoardGroupReqDto;
 import com.strcat.dto.ReadBoardGroupResDto;
 import com.strcat.dto.ReadBoardGroupSummaryResDto;
@@ -13,6 +14,7 @@ import com.strcat.repository.BoardRepository;
 import com.strcat.repository.ContentRepository;
 import com.strcat.repository.UserRepository;
 import com.strcat.service.BoardGroupService;
+import com.strcat.service.BoardService;
 import com.strcat.service.UserService;
 import com.strcat.util.JwtUtils;
 import com.strcat.util.SecureDataUtils;
@@ -34,6 +36,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 public class BoardGroupServiceTest {
     private final BoardGroupService boardGroupService;
     private final BoardGroupRepository boardGroupRepository;
+    private final BoardService boardService;
     private final BoardRepository boardRepository;
     private final SecureDataUtils secureDataUtils;
     private final JwtUtils jwtUtils;
@@ -54,7 +57,10 @@ public class BoardGroupServiceTest {
         this.boardRepository = boardRepository;
         this.contentRepository = contentRepository;
         UserService userService = new UserService(userRepository, jwtUtils);
-        this.boardGroupService = new BoardGroupService(boardGroupRepository, userService, secureDataUtils, jwtUtils);
+        this.boardService = new BoardService(boardRepository, boardGroupRepository, secureDataUtils, userService,
+                jwtUtils);
+        this.boardGroupService = new BoardGroupService(boardGroupRepository, boardService, userService, secureDataUtils,
+                jwtUtils);
     }
 
     @BeforeEach
@@ -95,7 +101,7 @@ public class BoardGroupServiceTest {
             board.getContents().add(content);
 
             ReadBoardGroupResDto expect = new ReadBoardGroupResDto("testGroup", boardGroup.getEncryptedId(),
-                    true, List.of(board));
+                    true, List.of(boardService.fetchBoardResponse(board.getEncryptedId())));
 
             //when
             ReadBoardGroupResDto result = boardGroupService.readBoardGroup(encryptedId, token);
