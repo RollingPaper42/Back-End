@@ -3,6 +3,7 @@ package com.strcat.service;
 import com.strcat.domain.Board;
 import com.strcat.domain.BoardGroup;
 import com.strcat.domain.User;
+import com.strcat.dto.BoardResponse;
 import com.strcat.dto.CreateBoardReqDto;
 import com.strcat.dto.ReadBoardResDto;
 import com.strcat.dto.ReadBoardSummaryResDto;
@@ -60,13 +61,14 @@ public class BoardService {
     }
 
     public ReadBoardResDto readBoard(String encryptedBoardId, String token) {
-        Board board = getBoard(encryptedBoardId);
+        BoardResponse boardResponse = fetchBoardResponse(encryptedBoardId);
         try {
             Long userId = Long.parseLong(jwtUtils.parseUserId(jwtUtils.removeBearerString(token)));
-            Boolean isOwner = userId.equals(board.getUser().getId());
-            return new ReadBoardResDto(isOwner, board);
+            User user = userService.getUser(token);
+            Boolean isOwner = userId.equals(user.getId());
+            return new ReadBoardResDto(isOwner, boardResponse);
         } catch (NotAcceptableException e) {
-            return new ReadBoardResDto(false, board);
+            return new ReadBoardResDto(false, boardResponse);
         }
     }
 
@@ -86,6 +88,12 @@ public class BoardService {
             throw new NotAcceptableException("존재하지 않는 보드입니다.");
         }
         return optionalBoard.get();
+    }
+
+    private BoardResponse fetchBoardResponse(String encryptedBoardId) {
+        Board board = getBoard(encryptedBoardId);
+        return new BoardResponse(secureDataUtils.encrypt(board.getId()),
+                board.getTitle(), board.getTheme(), board.getContents());
     }
 
     private BoardGroup getBoardGroup(String encryptedBoardGroupId) {
