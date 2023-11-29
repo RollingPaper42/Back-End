@@ -15,7 +15,7 @@ public class UserService {
     private final JwtUtils jwtUtils;
 
     public User getUser(String token) {
-        Long userId = Long.parseLong(jwtUtils.parseUserId(jwtUtils.removeBearerString(token)));
+        Long userId = jwtUtils.parseUserId(jwtUtils.removeBearerString(token));
         Optional<User> user = userRepository.findById(userId);
 
         if (user.isEmpty()) {
@@ -30,7 +30,7 @@ public class UserService {
             return false;
         }
 
-        Long userId = Long.parseLong(jwtUtils.parseUserId(tokenCode));
+        Long userId = jwtUtils.parseUserId(tokenCode);
         Optional<User> user = userRepository.findById(userId);
         return user.isPresent();
     }

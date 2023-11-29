@@ -11,8 +11,8 @@ import com.strcat.dto.ReadMyInfoResDto;
 import com.strcat.exception.NotAcceptableException;
 import com.strcat.repository.BoardGroupRepository;
 import com.strcat.repository.BoardRepository;
-import com.strcat.util.SecureDataUtils;
 import com.strcat.util.JwtUtils;
+import com.strcat.util.SecureDataUtils;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -62,7 +62,7 @@ public class BoardService {
     public ReadBoardResDto readBoard(String encryptedBoardId, String token) {
         BoardResponse boardResponse = fetchBoardResponse(encryptedBoardId);
         try {
-            Long userId = Long.parseLong(jwtUtils.parseUserId(jwtUtils.removeBearerString(token)));
+            Long userId = jwtUtils.parseUserId(jwtUtils.removeBearerString(token));
             User user = userService.getUser(token);
             Boolean isOwner = userId.equals(user.getId());
             return new ReadBoardResDto(isOwner, boardResponse);
