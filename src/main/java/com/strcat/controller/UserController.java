@@ -1,8 +1,7 @@
 package com.strcat.controller;
 
 
-import com.strcat.dto.ReadMyBoardInfoResDto;
-import com.strcat.dto.TmpReadMyBoardGroupInfoResDto;
+import com.strcat.dto.ReadMyInfoResDto;
 import com.strcat.service.BoardGroupService;
 import com.strcat.service.BoardService;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -23,14 +22,14 @@ public class UserController {
 
     @GetMapping("/boards")
     @SecurityRequirement(name = "Bearer Authentication")
-    public List<ReadMyBoardInfoResDto> readMyBoardInfo(
+    public List<ReadMyInfoResDto> readMyBoardInfo(
             @Parameter(hidden = true) @RequestHeader("Authorization") String token) {
         return boardService.readMyBoardInfo(token);
     }
 
     @GetMapping("/board-groups")
     @SecurityRequirement(name = "Bearer Authentication")
-    public List<TmpReadMyBoardGroupInfoResDto> readMyBoardGroupInfo(
+    public List<ReadMyInfoResDto> readMyBoardGroupInfo(
             @Parameter(hidden = true) @RequestHeader("Authorization") String token) {
         return boardGroupService.readMyBoardGroupInfo(token);
     }
