@@ -80,7 +80,7 @@ public class BoardService {
                 board.calculateTotalContentLength());
     }
 
-    private Board getBoard(String encryptedBoardId) {
+    public Board getBoard(String encryptedBoardId) {
         Long boardId = secureDataUtils.decrypt(encryptedBoardId);
         Optional<Board> optionalBoard = boardRepository.findById(boardId);
 
@@ -90,10 +90,17 @@ public class BoardService {
         return optionalBoard.get();
     }
 
-    private BoardResponse fetchBoardResponse(String encryptedBoardId) {
+    public BoardResponse fetchBoardResponse(String encryptedBoardId) {
         Board board = getBoard(encryptedBoardId);
         return new BoardResponse(secureDataUtils.encrypt(board.getId()),
                 board.getTitle(), board.getTheme(), board.getContents());
+    }
+
+    public List<BoardResponse> convertToBoardResponse(List<Board> boards) {
+        return boards.stream()
+                .map(board -> new BoardResponse(board.getEncryptedId(), board.getTitle(), board.getTheme(),
+                        board.getContents()))
+                .collect(Collectors.toList());
     }
 
     private BoardGroup getBoardGroup(String encryptedBoardGroupId) {
