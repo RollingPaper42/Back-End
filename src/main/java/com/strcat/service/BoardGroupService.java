@@ -9,8 +9,8 @@ import com.strcat.dto.ReadBoardGroupSummaryResDto;
 import com.strcat.dto.ReadMyInfoResDto;
 import com.strcat.exception.NotAcceptableException;
 import com.strcat.repository.BoardGroupRepository;
-import com.strcat.util.SecureDataUtils;
 import com.strcat.util.JwtUtils;
+import com.strcat.util.SecureDataUtils;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -39,7 +39,7 @@ public class BoardGroupService {
     public ReadBoardGroupResDto readBoardGroup(String encryptedBoardGroupId, String token) {
         BoardGroup boardGroup = getBoardGroup(encryptedBoardGroupId);
         try {
-            Long userId = Long.parseLong(jwtUtils.parseUserId(jwtUtils.removeBearerString(token)));
+            Long userId = jwtUtils.parseUserId(jwtUtils.removeBearerString(token));
             Boolean isOwner = userId.equals(boardGroup.getUser().getId());
             return new ReadBoardGroupResDto(boardGroup.getTitle(), boardGroup.getEncryptedId(), isOwner,
                     boardService.fetchBoardResponses(boardGroup.getBoards()));

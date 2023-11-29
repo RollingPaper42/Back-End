@@ -49,12 +49,12 @@ public class JwtUtils {
         return token;
     }
 
-    public String parseUserId(String token) {
+    public Long parseUserId(String token) {
         try {
-            return Jwts.parser()
+            return Long.parseLong(Jwts.parser()
                     .verifyWith(secretKey)
                     .build()
-                    .parseSignedClaims(token).getPayload().getId();
+                    .parseSignedClaims(token).getPayload().getId());
         } catch (Exception e) {
             throw new NotAcceptableException("잘못된 토큰 형식입니다.");
         }
