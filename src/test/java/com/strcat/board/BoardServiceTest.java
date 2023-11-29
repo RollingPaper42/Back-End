@@ -161,7 +161,8 @@ public class BoardServiceTest {
         CreateBoardReqDto dto = new CreateBoardReqDto(null, "가나다", "Green");
         String encryptedUrl = boardService.createBoard(dto, token);
         ReadBoardResDto boardRes = boardService.readBoard(encryptedUrl, token);
-        Content content = new Content("test", "test", "test.jpg", boardRes.getBoard());
+        Board board = boardService.getBoard(encryptedUrl);
+        Content content = new Content("test", "test", "test.jpg", board);
         contentRepository.save(content);
         boardRes.getBoard().getContents().add(content); // contents에 자동으로 content 추가가 안됨...
         ReadBoardSummaryResDto expect = new ReadBoardSummaryResDto("가나다", "Green", 1, 4L);
