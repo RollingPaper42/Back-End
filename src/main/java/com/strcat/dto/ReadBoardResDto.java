@@ -8,5 +8,5 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ReadBoardResDto {
     private final Boolean isOwner;
-    private final Board board;
+    private final BoardResponse board;
 }

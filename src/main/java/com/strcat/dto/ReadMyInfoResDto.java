@@ -5,8 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class TmpReadMyBoardGroupInfoResDto {
-    //테스트용
-    final String encryptedId;
-    final String title;
+public class ReadMyInfoResDto {
+    private final String id;
+    private final String title;
 }

@@ -3,10 +3,11 @@ package com.strcat.service;
 import com.strcat.domain.Board;
 import com.strcat.domain.BoardGroup;
 import com.strcat.domain.User;
+import com.strcat.dto.BoardResponse;
 import com.strcat.dto.CreateBoardReqDto;
 import com.strcat.dto.ReadBoardResDto;
 import com.strcat.dto.ReadBoardSummaryResDto;
-import com.strcat.dto.ReadMyBoardInfoResDto;
+import com.strcat.dto.ReadMyInfoResDto;
 import com.strcat.exception.NotAcceptableException;
 import com.strcat.repository.BoardGroupRepository;
 import com.strcat.repository.BoardRepository;
@@ -31,14 +32,13 @@ public class BoardService {
         return boardRepository.findByUserId(userId);
     }
 
-    public List<ReadMyBoardInfoResDto> readMyBoardInfo(String token) {
+    public List<ReadMyInfoResDto> readMyBoardInfo(String token) {
         User user = userService.getUser(token);
         List<Board> boards = findByUserId(user.getId());
         return boards.stream()
-                .map(board -> new ReadMyBoardInfoResDto(secureDataUtils.encrypt(
+                .map(board -> new ReadMyInfoResDto(secureDataUtils.encrypt(
                         board.getId()),
-                        board.getTitle(),
-                        board.getTheme()))
+                        board.getTitle()))
                 .collect(Collectors.toList());
     }
 
@@ -60,13 +60,14 @@ public class BoardService {
     }
 
     public ReadBoardResDto readBoard(String encryptedBoardId, String token) {
-        Board board = getBoard(encryptedBoardId);
+        BoardResponse boardResponse = fetchBoardResponse(encryptedBoardId);
         try {
             Long userId = jwtUtils.parseUserId(jwtUtils.removeBearerString(token));
-            Boolean isOwner = userId.equals(board.getUser().getId());
-            return new ReadBoardResDto(isOwner, board);
+            User user = userService.getUser(token);
+            Boolean isOwner = userId.equals(user.getId());
+            return new ReadBoardResDto(isOwner, boardResponse);
         } catch (NotAcceptableException e) {
-            return new ReadBoardResDto(false, board);
+            return new ReadBoardResDto(false, boardResponse);
         }
     }
 
@@ -78,7 +79,7 @@ public class BoardService {
                 board.calculateTotalContentLength());
     }
 
-    private Board getBoard(String encryptedBoardId) {
+    public Board getBoard(String encryptedBoardId) {
         Long boardId = secureDataUtils.decrypt(encryptedBoardId);
         Optional<Board> optionalBoard = boardRepository.findById(boardId);
 
@@ -86,6 +87,19 @@ public class BoardService {
             throw new NotAcceptableException("존재하지 않는 보드입니다.");
         }
         return optionalBoard.get();
+    }
+
+    public BoardResponse fetchBoardResponse(String encryptedBoardId) {
+        Board board = getBoard(encryptedBoardId);
+        return new BoardResponse(secureDataUtils.encrypt(board.getId()),
+                board.getTitle(), board.getTheme(), board.getContents());
+    }
+
+    public List<BoardResponse> convertToBoardResponse(List<Board> boards) {
+        return boards.stream()
+                .map(board -> new BoardResponse(board.getEncryptedId(), board.getTitle(), board.getTheme(),
+                        board.getContents()))
+                .collect(Collectors.toList());
     }
 
     private BoardGroup getBoardGroup(String encryptedBoardGroupId) {
