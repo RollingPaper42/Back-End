@@ -36,7 +36,7 @@ public class Content {
     @Column(length = 1000, nullable = false)
     private String text;
 
-    @Column
+    @Column(length = 1000)
     private String photoUrl;
 
     @JsonIgnore
