@@ -4,7 +4,10 @@ import com.strcat.dto.CreateBoardGroupReqDto;
 import com.strcat.dto.ReadBoardGroupResDto;
 import com.strcat.dto.ReadBoardGroupSummaryResDto;
 import com.strcat.service.BoardGroupService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -33,6 +36,9 @@ public class BoardGroupController {
 
     @PostMapping
     @SecurityRequirement(name = "Bearer Authentication")
+    @Operation(summary = "보드 그룹 생성", description = "그룹 생성 성공 후 group의 encryptedId를 반환합니다.")
+    @ApiResponse(responseCode = "200", description = "성공", content = {
+            @Content(examples = {@ExampleObject("Wd5lUSQnmEjnMVl043cEzZzNqqrA3Z9pBAVImYNwI14=")})})
     public String createGroup(
             @Parameter(hidden = true) @RequestHeader("Authorization") String token,
             @RequestBody CreateBoardGroupReqDto dto) {
@@ -41,6 +47,7 @@ public class BoardGroupController {
 
     @GetMapping("/{boardGroupId}")
     @SecurityRequirement(name = "Bearer Authentication")
+    @Operation(summary = "보드 그룹 조회", description = "그룹의 정보와 소유자 여부, 포함된 보드 전체를 반환합니다.")
     public ReadBoardGroupResDto readBoardGroup(@Parameter(hidden = true) @RequestHeader("Authorization") String token,
                                                @PathVariable(name = "boardGroupId") String encryptedBoardGroupId) {
         return boardGroupService.readBoardGroup(encryptedBoardGroupId, token);
@@ -48,6 +55,7 @@ public class BoardGroupController {
 
     @GetMapping("/{boardGroupId}/summaries")
     @SecurityRequirement(name = "Bearer Authentication")
+    @Operation(summary = "보드 그룹 요약 조회", description = "그룹 요약 정보를 조회합니다.")
     public ReadBoardGroupSummaryResDto readBoardGroupSummary(
             @PathVariable(name = "boardGroupId") String encryptedBoardGroupId,
             @Parameter(hidden = true) @RequestHeader("Authorization") String token) {
