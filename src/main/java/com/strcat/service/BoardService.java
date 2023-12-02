@@ -63,11 +63,10 @@ public class BoardService {
         BoardResponse boardResponse = fetchBoardResponse(board);
         try {
             Long userId = jwtUtils.parseUserId(jwtUtils.removeBearerString(token));
-            User user = userService.getUser(token);
-            Boolean isOwner = userId.equals(user.getId());
+            Boolean isOwner = userId.equals(board.getUser().getId());
             return new ReadBoardResDto(isOwner, boardResponse);
         } catch (NotAcceptableException e) {
-            return new ReadBoardResDto(false, boardResponse);
+            return new ReadBoardResDto(false, boardResponse);정
         }
     }
 
