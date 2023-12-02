@@ -66,7 +66,7 @@ public class BoardService {
             Boolean isOwner = userId.equals(board.getUser().getId());
             return new ReadBoardResDto(isOwner, boardResponse);
         } catch (NotAcceptableException e) {
-            return new ReadBoardResDto(false, boardResponse);정
+            return new ReadBoardResDto(false, boardResponse);
         }
     }
 
