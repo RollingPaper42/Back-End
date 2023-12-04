@@ -2,9 +2,8 @@ package com.strcat.controller;
 
 import com.strcat.dto.CheckLoginResDto;
 import com.strcat.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +21,7 @@ public class LoginController {
 
     @GetMapping("/check")
     @SecurityRequirement(name = "Bearer Authentication")
+    @Operation(summary = "로그인 여부 확인", description = "현재 로그인 여부를 반환합니다.")
     public CheckLoginResDto checkLogin(
             @Parameter(hidden = true)
             @RequestHeader("Authorization") String token
