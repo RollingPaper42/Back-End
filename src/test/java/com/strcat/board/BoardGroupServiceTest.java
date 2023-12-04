@@ -85,7 +85,7 @@ public class BoardGroupServiceTest {
         }
 
         @Test
-        public void 조회() {
+        public void 조회_isOwner_true() {
             //given
             CreateBoardGroupReqDto dto = new CreateBoardGroupReqDto("testGroup");
             String encryptedId = boardGroupService.create(dto, token);
@@ -103,6 +103,33 @@ public class BoardGroupServiceTest {
 
             //when
             ReadBoardGroupResDto result = boardGroupService.readBoardGroup(encryptedId, token);
+
+            //then
+            Assertions.assertEquals(expect, result);
+        }
+
+        @Test
+        public void 조회_isOwner_false() {
+            //given
+            CreateBoardGroupReqDto dto = new CreateBoardGroupReqDto("testGroup");
+            String encryptedId = boardGroupService.create(dto, token);
+            BoardGroup boardGroup = boardGroupRepository.findById(secureDataUtils.decrypt(encryptedId)).get();
+            Board board = boardRepository.save(
+                    new Board(boardGroup, "testBoard", "Green", user));
+            Content content = contentRepository.save(new Content("testWriter", "test",
+                    "example.org", board));
+            boardGroup.getBoards().add(board);
+            board.getContents().add(content);
+
+            User user2 = new User();
+            userRepository.save(user2);
+            String token2 = "Bearer " + jwtUtils.createJwtToken(user2.getId().toString());
+
+            ReadBoardGroupResDto expect = new ReadBoardGroupResDto("testGroup", boardGroup.getEncryptedId(),
+                    false, boardService.fetchBoardResponses(boardGroup.getBoards()));
+
+            //when
+            ReadBoardGroupResDto result = boardGroupService.readBoardGroup(encryptedId, token2);
 
             //then
             Assertions.assertEquals(expect, result);
