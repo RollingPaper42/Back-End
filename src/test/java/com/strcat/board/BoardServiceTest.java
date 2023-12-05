@@ -76,7 +76,7 @@ public class BoardServiceTest {
         }
 
         @Test
-        public void 조회_isOwner_true() {
+        public void 보드주인일때조회() {
             //given
             CreateBoardReqDto dto = new CreateBoardReqDto(null, "가나다", "Green");
             String encryptedUrl = boardService.createBoard(dto, token);
@@ -92,7 +92,7 @@ public class BoardServiceTest {
         }
 
         @Test
-        public void 조회_isOwner_false() {
+        public void 보드주인아닌조회() {
             //given
             CreateBoardReqDto dto = new CreateBoardReqDto(null, "가나다", "Green");
             String encryptedUrl = boardService.createBoard(dto, token);
@@ -112,7 +112,7 @@ public class BoardServiceTest {
         }
 
         @Test
-        public void 컨텐츠없는경우요약조회() {
+        public void 컨텐츠없는요약() {
             //given
             CreateBoardReqDto dto = new CreateBoardReqDto(null, "가나다", "Green");
             String encryptedUrl = boardService.createBoard(dto, token);
@@ -126,7 +126,7 @@ public class BoardServiceTest {
         }
 
         @Test
-        public void 컨텐츠존재하는경우요약조회() {
+        public void 컨텐츠존재요약() {
             //given
             CreateBoardReqDto dto = new CreateBoardReqDto(null, "가나다", "Green");
             String encryptedUrl = boardService.createBoard(dto, token);
@@ -148,7 +148,7 @@ public class BoardServiceTest {
     @Nested
     class 실패 {
         @Test
-        public void 제목길이가30자이상일때보드생성실패() {
+        public void 제목길이30자이상보드생성() {
             //given
             CreateBoardReqDto dto = new CreateBoardReqDto(null, "가나다가나다가나다가나다가나다가나다가나다가나다가나다가나다가", "Green");
 
@@ -162,7 +162,7 @@ public class BoardServiceTest {
 
         @ParameterizedTest
         @ValueSource(strings = {"", "1", "12", "123", "1234", "12345", "123456", "1234567", "1234567890"})
-        public void 잘못된토큰일때보드생성실패(String invalidToken) {
+        public void 잘못된토큰보드생성(String invalidToken) {
             //given
             CreateBoardReqDto dto = new CreateBoardReqDto(null, "가나다", "Green");
 
@@ -175,7 +175,7 @@ public class BoardServiceTest {
         }
 
         @Test
-        public void 잘못된URL보드읽기실패() {
+        public void 잘못된URL보드조회() {
             //given
             CreateBoardReqDto dto = new CreateBoardReqDto(null, "가나다", "Green");
             String encryptedUrl = boardService.createBoard(dto, token);
@@ -190,7 +190,7 @@ public class BoardServiceTest {
         }
 
         @Test
-        public void 존재하지않는보드읽기실패() {
+        public void 존재하지않는보드조회() {
             //given
             CreateBoardReqDto dto = new CreateBoardReqDto(null, "가나다", "Green");
             boardService.createBoard(dto, token);

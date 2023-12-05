@@ -85,7 +85,7 @@ public class BoardGroupServiceTest {
         }
 
         @Test
-        public void 조회_isOwner_true() {
+        public void 그룹주인일때조회() {
             //given
             CreateBoardGroupReqDto dto = new CreateBoardGroupReqDto("testGroup");
             String encryptedId = boardGroupService.create(dto, token);
@@ -109,7 +109,7 @@ public class BoardGroupServiceTest {
         }
 
         @Test
-        public void 조회_isOwner_false() {
+        public void 그룹주인아닌조회() {
             //given
             CreateBoardGroupReqDto dto = new CreateBoardGroupReqDto("testGroup");
             String encryptedId = boardGroupService.create(dto, token);
@@ -136,7 +136,7 @@ public class BoardGroupServiceTest {
         }
 
         @Test
-        public void 보드존재시요약() {
+        public void 보드존재요약() {
             //given
             CreateBoardGroupReqDto dto = new CreateBoardGroupReqDto("testGroup");
             String encryptedId = boardGroupService.create(dto, token);
