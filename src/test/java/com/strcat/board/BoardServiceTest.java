@@ -154,7 +154,7 @@ public class BoardServiceTest {
         ReadBoardSummaryResDto expect = new ReadBoardSummaryResDto("가나다", "Green", 0, 0L);
 
         //when
-        ReadBoardSummaryResDto result = boardService.readSummary(encryptedUrl, token);
+        ReadBoardSummaryResDto result = boardService.readSummary(encryptedUrl);
 
         //then
         Assertions.assertEquals(expect, result);
@@ -173,7 +173,7 @@ public class BoardServiceTest {
         ReadBoardSummaryResDto expect = new ReadBoardSummaryResDto("가나다", "Green", 1, 4L);
 
         //when
-        ReadBoardSummaryResDto result = boardService.readSummary(encryptedUrl, token);
+        ReadBoardSummaryResDto result = boardService.readSummary(encryptedUrl);
 
         //then
         Assertions.assertEquals(expect, result);
