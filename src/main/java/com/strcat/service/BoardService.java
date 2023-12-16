@@ -70,8 +70,7 @@ public class BoardService {
         }
     }
 
-    public ReadBoardSummaryResDto readSummary(String encryptedBoardId, String token) {
-        userService.getUser(token);
+    public ReadBoardSummaryResDto readSummary(String encryptedBoardId) {
         Board board = getBoard(encryptedBoardId);
 
         return new ReadBoardSummaryResDto(board.getTitle(), board.getTheme(), board.getContents().size(),

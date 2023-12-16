@@ -3,6 +3,7 @@ package com.strcat.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.strcat.exception.NotAcceptableException;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,7 +26,7 @@ public class ShortUrlService {
         this.secret = secret;
     }
 
-    public String generateUrl(String originUrl) throws Exception {
+    public String generateUrl(String originUrl) {
         // 헤더 설정
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-Naver-Client-Id", id);
@@ -46,9 +47,13 @@ public class ShortUrlService {
                 }
         ));
 
-        String json = restTemplate.getForEntity(builder.toUriString(), String.class).getBody();
+        try {
+            String json = restTemplate.getForEntity(builder.toUriString(), String.class).getBody();
 
-        return extractUrl(json);
+            return extractUrl(json);
+        } catch (Exception err) {
+            throw new NotAcceptableException("url 단축 실패");
+        }
     }
 
     private String extractUrl(String rawResponse) throws JsonProcessingException {

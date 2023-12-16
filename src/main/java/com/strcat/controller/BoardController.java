@@ -79,10 +79,8 @@ public class BoardController {
     }
 
     @GetMapping("/{boardId}/summaries")
-    @SecurityRequirement(name = "Bearer Authentication")
     @Operation(summary = "보드 요약 조회", description = "보드 요약 정보를 조회합니다.")
-    public ReadBoardSummaryResDto readSummary(@PathVariable(name = "boardId") String encryptedBoardId,
-                                              @Parameter(hidden = true) @RequestHeader("Authorization") String token) {
-        return boardService.readSummary(encryptedBoardId, token);
+    public ReadBoardSummaryResDto readSummary(@PathVariable(name = "boardId") String encryptedBoardId) {
+        return boardService.readSummary(encryptedBoardId);
     }
 }
