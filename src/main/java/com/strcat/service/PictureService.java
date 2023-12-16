@@ -13,7 +13,7 @@ public class PictureService {
 
     public boolean isInvalidContentType(String contentType) {
         return switch (contentType) {
-            case "image/jpeg", "image/png", "image/jpg" -> false;
+            case "image/jpeg", "image/png", "image/jpg", "image/heic" -> false;
             default -> true;
         };
     }
