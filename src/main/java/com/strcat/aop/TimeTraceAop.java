@@ -43,12 +43,13 @@ public class TimeTraceAop {
     @Around("execution(* com.strcat.controller..*(..))"
             + "|| execution(* com.strcat.service..*(..))")
     public Object logMethodExecution(ProceedingJoinPoint joinPoint) throws Throwable {
-        final String PREFIX = "-------> ";
-        final String CALLED = "Called ";
-        final String BACK = "Back   ";
+        final String PREFIX = "->";
+        final String CALLED = "Called";
+        final String BACK = "Back";
+        final String FUNCTION_NAME = joinPoint.getSignature().getName() + "()";
         Pair<Long, String> start = fetchMicroSecond();
 
-        log.info(PREFIX + CALLED + joinPoint.toString());
+        log.info("{}{}{}", PREFIX, String.format("%-7s", CALLED), FUNCTION_NAME);
 
         try {
             return joinPoint.proceed();
@@ -56,7 +57,8 @@ public class TimeTraceAop {
             Pair<Long, String> end = fetchMicroSecond();
             long timeDifference = end.getFirst() - start.getFirst();
 
-            log.info(PREFIX + BACK + joinPoint.toString() + ", 수행 시간: " + timeDifference + end.getSecond());
+            log.info("{}{}{}/time: {}{}", PREFIX, String.format("%-7s", BACK)
+                    , String.format("%-30s", FUNCTION_NAME), timeDifference, end.getSecond());
         }
     }
 }
