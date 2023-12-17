@@ -7,8 +7,8 @@ import org.slf4j.Logger;
 import org.springframework.data.util.Pair;
 
 @Aspect
-public class TimeTraceAop {
-    private static final Logger log = org.slf4j.LoggerFactory.getLogger(TimeTraceAop.class);
+public class LogAop {
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(LogAop.class);
 
     /**
      * 밀리 세컨드의 단위로 시간을 측정하는 함수입니다.
