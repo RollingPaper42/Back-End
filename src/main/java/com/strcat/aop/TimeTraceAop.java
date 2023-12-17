@@ -1,22 +1,23 @@
 package com.strcat.aop;
 
-import lombok.Getter;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.slf4j.Logger;
+import org.springframework.data.util.Pair;
 
 @Aspect
 public class TimeTraceAop {
     private Pair<Long, String> fetchMilliSecond() {
-        return new Pair<>(System.currentTimeMillis(), "ms");
+        return Pair.of(System.currentTimeMillis(), "ms");
     }
 
     private Pair<Long, String> fetchMicroSecond() {
-        return new Pair<>(System.nanoTime() / 1000, "μs");
+        return Pair.of(System.nanoTime() / 1000, "μs");
     }
 
     private Pair<Long, String> fetchNanoSecond() {
-        return new Pair<>(System.nanoTime(), "ns");
+        return Pair.of(System.nanoTime(), "ns");
     }
 
     @Around("execution(* com.strcat.controller..*(..)) || execution(* com.strcat.service..*(..))")
@@ -36,15 +37,5 @@ public class TimeTraceAop {
 
             System.out.println(PREFIX + joinPoint.toString() + ", 수행 시간: " + timeDifference + end.getValue());
         }
-    }
-}
-@Getter
-class Pair<K, V> {
-    private final K key;
-    private final V value;
-
-    public Pair(K key, V value) {
-        this.key = key;
-        this.value = value;
     }
 }
