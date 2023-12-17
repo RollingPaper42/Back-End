@@ -48,16 +48,15 @@ public class TimeTraceAop {
         final String BACK = "Back   ";
         Pair<Long, String> start = fetchMicroSecond();
 
-        System.out.println(PREFIX + "호출 함수: " + joinPoint.toString());
+        log.info(PREFIX + CALLED + joinPoint.toString());
 
         try {
             return joinPoint.proceed();
         } finally {
-            // 함수 호출로 원하는 단위의 시간을 얻어올 수 있습니다.
             Pair<Long, String> end = fetchMicroSecond();
-            long timeDifference = end.getKey() - start.getKey();
+            long timeDifference = end.getFirst() - start.getFirst();
 
-            System.out.println(PREFIX + joinPoint.toString() + ", 수행 시간: " + timeDifference + end.getValue());
+            log.info(PREFIX + BACK + joinPoint.toString() + ", 수행 시간: " + timeDifference + end.getSecond());
         }
     }
 }
