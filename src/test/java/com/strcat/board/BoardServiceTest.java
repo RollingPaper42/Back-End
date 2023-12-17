@@ -17,6 +17,7 @@ import com.strcat.service.UserService;
 import com.strcat.util.SecureDataUtils;
 import com.strcat.util.JwtUtils;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -67,7 +68,8 @@ public class BoardServiceTest {
 
         //when
         String encryptedUrl = boardService.createBoard(dto, token);
-        Board board = boardRepository.findAll().get(0);
+        Optional<Board> optionalBoard = boardRepository.findFirstByOrderByCreatedAtDesc();
+        Board board = optionalBoard.get();
 
         //then
         Assertions.assertEquals(board.getId(), secureDataUtils.decrypt(encryptedUrl));
@@ -105,7 +107,8 @@ public class BoardServiceTest {
         //given
         CreateBoardReqDto dto = new CreateBoardReqDto(null, "가나다", "Green");
         String encryptedUrl = boardService.createBoard(dto, token);
-        Board board = boardRepository.findAll().get(0);
+        Optional<Board> optionalBoard = boardRepository.findFirstByOrderByCreatedAtDesc();
+        Board board = optionalBoard.get();
         ReadBoardResDto expect = new ReadBoardResDto(true,
                 new BoardResponse(board.getEncryptedId(), board.getTitle(), board.getTheme(), board.getContents()));
 
