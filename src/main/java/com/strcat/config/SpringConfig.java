@@ -1,6 +1,6 @@
 package com.strcat.config;
 
-import com.strcat.aop.TimeTraceAop;
+import com.strcat.aop.LogAop;
 import com.strcat.repository.OAuthUserRepository;
 import com.strcat.repository.UserRepository;
 import com.strcat.service.OAuthUserService;
@@ -15,8 +15,8 @@ public class SpringConfig {
     private final OAuthUserRepository oAuthUserRepository;
 
     @Bean
-    public TimeTraceAop timeTraceAop() {
-        return new TimeTraceAop();
+    public LogAop logAop() {
+        return new LogAop();
     }
 
     @Bean
