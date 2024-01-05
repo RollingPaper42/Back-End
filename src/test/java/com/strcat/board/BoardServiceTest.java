@@ -16,6 +16,8 @@ import com.strcat.service.BoardService;
 import com.strcat.service.UserService;
 import com.strcat.util.JwtUtils;
 import com.strcat.util.SecureDataUtils;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
