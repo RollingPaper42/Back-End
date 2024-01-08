@@ -16,8 +16,6 @@ import com.strcat.service.BoardService;
 import com.strcat.service.UserService;
 import com.strcat.util.JwtUtils;
 import com.strcat.util.SecureDataUtils;
-import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -121,7 +119,7 @@ public class BoardServiceTest {
             ReadBoardSummaryResDto expect = new ReadBoardSummaryResDto("가나다", "Green", 0, 0L);
 
             //when
-            ReadBoardSummaryResDto result = boardService.readSummary(encryptedUrl, token);
+            ReadBoardSummaryResDto result = boardService.readSummary(encryptedUrl);
 
             //then
             Assertions.assertEquals(expect, result);
@@ -140,7 +138,7 @@ public class BoardServiceTest {
             ReadBoardSummaryResDto expect = new ReadBoardSummaryResDto("가나다", "Green", 1, 4L);
 
             //when
-            ReadBoardSummaryResDto result = boardService.readSummary(encryptedUrl, token);
+            ReadBoardSummaryResDto result = boardService.readSummary(encryptedUrl);
 
             //then
             Assertions.assertEquals(expect, result);
