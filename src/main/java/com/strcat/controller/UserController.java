@@ -2,7 +2,6 @@ package com.strcat.controller;
 
 
 import com.strcat.dto.ReadMyInfoResDto;
-import com.strcat.service.BoardGroupService;
 import com.strcat.service.BoardService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class UserController {
     private final BoardService boardService;
-    private final BoardGroupService boardGroupService;
 
     @GetMapping("/boards")
     @SecurityRequirement(name = "Bearer Authentication")
@@ -27,13 +25,5 @@ public class UserController {
     public List<ReadMyInfoResDto> readMyBoardInfo(
             @Parameter(hidden = true) @RequestHeader("Authorization") String token) {
         return boardService.readMyBoardInfo(token);
-    }
-
-    @GetMapping("/board-groups")
-    @SecurityRequirement(name = "Bearer Authentication")
-    @Operation(summary = "내 보드 그룹 조회", description = "내가 생성한 보드 그룹 정보 리스트를 반환합니다.")
-    public List<ReadMyInfoResDto> readMyBoardGroupInfo(
-            @Parameter(hidden = true) @RequestHeader("Authorization") String token) {
-        return boardGroupService.readMyBoardGroupInfo(token);
     }
 }
