@@ -4,6 +4,7 @@ import com.strcat.config.oauth.JwtAuthFilter;
 import com.strcat.config.oauth.JwtAuthenticationEntryPoint;
 import com.strcat.config.oauth.OAuthFailureHandler;
 import com.strcat.config.oauth.OAuthSuccessHandler;
+import com.strcat.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -24,7 +25,7 @@ public class SecurityConfig {
     private final OAuthSuccessHandler oAuthSuccessHandler;
     private final OAuthFailureHandler oAuthFailureHandler;
     private final WebConfig webConfig;
-    private final JwtAuthFilter jwtAuthFilter;
+    private final UserService userService;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
 
@@ -40,18 +41,17 @@ public class SecurityConfig {
             "boards/*/summaries",
             "boards/*/contents",
             "boards/*/contents/pictures",
-            "board-groups/*"
     };
 
     @Autowired
     public SecurityConfig(OAuthSuccessHandler oAuthSuccessHandler,
                           OAuthFailureHandler oAuthFailureHandler, WebConfig webConfig,
-                          JwtAuthFilter jwtAuthFilter,
+                          UserService userService,
                           JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint) {
         this.oAuthSuccessHandler = oAuthSuccessHandler;
         this.oAuthFailureHandler = oAuthFailureHandler;
         this.webConfig = webConfig;
-        this.jwtAuthFilter = jwtAuthFilter;
+        this.userService = userService;
         this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
     }
 
@@ -71,7 +71,7 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(AbstractHttpConfigurer::disable)
                 .addFilter(webConfig.corsFilter())
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtAuthFilter(userService), UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling((httpSecurityExceptionHandlingConfigurer) -> httpSecurityExceptionHandlingConfigurer
                         .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 );

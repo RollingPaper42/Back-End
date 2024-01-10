@@ -34,4 +34,16 @@ public class UserService {
         Optional<User> user = userRepository.findById(userId);
         return user.isPresent();
     }
+
+    public Optional<User> validate(String rawToken) {
+        String token = jwtUtils.exportToken(rawToken);
+
+        if (jwtUtils.isValidateToken(token)) {
+            Long userId = jwtUtils.parseUserId(token);
+
+            return userRepository.findById(userId);
+        }
+
+        return Optional.empty();
+    }
 }
