@@ -1,7 +1,6 @@
 package com.strcat.service;
 
 import com.strcat.domain.Board;
-import com.strcat.domain.BoardGroup;
 import com.strcat.domain.User;
 import com.strcat.dto.BoardResponse;
 import com.strcat.dto.CreateBoardReqDto;
@@ -9,7 +8,6 @@ import com.strcat.dto.ReadBoardResDto;
 import com.strcat.dto.ReadBoardSummaryResDto;
 import com.strcat.dto.ReadMyInfoResDto;
 import com.strcat.exception.NotAcceptableException;
-import com.strcat.repository.BoardGroupRepository;
 import com.strcat.repository.BoardRepository;
 import com.strcat.util.JwtUtils;
 import com.strcat.util.SecureDataUtils;
@@ -23,7 +21,6 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class BoardService {
     private final BoardRepository boardRepository;
-    private final BoardGroupRepository boardGroupRepository;
     private final SecureDataUtils secureDataUtils;
     private final UserService userService;
     private final JwtUtils jwtUtils;
@@ -44,12 +41,7 @@ public class BoardService {
     public String createBoard(CreateBoardReqDto dto, String token) {
         Board board;
         User user = userService.getUser(token);
-        if (dto.getGroupId() != null) {
-            BoardGroup boardGroup = getBoardGroup(dto.getGroupId());
-            board = new Board(boardGroup, dto.getTitle(), dto.getTheme(), user);
-        } else {
-            board = new Board(dto.getTitle(), dto.getTheme(), user);
-        }
+        board = new Board(dto.getTitle(), dto.getTheme(), user);
         board = boardRepository.save(board);
 
         String encryptedBoardId = secureDataUtils.encrypt(board.getId());
@@ -90,22 +82,5 @@ public class BoardService {
     public BoardResponse fetchBoardResponse(Board board) {
         return new BoardResponse(board.getEncryptedId(),
                 board.getTitle(), board.getTheme(), board.getContents());
-    }
-
-    public List<BoardResponse> fetchBoardResponses(List<Board> boards) {
-        return boards.stream()
-                .map(board -> new BoardResponse(board.getEncryptedId(), board.getTitle(), board.getTheme(),
-                        board.getContents()))
-                .collect(Collectors.toList());
-    }
-
-    private BoardGroup getBoardGroup(String encryptedBoardGroupId) {
-        Long boardGroupId = secureDataUtils.decrypt(encryptedBoardGroupId);
-        Optional<BoardGroup> boardGroup = boardGroupRepository.findById(boardGroupId);
-
-        if (boardGroup.isEmpty()) {
-            throw new NotAcceptableException("존재하지 않는 보드 그룹입니다.");
-        }
-        return boardGroup.get();
     }
 }

@@ -8,7 +8,6 @@ import com.strcat.dto.CreateBoardReqDto;
 import com.strcat.dto.ReadBoardResDto;
 import com.strcat.dto.ReadBoardSummaryResDto;
 import com.strcat.exception.NotAcceptableException;
-import com.strcat.repository.BoardGroupRepository;
 import com.strcat.repository.BoardRepository;
 import com.strcat.repository.ContentRepository;
 import com.strcat.repository.UserRepository;
@@ -42,14 +41,14 @@ public class BoardServiceTest {
 
     @Autowired
     public BoardServiceTest(BoardRepository boardRepository, UserRepository userRepository,
-                            ContentRepository contentRepository, BoardGroupRepository boardGroupRepository) {
+                            ContentRepository contentRepository) {
         this.boardRepository = boardRepository;
         this.userRepository = userRepository;
         this.contentRepository = contentRepository;
         this.jwtUtils = new JwtUtils("testtesttesttesttesttesttesttesttesttest");
         this.secureDataUtils = new SecureDataUtils("MyTestCode-32CharacterTestAPIKey");
         UserService userService = new UserService(userRepository, jwtUtils);
-        this.boardService = new BoardService(boardRepository, boardGroupRepository, secureDataUtils, userService,
+        this.boardService = new BoardService(boardRepository, secureDataUtils, userService,
                 jwtUtils);
     }
 
