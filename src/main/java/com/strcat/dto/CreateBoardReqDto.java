@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public class CreateBoardReqDto {
-    private final String groupId;
     private final String title;
     private final String theme;
 }

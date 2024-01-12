@@ -8,7 +8,6 @@ import com.strcat.dto.CreateBoardReqDto;
 import com.strcat.dto.ReadBoardResDto;
 import com.strcat.dto.ReadBoardSummaryResDto;
 import com.strcat.exception.NotAcceptableException;
-import com.strcat.repository.BoardGroupRepository;
 import com.strcat.repository.BoardRepository;
 import com.strcat.repository.ContentRepository;
 import com.strcat.repository.UserRepository;
@@ -42,14 +41,14 @@ public class BoardServiceTest {
 
     @Autowired
     public BoardServiceTest(BoardRepository boardRepository, UserRepository userRepository,
-                            ContentRepository contentRepository, BoardGroupRepository boardGroupRepository) {
+                            ContentRepository contentRepository) {
         this.boardRepository = boardRepository;
         this.userRepository = userRepository;
         this.contentRepository = contentRepository;
         this.jwtUtils = new JwtUtils("testtesttesttesttesttesttesttesttesttest");
         this.secureDataUtils = new SecureDataUtils("MyTestCode-32CharacterTestAPIKey");
         UserService userService = new UserService(userRepository, jwtUtils);
-        this.boardService = new BoardService(boardRepository, boardGroupRepository, secureDataUtils, userService,
+        this.boardService = new BoardService(boardRepository, secureDataUtils, userService,
                 jwtUtils);
     }
 
@@ -65,7 +64,7 @@ public class BoardServiceTest {
         @Test
         public void 생성() {
             //given
-            CreateBoardReqDto dto = new CreateBoardReqDto(null, "가나다", "Green");
+            CreateBoardReqDto dto = new CreateBoardReqDto("가나다", "Green");
 
             //when
             String encryptedUrl = boardService.createBoard(dto, token);
@@ -78,7 +77,7 @@ public class BoardServiceTest {
         @Test
         public void 보드주인일때조회() {
             //given
-            CreateBoardReqDto dto = new CreateBoardReqDto(null, "가나다", "Green");
+            CreateBoardReqDto dto = new CreateBoardReqDto("가나다", "Green");
             String encryptedUrl = boardService.createBoard(dto, token);
             Board board = boardRepository.findAll().get(0);
             ReadBoardResDto expect = new ReadBoardResDto(true,
@@ -94,7 +93,7 @@ public class BoardServiceTest {
         @Test
         public void 보드주인아닌조회() {
             //given
-            CreateBoardReqDto dto = new CreateBoardReqDto(null, "가나다", "Green");
+            CreateBoardReqDto dto = new CreateBoardReqDto("가나다", "Green");
             String encryptedUrl = boardService.createBoard(dto, token);
             Board board = boardRepository.findAll().get(0);
             User user2 = new User();
@@ -114,7 +113,7 @@ public class BoardServiceTest {
         @Test
         public void 컨텐츠없는요약() {
             //given
-            CreateBoardReqDto dto = new CreateBoardReqDto(null, "가나다", "Green");
+            CreateBoardReqDto dto = new CreateBoardReqDto("가나다", "Green");
             String encryptedUrl = boardService.createBoard(dto, token);
             ReadBoardSummaryResDto expect = new ReadBoardSummaryResDto("가나다", "Green", 0, 0L);
 
@@ -128,7 +127,7 @@ public class BoardServiceTest {
         @Test
         public void 컨텐츠존재요약() {
             //given
-            CreateBoardReqDto dto = new CreateBoardReqDto(null, "가나다", "Green");
+            CreateBoardReqDto dto = new CreateBoardReqDto("가나다", "Green");
             String encryptedUrl = boardService.createBoard(dto, token);
             ReadBoardResDto boardRes = boardService.readBoard(encryptedUrl, token);
             Board board = boardService.getBoard(encryptedUrl);
@@ -150,7 +149,7 @@ public class BoardServiceTest {
         @Test
         public void 제목길이30자이상보드생성() {
             //given
-            CreateBoardReqDto dto = new CreateBoardReqDto(null, "가나다가나다가나다가나다가나다가나다가나다가나다가나다가나다가", "Green");
+            CreateBoardReqDto dto = new CreateBoardReqDto("가나다가나다가나다가나다가나다가나다가나다가나다가나다가나다가", "Green");
 
             //when
             Throwable thrown = Assertions.assertThrows(DataIntegrityViolationException.class, () ->
@@ -164,7 +163,7 @@ public class BoardServiceTest {
         @ValueSource(strings = {"", "1", "12", "123", "1234", "12345", "123456", "1234567", "1234567890"})
         public void 잘못된토큰보드생성(String invalidToken) {
             //given
-            CreateBoardReqDto dto = new CreateBoardReqDto(null, "가나다", "Green");
+            CreateBoardReqDto dto = new CreateBoardReqDto("가나다", "Green");
 
             //when
             Throwable thrown = Assertions.assertThrows(NotAcceptableException.class, () ->
@@ -177,7 +176,7 @@ public class BoardServiceTest {
         @Test
         public void 잘못된URL보드조회() {
             //given
-            CreateBoardReqDto dto = new CreateBoardReqDto(null, "가나다", "Green");
+            CreateBoardReqDto dto = new CreateBoardReqDto("가나다", "Green");
             String encryptedUrl = boardService.createBoard(dto, token);
             String invalidUrl = encryptedUrl.substring(4);
 
@@ -192,7 +191,7 @@ public class BoardServiceTest {
         @Test
         public void 존재하지않는보드조회() {
             //given
-            CreateBoardReqDto dto = new CreateBoardReqDto(null, "가나다", "Green");
+            CreateBoardReqDto dto = new CreateBoardReqDto("가나다", "Green");
             boardService.createBoard(dto, token);
             String validNotExistUrl = secureDataUtils.encrypt(Long.MAX_VALUE);
 

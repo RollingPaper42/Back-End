@@ -30,7 +30,4 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Board> boards;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<BoardGroup> boardGroups;
 }

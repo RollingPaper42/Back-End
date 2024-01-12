@@ -22,7 +22,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Data
-@ToString(exclude = {"boardGroup"})
+@ToString
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class Board {
@@ -51,19 +51,7 @@ public class Board {
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
     private List<Content> contents = new ArrayList<>();
 
-    @JsonIgnore
-    @ManyToOne
-    @JoinColumn(name = "group_id")
-    private BoardGroup boardGroup;
-
     public Board(String title, String theme, User user) {
-        this.title = title;
-        this.theme = theme;
-        this.user = user;
-    }
-
-    public Board(BoardGroup boardGroup, String title, String theme, User user) {
-        this.boardGroup = boardGroup;
         this.title = title;
         this.theme = theme;
         this.user = user;
