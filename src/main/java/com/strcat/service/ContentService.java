@@ -18,7 +18,7 @@ public class ContentService {
     private final BoardRepository boardRepository;
     private final SecureDataUtils secureDataUtils;
 
-    public Content create(CreateContentReqDto dto, String encryptedBoardId) {
+    public Long create(CreateContentReqDto dto, String encryptedBoardId) {
         Long boardId = secureDataUtils.decrypt(encryptedBoardId);
         Optional<Board> optionalBoard = boardRepository.findById(boardId);
 
@@ -26,6 +26,6 @@ public class ContentService {
             throw new NotAcceptableException("존재하지 않는 보드입니다.");
         }
         Board board = optionalBoard.get();
-        return contentRepository.save(new Content(dto.getWriter(), dto.getText(), dto.getPhotoUrl(), board));
+        return contentRepository.save(new Content(dto.getWriter(), dto.getText(), dto.getPhotoUrl(), board)).getId();
     }
 }
