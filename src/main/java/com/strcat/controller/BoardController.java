@@ -29,9 +29,12 @@ import org.springframework.web.multipart.MultipartFile;
 @Tag(name = "보드 및 컨텐츠")
 @ApiResponses({
         @ApiResponse(responseCode = "200", description = "성공"),
-        @ApiResponse(responseCode = "401", description = "인증 실패"),
-        @ApiResponse(responseCode = "406", description = "잘못된 요청"),
-        @ApiResponse(responseCode = "500", description = "서버 에러"),
+        @ApiResponse(responseCode = "406", description = "잘못된 요청", content = {
+                @Content(examples = {@ExampleObject("잘못된 요청")})
+        }),
+        @ApiResponse(responseCode = "500", description = "서버 에러", content = {
+                @Content(examples = {@ExampleObject("서버 에러")})
+        }),
 })
 @RestController
 @RequestMapping("/boards")
@@ -46,13 +49,13 @@ public class BoardController {
     @Operation(summary = "보드 생성", description = "생성 성공 후 board의 encryptedId를 반환합니다.")
     @ApiResponse(responseCode = "200", description = "성공", content = {
             @Content(examples = {@ExampleObject("Wd5lUSQnmEjnMVl043cEzZzNqqrA3Z9pBAVImYNwI14=")})})
+    @ApiResponse(responseCode = "401", description = "인증 실패")
     public String createBoard(@Parameter(hidden = true) @RequestHeader("Authorization") String token,
                               @RequestBody CreateBoardReqDto dto) {
         return boardService.createBoard(dto, token);
     }
 
     @PostMapping("/{boardId}/contents")
-    @Operation(summary = "컨텐츠 생성", description = "컨텐츠 성공 후 content의 id를 반환합니다.")
     @ApiResponse(responseCode = "200", description = "성공", content = {
             @Content(examples = {@ExampleObject("32")})})
     public Long createContent(@PathVariable(name = "boardId") String encryptedBoardId,
