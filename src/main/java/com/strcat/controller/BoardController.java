@@ -6,7 +6,6 @@ import com.strcat.dto.ReadBoardResDto;
 import com.strcat.dto.ReadBoardSummaryResDto;
 import com.strcat.service.BoardService;
 import com.strcat.service.ContentService;
-import com.strcat.service.PictureService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -39,7 +38,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class BoardController {
     private final ContentService contentService;
     private final BoardService boardService;
-    private final PictureService pictureService;
 
     @PostMapping
     @SecurityRequirement(name = "Bearer Authentication")
@@ -67,7 +65,7 @@ public class BoardController {
                     @ExampleObject("https://elasticbeanstalk-ap-northeast-2-168479654979.s3.ap-northeast-2.amazonaws.com/pictures/strcat%3Aj5AAnW0Dq0Q5qS4g56IiRj1W8xQUKPbva1hbe_4STryyELo6vaiFqPgjJH5-_iIv%3A1701366068275%3Aphotofilename.jpg")})})
     public String createPicture(@PathVariable(name = "boardId") String encryptedBoardId,
                                 @RequestParam MultipartFile picture) {
-        return pictureService.postPicture(encryptedBoardId, picture);
+        return contentService.postPicture(encryptedBoardId, picture);
     }
 
     @GetMapping("/{boardId}")

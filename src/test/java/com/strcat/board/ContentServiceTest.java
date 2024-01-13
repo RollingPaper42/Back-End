@@ -8,6 +8,7 @@ import com.strcat.domain.User;
 import com.strcat.dto.CreateContentReqDto;
 import com.strcat.repository.BoardRepository;
 import com.strcat.repository.ContentRepository;
+import com.strcat.repository.PictureRepository;
 import com.strcat.repository.UserRepository;
 import com.strcat.service.ContentService;
 import com.strcat.util.SecureDataUtils;
@@ -37,7 +38,8 @@ public class ContentServiceTest {
         this.boardRepository = boardRepository;
         this.userRepository = userRepository;
         this.secureDataUtils = new SecureDataUtils("MyTestCode-32CharacterTestAPIKey");
-        this.contentService = new ContentService(contentRepository, boardRepository, secureDataUtils);
+        this.contentService = new ContentService(contentRepository, boardRepository, new PictureRepository("s3"),
+                secureDataUtils);
     }
 
     @BeforeEach
