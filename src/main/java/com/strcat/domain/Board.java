@@ -1,6 +1,10 @@
 package com.strcat.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.strcat.dto.BoardResponse;
+import com.strcat.dto.ReadBoardResDto;
+import com.strcat.dto.ReadBoardSummaryResDto;
+import com.strcat.dto.ReadMyInfoResDto;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -61,5 +65,21 @@ public class Board {
         return contents.stream()
                 .mapToLong(content -> content.getText().length())
                 .sum();
+    }
+
+    private BoardResponse toBoardResponse() {
+        return new BoardResponse(encryptedId, title, theme, contents);
+    }
+
+    public ReadBoardResDto toReadBoardResDto(Boolean isOwner) {
+        return new ReadBoardResDto(isOwner, toBoardResponse());
+    }
+
+    public ReadBoardSummaryResDto toReadBoardSummaryDto() {
+        return new ReadBoardSummaryResDto(title, theme, contents.size(), calculateTotalContentLength());
+    }
+
+    public ReadMyInfoResDto toReadMyInfoResDto() {
+        return new ReadMyInfoResDto(encryptedId, title);
     }
 }
