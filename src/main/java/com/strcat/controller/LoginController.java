@@ -22,9 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
         @ApiResponse(responseCode = "406", description = "잘못된 요청", content = {
                 @Content(examples = {@ExampleObject("잘못된 요청")})
         }),
-        @ApiResponse(responseCode = "406", description = "잘못된 요청", content = {
-                @Content(examples = {@ExampleObject("잘못된 요청")})
-        }),
         @ApiResponse(responseCode = "500", description = "서버 에러", content = {
                 @Content(examples = {@ExampleObject("서버 에러")})
         }),
