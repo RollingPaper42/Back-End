@@ -7,6 +7,7 @@ import com.strcat.domain.Content;
 import com.strcat.domain.User;
 import com.strcat.dto.CreateContentReqDto;
 import com.strcat.dto.DeleteContentReqDto;
+import com.strcat.dto.ReadBoardResDto;
 import com.strcat.repository.BoardRepository;
 import com.strcat.repository.ContentRepository;
 import com.strcat.repository.PictureRepository;
@@ -99,13 +100,13 @@ public class ContentServiceTest {
         Content content = contentRepository.save(new Content(dto.getWriter(), dto.getText(), dto.getPhotoUrl(), board));
 
         //when
-        Board result = contentService.deleteContent(encryptedBoardId, new DeleteContentReqDto(List.of(content.getId())),
+        ReadBoardResDto result = contentService.deleteContent(encryptedBoardId, new DeleteContentReqDto(List.of(content.getId())),
                 user);
 
         //then
         Assertions.assertEquals(
                 List.of(),
-                result.getContents());
+                result.getBoard().getContents());
     }
 
 }
