@@ -29,6 +29,7 @@ public class ContentServiceTest {
     private UserRepository userRepository;
     private SecureDataUtils secureDataUtils;
     private ContentService contentService;
+    private ContentRepository contentRepository;
 
     @Autowired
     public ContentServiceTest(ContentRepository contentRepository,
@@ -37,6 +38,7 @@ public class ContentServiceTest {
     ) {
         this.boardRepository = boardRepository;
         this.userRepository = userRepository;
+        this.contentRepository = contentRepository;
         this.secureDataUtils = new SecureDataUtils("MyTestCode-32CharacterTestAPIKey");
         this.contentService = new ContentService(contentRepository, boardRepository, new PictureRepository("s3"),
                 secureDataUtils);
@@ -58,7 +60,8 @@ public class ContentServiceTest {
         CreateContentReqDto dto = new CreateContentReqDto("철수", "안녕! 만나서 반가워. 행복하길 바래~", "photo");
 
         //when
-        Content result = contentService.create(dto, encryptedBoardId);
+        Long id = contentService.create(dto, encryptedBoardId);
+        Content result = contentRepository.findById(id).get();
 
         //then
         assertThat(result.getBoard().getId()).isEqualTo(board.getId());
