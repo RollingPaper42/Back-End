@@ -2,7 +2,10 @@ package com.strcat.service;
 
 import com.strcat.domain.Board;
 import com.strcat.domain.Content;
+import com.strcat.domain.User;
 import com.strcat.dto.CreateContentReqDto;
+import com.strcat.dto.DeleteContentReqDto;
+import com.strcat.dto.ReadBoardResDto;
 import com.strcat.exception.NotAcceptableException;
 import com.strcat.repository.BoardRepository;
 import com.strcat.repository.ContentRepository;
@@ -45,5 +48,14 @@ public class ContentService {
             case "image/jpeg", "image/png", "image/jpg" -> false;
             default -> true;
         };
+    }
+
+    public ReadBoardResDto deleteContent(String encryptedBoardId, DeleteContentReqDto dto, User user) {
+        Long boardId = secureDataUtils.decrypt(encryptedBoardId);
+
+        contentRepository.deleteAllById(dto.contentIds());
+        Board board = boardRepository.findById(boardId).orElseThrow(() -> new NotAcceptableException("보드를 찾을 수 없습니다"));
+
+        return board.toReadBoardResDto(user.getId().equals(board.getUser().getId()));
     }
 }

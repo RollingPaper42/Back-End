@@ -6,12 +6,14 @@ import com.strcat.domain.Board;
 import com.strcat.domain.Content;
 import com.strcat.domain.User;
 import com.strcat.dto.CreateContentReqDto;
+import com.strcat.dto.DeleteContentReqDto;
 import com.strcat.repository.BoardRepository;
 import com.strcat.repository.ContentRepository;
 import com.strcat.repository.PictureRepository;
 import com.strcat.repository.UserRepository;
 import com.strcat.service.ContentService;
 import com.strcat.util.SecureDataUtils;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -46,6 +48,7 @@ public class ContentServiceTest {
 
     @BeforeEach
     public void beforeEach() {
+        userRepository.deleteAll();
         User user = new User();
         userRepository.save(user);
         boardRepository.save(new Board("홍길동", "dsfds", user));
@@ -82,6 +85,27 @@ public class ContentServiceTest {
         Assertions.assertThrows(DataIntegrityViolationException.class, () -> {
             contentService.create(dto, encryptedBoardId);
         });
+    }
+
+    @Test
+    @DisplayName("컨텐츠 삭제 성공")
+    public void content_삭제_성공() {
+        //given
+        User user = userRepository.findAll().get(0);
+        Board board = boardRepository.save(new Board("asd", "asd", user));
+        String encryptedBoardId = secureDataUtils.encrypt(board.getId());
+        CreateContentReqDto dto = new CreateContentReqDto(
+                "12345", "안녕! 만나서 반가워. 행복하길 바래~", "photo");
+        Content content = contentRepository.save(new Content(dto.getWriter(), dto.getText(), dto.getPhotoUrl(), board));
+
+        //when
+        Board result = contentService.deleteContent(encryptedBoardId, new DeleteContentReqDto(List.of(content.getId())),
+                user);
+
+        //then
+        Assertions.assertEquals(
+                List.of(),
+                result.getContents());
     }
 
 }
