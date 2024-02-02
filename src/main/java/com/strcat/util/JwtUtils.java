@@ -3,7 +3,6 @@ package com.strcat.util;
 import com.strcat.exception.NotAcceptableException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import jakarta.servlet.http.HttpServletRequest;
 import java.time.Duration;
 import java.util.Base64;
 import java.util.Date;
@@ -31,9 +30,7 @@ public class JwtUtils {
         this.secretKey = Keys.hmacShaKeyFor(encoded);
     }
 
-    public String exportToken(HttpServletRequest request) {
-        String rawToken = request.getHeader("Authorization");
-
+    public String exportToken(String rawToken) {
         if (rawToken == null
                 || rawToken.isBlank()
                 || rawToken.length() < 6) {
@@ -61,10 +58,6 @@ public class JwtUtils {
     }
 
     public boolean isValidateToken(String token) {
-        if (token == null || token.isBlank()) {
-            return false;
-        }
-
         try {
             return Jwts.parser()
                     .verifyWith(secretKey)

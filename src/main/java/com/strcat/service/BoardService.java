@@ -2,7 +2,6 @@ package com.strcat.service;
 
 import com.strcat.domain.Board;
 import com.strcat.domain.User;
-import com.strcat.dto.BoardResponse;
 import com.strcat.dto.CreateBoardReqDto;
 import com.strcat.dto.ReadBoardResDto;
 import com.strcat.dto.ReadBoardSummaryResDto;
@@ -33,8 +32,7 @@ public class BoardService {
         User user = userService.getUser(token);
         List<Board> boards = findByUserId(user.getId());
         return boards.stream()
-                .map(board -> new ReadMyInfoResDto(board.getEncryptedId(),
-                        board.getTitle()))
+                .map(Board::toReadMyInfoResDto)
                 .collect(Collectors.toList());
     }
 
@@ -52,21 +50,17 @@ public class BoardService {
 
     public ReadBoardResDto readBoard(String encryptedBoardId, String token) {
         Board board = getBoard(encryptedBoardId);
-        BoardResponse boardResponse = fetchBoardResponse(board);
         try {
             Long userId = jwtUtils.parseUserId(jwtUtils.removeBearerString(token));
             Boolean isOwner = userId.equals(board.getUser().getId());
-            return new ReadBoardResDto(isOwner, boardResponse);
+            return board.toReadBoardResDto(isOwner);
         } catch (NotAcceptableException e) {
-            return new ReadBoardResDto(false, boardResponse);
+            return board.toReadBoardResDto(false);
         }
     }
 
     public ReadBoardSummaryResDto readSummary(String encryptedBoardId) {
-        Board board = getBoard(encryptedBoardId);
-
-        return new ReadBoardSummaryResDto(board.getTitle(), board.getTheme(), board.getContents().size(),
-                board.calculateTotalContentLength());
+        return getBoard(encryptedBoardId).toReadBoardSummaryDto();
     }
 
     public Board getBoard(String encryptedBoardId) {
@@ -77,10 +71,5 @@ public class BoardService {
             throw new NotAcceptableException("존재하지 않는 보드입니다.");
         }
         return optionalBoard.get();
-    }
-
-    public BoardResponse fetchBoardResponse(Board board) {
-        return new BoardResponse(board.getEncryptedId(),
-                board.getTitle(), board.getTheme(), board.getContents());
     }
 }

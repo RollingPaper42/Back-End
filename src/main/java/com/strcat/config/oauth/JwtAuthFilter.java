@@ -1,7 +1,8 @@
 package com.strcat.config.oauth;
 
 
-import com.strcat.util.JwtUtils;
+import com.strcat.domain.User;
+import com.strcat.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
@@ -13,15 +14,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 
-@Component
 public class JwtAuthFilter extends GenericFilterBean {
-    private final JwtUtils jwtUtils;
+    private final UserService userService;
 
-    public JwtAuthFilter(JwtUtils jwtUtils) {
-        this.jwtUtils = jwtUtils;
+    public JwtAuthFilter(UserService userService) {
+        this.userService = userService;
     }
 
     @Override
@@ -31,21 +30,16 @@ public class JwtAuthFilter extends GenericFilterBean {
             return;
         }
 
-        String token = jwtUtils.exportToken(httpServletRequest);
+        userService.validate(httpServletRequest.getHeader("Authorization")).ifPresent(this::registerAuthentication);
 
-        if (token == null || token.isBlank()) {
-            chain.doFilter(request, response);
-            return;
-        }
-
-        if (jwtUtils.isValidateToken(token)) {
-            String oauthId = jwtUtils.parseUserId(token).toString();
-
-            Authentication authentication =
-                    new UsernamePasswordAuthenticationToken(oauthId, token,
-                            List.of(new SimpleGrantedAuthority("ROLE_USER")));
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        }
         chain.doFilter(request, response);
+    }
+
+    private void registerAuthentication(User user) {
+        Authentication authentication =
+                new UsernamePasswordAuthenticationToken(user.getId(), user,
+                        List.of(new SimpleGrantedAuthority("ROLE_USER")));
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 }
