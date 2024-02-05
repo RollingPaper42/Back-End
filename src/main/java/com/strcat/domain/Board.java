@@ -55,6 +55,11 @@ public class Board {
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
     private List<Content> contents = new ArrayList<>();
 
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "history_id")
+    private History history;
+
     public Board(String title, String theme, User user) {
         this.title = title;
         this.theme = theme;
