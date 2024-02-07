@@ -10,8 +10,10 @@ import com.strcat.dto.ReadBoardSummaryResDto;
 import com.strcat.exception.NotAcceptableException;
 import com.strcat.repository.BoardRepository;
 import com.strcat.repository.ContentRepository;
+import com.strcat.repository.HistoryRepository;
 import com.strcat.repository.UserRepository;
 import com.strcat.service.BoardService;
+import com.strcat.usecase.RecordHistoryUseCase;
 import com.strcat.util.JwtUtils;
 import com.strcat.util.SecureDataUtils;
 import org.junit.jupiter.api.Assertions;
@@ -31,19 +33,21 @@ public class BoardServiceTest {
     private final BoardService boardService;
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
+    private final HistoryRepository historyRepository;
     private final ContentRepository contentRepository;
     private final SecureDataUtils secureDataUtils;
     private User user;
 
     @Autowired
     public BoardServiceTest(BoardRepository boardRepository, UserRepository userRepository,
-                            ContentRepository contentRepository) {
+                            ContentRepository contentRepository, HistoryRepository historyRepository) {
         this.boardRepository = boardRepository;
         this.userRepository = userRepository;
         this.contentRepository = contentRepository;
+        this.historyRepository = historyRepository;
         JwtUtils jwtUtils = new JwtUtils("testtesttesttesttesttesttesttesttesttest");
         this.secureDataUtils = new SecureDataUtils("MyTestCode-32CharacterTestAPIKey");
-        this.boardService = new BoardService(boardRepository, secureDataUtils, userRepository);
+        this.boardService = new BoardService(boardRepository, secureDataUtils, userRepository, new RecordHistoryUseCase(userRepository, boardRepository, historyRepository));
     }
 
     @BeforeEach
