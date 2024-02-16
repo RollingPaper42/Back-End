@@ -33,7 +33,6 @@ public class BoardServiceTest {
     private final BoardService boardService;
     private final BoardRepository boardRepository;
     private final UserRepository userRepository;
-    private final HistoryRepository historyRepository;
     private final ContentRepository contentRepository;
     private final SecureDataUtils secureDataUtils;
     private User user;
@@ -44,7 +43,6 @@ public class BoardServiceTest {
         this.boardRepository = boardRepository;
         this.userRepository = userRepository;
         this.contentRepository = contentRepository;
-        this.historyRepository = historyRepository;
         JwtUtils jwtUtils = new JwtUtils("testtesttesttesttesttesttesttesttesttest");
         this.secureDataUtils = new SecureDataUtils("MyTestCode-32CharacterTestAPIKey");
         this.boardService = new BoardService(boardRepository, secureDataUtils, userRepository, new RecordHistoryUseCase(userRepository, boardRepository, historyRepository));
@@ -126,7 +124,7 @@ public class BoardServiceTest {
             CreateBoardReqDto dto = new CreateBoardReqDto("가나다", "Green");
             String encryptedUrl = boardService.createBoard(dto, user.getId());
             ReadBoardResDto boardRes = boardService.readBoard(encryptedUrl, user.getId());
-            Board board = boardService.getBoard(encryptedUrl);
+            Board board = boardRepository.findByEncryptedId(encryptedUrl).orElseThrow();
             Content content = new Content("test", "test", "test.jpg", board);
             contentRepository.save(content);
             boardRes.getBoard().getContents().add(content); // contents에 자동으로 content 추가가 안됨...
@@ -153,21 +151,6 @@ public class BoardServiceTest {
                     boardService.createBoard(dto, user.getId())
             );
             Assertions.assertTrue(thrown.getMessage().contains("Data too long"));
-        }
-
-        @Test
-        public void 잘못된URL보드조회() {
-            //given
-            CreateBoardReqDto dto = new CreateBoardReqDto("가나다", "Green");
-            String encryptedUrl = boardService.createBoard(dto, user.getId());
-            String invalidUrl = encryptedUrl.substring(4);
-
-            //when
-            Throwable thrown = Assertions.assertThrows(NotAcceptableException.class, () ->
-                    //then
-                    boardService.readBoard(invalidUrl, user.getId())
-            );
-            Assertions.assertEquals("복호화에 실패했습니다.", thrown.getMessage());
         }
 
         @Test

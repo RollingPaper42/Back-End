@@ -8,7 +8,6 @@ import com.strcat.exception.NotAcceptableException;
 import com.strcat.repository.BoardRepository;
 import com.strcat.repository.HistoryRepository;
 import com.strcat.repository.UserRepository;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,7 +23,7 @@ public class RecordHistoryUseCase {
     private final BoardRepository boardRepository;
     private final HistoryRepository historyRepository;
 
-    public List<History> record(Long userId, List<HistoryItem> historyItems) {
+    public List<History> write(Long userId, List<HistoryItem> historyItems) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotAcceptableException("유저를 찾을 수 없습니다"));
 
         Queue<History> histories = new LinkedList<>(historyItems.stream().map((item) -> {
@@ -36,14 +35,14 @@ public class RecordHistoryUseCase {
 
         List<History> origins = user.getHistories();
         
-        renewHistories(histories, origins);
-        filterLeastHistory(origins);
+        updateHistories(histories, origins);
+        filterRecentHistory(origins);
 
         return historyRepository.findByUserIdOrderByVisitedAtAsc(userId);
     }
 
     // 모든 기록이 담긴 PriorityQueue에서 최신 10개의 데이터만 남기고 삭제하고 DB에 적용
-    private void filterLeastHistory(List<History> origins) {
+    private void filterRecentHistory(List<History> origins) {
         Queue<History> priorityQ = new PriorityQueue<>(Comparator.comparing(History::getVisitedAt).reversed());
 
         priorityQ.addAll(origins);
@@ -57,7 +56,7 @@ public class RecordHistoryUseCase {
     }
 
     // 이미 해당 보드의 기록이 존재하면 보다 최신 기록으로 갱신하고 아니라면 새 기록을 추가함
-    private void renewHistories(Queue<History> histories, List<History> origins) {
+    private void updateHistories(Queue<History> histories, List<History> origins) {
 
         while (!histories.isEmpty()) {
             History history = histories.peek();

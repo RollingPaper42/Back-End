@@ -13,9 +13,7 @@ import com.strcat.usecase.RecordHistoryUseCase;
 import com.strcat.util.SecureDataUtils;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -39,14 +37,12 @@ public class BoardService {
     }
 
     public ReadBoardResDto readBoard(String encryptedBoardId, Long userId) {
-        Board board = getBoard(encryptedBoardId);
+        Board board = boardRepository.findByEncryptedId(encryptedBoardId)
+                .orElseThrow(() -> new NotAcceptableException("존재하지 않는 보드입니다."));
 
         try {
-            if (userId != null) {
-                recordHistoryUseCase.record(userId,
-                        List.of(new HistoryItem(encryptedBoardId, board.getTitle(), LocalDateTime.now())));
-            }
-
+            recordHistoryUseCase.write(userId,
+                    List.of(new HistoryItem(encryptedBoardId, board.getTitle(), LocalDateTime.now())));
             Boolean isOwner = userId.equals(board.getUser().getId());
             return board.toReadBoardResDto(isOwner);
         } catch (NotAcceptableException e) {
@@ -55,16 +51,10 @@ public class BoardService {
     }
 
     public ReadBoardSummaryResDto readSummary(String encryptedBoardId) {
-        return getBoard(encryptedBoardId).toReadBoardSummaryDto();
+        return boardRepository.findByEncryptedId(encryptedBoardId)
+                .orElseThrow(() -> new NotAcceptableException("존재하지 않는 보드입니다."))
+                .toReadBoardSummaryDto();
     }
 
-    public Board getBoard(String encryptedBoardId) {
-        Long boardId = secureDataUtils.decrypt(encryptedBoardId);
-        Optional<Board> optionalBoard = boardRepository.findById(boardId);
 
-        if (optionalBoard.isEmpty()) {
-            throw new NotAcceptableException("존재하지 않는 보드입니다.");
-        }
-        return optionalBoard.get();
-    }
 }

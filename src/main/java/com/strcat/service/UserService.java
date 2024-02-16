@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService {
     private final UserRepository userRepository;
-    private final BoardRepository boardRepository;
     private final HistoryRepository historyRepository;
     private final RecordHistoryUseCase recordHistoryUseCase;
     private final JwtUtils jwtUtils;
@@ -33,7 +32,6 @@ public class UserService {
                        JwtUtils jwtUtils) {
 
         this.userRepository = userRepository;
-        this.boardRepository = boardRepository;
         this.historyRepository = historyRepository;
         this.recordHistoryUseCase = new RecordHistoryUseCase(userRepository, boardRepository, historyRepository);
         this.jwtUtils = jwtUtils;
@@ -80,7 +78,7 @@ public class UserService {
 
     @Transactional
     public HistoryDto postMyBoardHistory(Long userId, HistoryDto dto) {
-        List<History> result = recordHistoryUseCase.record(userId, dto.history());
+        List<History> result = recordHistoryUseCase.write(userId, dto.history());
 
         return new HistoryDto(result.stream()
                 .map((history -> new HistoryItem(history.getBoard().getEncryptedId(), history.getBoard().getTitle(),
