@@ -8,6 +8,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BoardRepository extends JpaRepository<Board, Long> {
-    List<Board> findByUserId(Long userId);
-    Optional<Board> findFirstByOrderByCreatedAtDesc();
+    Optional<Board> findByEncryptedId(String encryptedId);
 }

@@ -4,6 +4,7 @@ import com.strcat.domain.User;
 import com.strcat.service.OAuthUserService;
 import com.strcat.util.JwtUtils;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -35,8 +36,12 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
         String provider = request.getRequestURI().split("/")[4];
         User user = oAuthUserService.signIn(authentication.getName(), provider);
         String token = jwtUtils.createJwtToken(user.getId().toString());
+        Cookie cookie = new Cookie("token", token);
 
         log.info("token: " + token);
+        cookie.setMaxAge(60 * 60);
+        cookie.setDomain(".strcat.me");
+
 
         response.sendRedirect(String.format("%s?token=%s", REDIRECT_URI, token));
     }

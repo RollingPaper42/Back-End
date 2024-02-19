@@ -3,16 +3,16 @@ package com.strcat.service;
 import com.strcat.domain.Board;
 import com.strcat.domain.User;
 import com.strcat.dto.CreateBoardReqDto;
+import com.strcat.dto.HistoryItem;
 import com.strcat.dto.ReadBoardResDto;
 import com.strcat.dto.ReadBoardSummaryResDto;
-import com.strcat.dto.ReadMyInfoResDto;
 import com.strcat.exception.NotAcceptableException;
 import com.strcat.repository.BoardRepository;
-import com.strcat.util.JwtUtils;
+import com.strcat.repository.UserRepository;
+import com.strcat.usecase.RecordHistoryUseCase;
 import com.strcat.util.SecureDataUtils;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,24 +21,12 @@ import org.springframework.stereotype.Service;
 public class BoardService {
     private final BoardRepository boardRepository;
     private final SecureDataUtils secureDataUtils;
-    private final UserService userService;
-    private final JwtUtils jwtUtils;
+    private final UserRepository userRepository;
+    private final RecordHistoryUseCase recordHistoryUseCase;
 
-    public List<Board> findByUserId(Long userId) {
-        return boardRepository.findByUserId(userId);
-    }
-
-    public List<ReadMyInfoResDto> readMyBoardInfo(String token) {
-        User user = userService.getUser(token);
-        List<Board> boards = findByUserId(user.getId());
-        return boards.stream()
-                .map(Board::toReadMyInfoResDto)
-                .collect(Collectors.toList());
-    }
-
-    public String createBoard(CreateBoardReqDto dto, String token) {
+    public String createBoard(CreateBoardReqDto dto, Long userId) {
         Board board;
-        User user = userService.getUser(token);
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotAcceptableException("유저가 존재하지 않습니다."));
         board = new Board(dto.getTitle(), dto.getTheme(), user);
         board = boardRepository.save(board);
 
@@ -48,10 +36,13 @@ public class BoardService {
         return encryptedBoardId;
     }
 
-    public ReadBoardResDto readBoard(String encryptedBoardId, String token) {
-        Board board = getBoard(encryptedBoardId);
+    public ReadBoardResDto readBoard(String encryptedBoardId, Long userId) {
+        Board board = boardRepository.findByEncryptedId(encryptedBoardId)
+                .orElseThrow(() -> new NotAcceptableException("존재하지 않는 보드입니다."));
+
         try {
-            Long userId = jwtUtils.parseUserId(jwtUtils.removeBearerString(token));
+            recordHistoryUseCase.write(userId,
+                    List.of(new HistoryItem(encryptedBoardId, board.getTitle(), LocalDateTime.now())));
             Boolean isOwner = userId.equals(board.getUser().getId());
             return board.toReadBoardResDto(isOwner);
         } catch (NotAcceptableException e) {
@@ -60,16 +51,10 @@ public class BoardService {
     }
 
     public ReadBoardSummaryResDto readSummary(String encryptedBoardId) {
-        return getBoard(encryptedBoardId).toReadBoardSummaryDto();
+        return boardRepository.findByEncryptedId(encryptedBoardId)
+                .orElseThrow(() -> new NotAcceptableException("존재하지 않는 보드입니다."))
+                .toReadBoardSummaryDto();
     }
 
-    public Board getBoard(String encryptedBoardId) {
-        Long boardId = secureDataUtils.decrypt(encryptedBoardId);
-        Optional<Board> optionalBoard = boardRepository.findById(boardId);
 
-        if (optionalBoard.isEmpty()) {
-            throw new NotAcceptableException("존재하지 않는 보드입니다.");
-        }
-        return optionalBoard.get();
-    }
 }

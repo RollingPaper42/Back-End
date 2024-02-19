@@ -26,7 +26,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Data
-@ToString
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class Board {
@@ -54,6 +53,10 @@ public class Board {
 
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
     private List<Content> contents = new ArrayList<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
+    private List<History> history;
 
     public Board(String title, String theme, User user) {
         this.title = title;

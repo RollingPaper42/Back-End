@@ -1,6 +1,5 @@
 package com.strcat.controller;
 
-import com.strcat.domain.Board;
 import com.strcat.domain.User;
 import com.strcat.dto.CreateBoardReqDto;
 import com.strcat.dto.CreateContentReqDto;
@@ -10,7 +9,6 @@ import com.strcat.dto.ReadBoardSummaryResDto;
 import com.strcat.service.BoardService;
 import com.strcat.service.ContentService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -25,7 +23,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -57,9 +54,10 @@ public class BoardController {
     @ApiResponse(responseCode = "401", description = "인증 실패", content = {
             @Content(examples = {@ExampleObject("인증 실패")})
     })
-    public String createBoard(@Parameter(hidden = true) @RequestHeader("Authorization") String token,
+    public String createBoard(Authentication authentication,
                               @RequestBody CreateBoardReqDto dto) {
-        return boardService.createBoard(dto, token);
+        Long userId = (Long) authentication.getPrincipal();
+        return boardService.createBoard(dto, userId);
     }
 
     @PostMapping("/{boardId}/contents")
@@ -84,9 +82,10 @@ public class BoardController {
     @GetMapping("/{boardId}")
     @SecurityRequirement(name = "Bearer Authentication")
     @Operation(summary = "보드 조회", description = "보드에 대한 모든 정보와 보드 소유자 여부를 반환합니다.")
-    public ReadBoardResDto readBoard(@Parameter(hidden = true) @RequestHeader("Authorization") String token,
+    public ReadBoardResDto readBoard(Authentication authentication,
                                      @PathVariable(name = "boardId") String encryptedBoardId) {
-        return boardService.readBoard(encryptedBoardId, token);
+        Long userId = (Long) authentication.getPrincipal();
+        return boardService.readBoard(encryptedBoardId, userId);
     }
 
     @GetMapping("/{boardId}/summaries")
