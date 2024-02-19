@@ -39,6 +39,7 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
         Cookie cookie = new Cookie("token", token);
 
         log.info("token: " + token);
+        cookie.setSecure(true);
         cookie.setMaxAge(60 * 60);
         cookie.setDomain(".strcat.me");
 
