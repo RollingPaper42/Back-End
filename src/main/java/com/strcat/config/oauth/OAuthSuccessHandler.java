@@ -11,6 +11,8 @@ import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -36,14 +38,17 @@ public class OAuthSuccessHandler implements AuthenticationSuccessHandler {
         String provider = request.getRequestURI().split("/")[4];
         User user = oAuthUserService.signIn(authentication.getName(), provider);
         String token = jwtUtils.createJwtToken(user.getId().toString());
-        Cookie cookie = new Cookie("token", token);
+        String cookie = ResponseCookie.from("token", token)
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("None")
+                .domain(".strcat.me")
+                .build()
+                .toString();
 
         log.info("token: " + token);
-        cookie.setSecure(true);
-        cookie.setMaxAge(60 * 60);
-        cookie.setDomain(".strcat.me");
 
-
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie);
         response.sendRedirect(String.format("%s?token=%s", REDIRECT_URI, token));
     }
 }
