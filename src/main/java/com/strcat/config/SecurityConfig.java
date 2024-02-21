@@ -37,7 +37,7 @@ public class SecurityConfig {
             "favicon.ico",
             "v3/api-docs/**",
             "swagger-ui/**",
-            "boards/*",
+            "boards/{boardId}",
             "boards/*/summaries",
             "boards/*/contents",
             "boards/*/contents/pictures",

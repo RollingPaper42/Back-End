@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.security.core.Authentication;
@@ -84,7 +85,8 @@ public class BoardController {
     @Operation(summary = "보드 조회", description = "보드에 대한 모든 정보와 보드 소유자 여부를 반환합니다.")
     public ReadBoardResDto readBoard(Authentication authentication,
                                      @PathVariable(name = "boardId") String encryptedBoardId) {
-        Long userId = (Long) authentication.getPrincipal();
+        Long userId = authentication != null ? (Long) authentication.getPrincipal() : null;
+
         return boardService.readBoard(encryptedBoardId, userId);
     }
 
@@ -101,7 +103,9 @@ public class BoardController {
             @Content(examples = {@ExampleObject("인증 실패")})})
     public ReadBoardResDto deleteContents(@PathVariable(name = "boardId") String encryptedBoardId, @RequestBody
             DeleteContentReqDto dto, Authentication authentication) {
-        if (authentication == null) throw new ResponseStatusException(HttpStatusCode.valueOf(401));
+        if (authentication == null) {
+            throw new ResponseStatusException(HttpStatusCode.valueOf(401));
+        }
 
         User user = (User) authentication.getCredentials();
 
