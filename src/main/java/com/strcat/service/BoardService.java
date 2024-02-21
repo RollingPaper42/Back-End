@@ -39,15 +39,14 @@ public class BoardService {
     public ReadBoardResDto readBoard(String encryptedBoardId, Long userId) {
         Board board = boardRepository.findByEncryptedId(encryptedBoardId)
                 .orElseThrow(() -> new NotAcceptableException("존재하지 않는 보드입니다."));
-
-        try {
+        if (userId != null) {
             recordHistoryUseCase.write(userId,
                     List.of(new HistoryItem(encryptedBoardId, board.getTitle(), LocalDateTime.now())));
+
             Boolean isOwner = userId.equals(board.getUser().getId());
             return board.toReadBoardResDto(isOwner);
-        } catch (NotAcceptableException e) {
-            return board.toReadBoardResDto(false);
         }
+        return board.toReadBoardResDto(false);
     }
 
     public ReadBoardSummaryResDto readSummary(String encryptedBoardId) {
