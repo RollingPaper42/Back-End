@@ -16,6 +16,7 @@ import com.strcat.service.BoardService;
 import com.strcat.usecase.RecordHistoryUseCase;
 import com.strcat.util.JwtUtils;
 import com.strcat.util.SecureDataUtils;
+import java.util.List;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -45,7 +46,8 @@ public class BoardServiceTest {
         this.contentRepository = contentRepository;
         JwtUtils jwtUtils = new JwtUtils("testtesttesttesttesttesttesttesttesttest");
         this.secureDataUtils = new SecureDataUtils("MyTestCode-32CharacterTestAPIKey");
-        this.boardService = new BoardService(boardRepository, secureDataUtils, userRepository, new RecordHistoryUseCase(userRepository, boardRepository, historyRepository));
+        this.boardService = new BoardService(boardRepository, secureDataUtils, userRepository,
+                new RecordHistoryUseCase(userRepository, boardRepository, historyRepository));
     }
 
     @BeforeEach
@@ -59,7 +61,7 @@ public class BoardServiceTest {
         @Test
         public void 생성() {
             //given
-            CreateBoardReqDto dto = new CreateBoardReqDto("가나다", "Green");
+            CreateBoardReqDto dto = new CreateBoardReqDto("가나다", "Green", false);
 
             //when
             String encryptedUrl = boardService.createBoard(dto, user.getId());
@@ -72,11 +74,12 @@ public class BoardServiceTest {
         @Test
         public void 보드주인일때조회() {
             //given
-            CreateBoardReqDto dto = new CreateBoardReqDto("가나다", "Green");
+            CreateBoardReqDto dto = new CreateBoardReqDto("가나다", "Green", false);
             String encryptedUrl = boardService.createBoard(dto, user.getId());
             Board board = boardRepository.findAll().get(0);
             ReadBoardResDto expect = new ReadBoardResDto(true,
-                    new BoardResponse(board.getEncryptedId(), board.getTitle(), board.getTheme(), board.getContents()));
+                    new BoardResponse(board.getEncryptedId(), board.getTitle(), board.getTheme(), false,
+                            board.getContents()));
 
             //when
             ReadBoardResDto result = boardService.readBoard(encryptedUrl, user.getId());
@@ -88,14 +91,15 @@ public class BoardServiceTest {
         @Test
         public void 보드주인아닌조회() {
             //given
-            CreateBoardReqDto dto = new CreateBoardReqDto("가나다", "Green");
+            CreateBoardReqDto dto = new CreateBoardReqDto("가나다", "Green", false);
             String encryptedUrl = boardService.createBoard(dto, user.getId());
             Board board = boardRepository.findAll().get(0);
             User user2 = new User();
             userRepository.save(user2);
 
             ReadBoardResDto expect = new ReadBoardResDto(false,
-                    new BoardResponse(board.getEncryptedId(), board.getTitle(), board.getTheme(), board.getContents()));
+                    new BoardResponse(board.getEncryptedId(), board.getTitle(), board.getTheme(), false,
+                            board.getContents()));
 
             //when
             ReadBoardResDto result = boardService.readBoard(encryptedUrl, user2.getId());
@@ -107,7 +111,7 @@ public class BoardServiceTest {
         @Test
         public void 컨텐츠없는요약() {
             //given
-            CreateBoardReqDto dto = new CreateBoardReqDto("가나다", "Green");
+            CreateBoardReqDto dto = new CreateBoardReqDto("가나다", "Green", false);
             String encryptedUrl = boardService.createBoard(dto, user.getId());
             ReadBoardSummaryResDto expect = new ReadBoardSummaryResDto("가나다", "Green", 0, 0L);
 
@@ -121,7 +125,7 @@ public class BoardServiceTest {
         @Test
         public void 컨텐츠존재요약() {
             //given
-            CreateBoardReqDto dto = new CreateBoardReqDto("가나다", "Green");
+            CreateBoardReqDto dto = new CreateBoardReqDto("가나다", "Green", false);
             String encryptedUrl = boardService.createBoard(dto, user.getId());
             ReadBoardResDto boardRes = boardService.readBoard(encryptedUrl, user.getId());
             Board board = boardRepository.findByEncryptedId(encryptedUrl).orElseThrow();
@@ -143,7 +147,7 @@ public class BoardServiceTest {
         @Test
         public void 제목길이30자이상보드생성() {
             //given
-            CreateBoardReqDto dto = new CreateBoardReqDto("가나다가나다가나다가나다가나다가나다가나다가나다가나다가나다가", "Green");
+            CreateBoardReqDto dto = new CreateBoardReqDto("가나다가나다가나다가나다가나다가나다가나다가나다가나다가나다가", "Green", false);
 
             //when
             Throwable thrown = Assertions.assertThrows(DataIntegrityViolationException.class, () ->
@@ -156,7 +160,7 @@ public class BoardServiceTest {
         @Test
         public void 존재하지않는보드조회() {
             //given
-            CreateBoardReqDto dto = new CreateBoardReqDto("가나다", "Green");
+            CreateBoardReqDto dto = new CreateBoardReqDto("가나다", "Green", false);
             boardService.createBoard(dto, user.getId());
             String validNotExistUrl = secureDataUtils.encrypt(Long.MAX_VALUE);
 

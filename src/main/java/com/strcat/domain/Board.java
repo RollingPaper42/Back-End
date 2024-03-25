@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -46,6 +45,9 @@ public class Board {
     @Column(name = "encrypted_id", columnDefinition = "TEXT", unique = true)
     private String encryptedId;
 
+    @Column(name = "is_public", nullable = false, columnDefinition = "bit(1) default 0")
+    private Boolean isPublic = false;
+
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false) // 외래키 컬럼 지정
@@ -58,10 +60,11 @@ public class Board {
     @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
     private List<History> history;
 
-    public Board(String title, String theme, User user) {
+    public Board(String title, String theme, User user, Boolean isPublic) {
         this.title = title;
         this.theme = theme;
         this.user = user;
+        this.isPublic = isPublic;
     }
 
     public Long calculateTotalContentLength() {
@@ -71,7 +74,7 @@ public class Board {
     }
 
     private BoardResponse toBoardResponse() {
-        return new BoardResponse(encryptedId, title, theme, contents);
+        return new BoardResponse(encryptedId, title, theme, isPublic, contents);
     }
 
     public ReadBoardResDto toReadBoardResDto(Boolean isOwner) {
