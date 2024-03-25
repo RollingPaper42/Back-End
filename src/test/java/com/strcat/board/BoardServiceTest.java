@@ -140,6 +140,23 @@ public class BoardServiceTest {
             //then
             Assertions.assertEquals(expect, result);
         }
+
+        @Test
+        public void 공개보드조회() {
+            //given
+            CreateBoardReqDto publicDto = new CreateBoardReqDto("공개", "Green", false);
+            CreateBoardReqDto privateDto = new CreateBoardReqDto("비공개", "Green", true);
+            boardService.createBoard(publicDto, user.getId());
+            boardService.createBoard(privateDto, user.getId());
+
+            //when
+            List<Board> result = boardService.readPublicBoard();
+            List<Board> expect = boardRepository.findAll().stream().filter((board) -> board.getIsPublic().equals(true))
+                    .toList();
+
+            //then
+            Assertions.assertEquals(expect, result);
+        }
     }
 
     @Nested

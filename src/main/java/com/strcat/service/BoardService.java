@@ -27,7 +27,7 @@ public class BoardService {
     public String createBoard(CreateBoardReqDto dto, Long userId) {
         Board board;
         User user = userRepository.findById(userId).orElseThrow(() -> new NotAcceptableException("유저가 존재하지 않습니다."));
-        board = new Board(dto.getTitle(), dto.getTheme(), user);
+        board = new Board(dto.getTitle(), dto.getTheme(), user, dto.getIsPublic());
         board = boardRepository.save(board);
 
         String encryptedBoardId = secureDataUtils.encrypt(board.getId());
@@ -55,5 +55,7 @@ public class BoardService {
                 .toReadBoardSummaryDto();
     }
 
-
+    public List<Board> readPublicBoard() {
+        return boardRepository.findByIsPublicTrue();
+    }
 }
