@@ -55,7 +55,7 @@ public class UserServiceTest {
         userRepository.save(other);
 
         for (int i = 1; i <= 10; ++i) {
-            boardRepository.save(new Board("test_board" + i, "green", other));
+            boardRepository.save(new Board("test_board" + i, "green", other, false));
         }
 
         this.boards = boardRepository.findAll();
