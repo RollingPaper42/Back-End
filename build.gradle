@@ -31,6 +31,7 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt-api:0.12.3'
     implementation platform('software.amazon.awssdk:bom:2.21.27')
     implementation("software.amazon.awssdk:s3")
+    implementation "org.jboss.logging:jboss-logging:3.5.3.Final"
     implementation 'software.amazon.awssdk:sts'
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.3'

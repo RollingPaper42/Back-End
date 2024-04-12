@@ -15,7 +15,6 @@ import com.strcat.util.JwtUtils;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -65,7 +64,7 @@ public class UserService {
         List<Board> boards = user.getBoards();
         return boards.stream()
                 .map(Board::toReadMyInfoResDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
 
@@ -82,6 +81,7 @@ public class UserService {
 
         return new HistoryDto(result.stream()
                 .map((history -> new HistoryItem(history.getBoard().getEncryptedId(), history.getBoard().getTitle(),
+                        history.getBoard().getIsPublic(),
                         history.getVisitedAt()))).toList());
     }
 }

@@ -41,7 +41,8 @@ public class BoardService {
                 .orElseThrow(() -> new NotAcceptableException("존재하지 않는 보드입니다."));
         if (userId != null) {
             recordHistoryUseCase.write(userId,
-                    List.of(new HistoryItem(encryptedBoardId, board.getTitle(), LocalDateTime.now())));
+                    List.of(new HistoryItem(encryptedBoardId, board.getTitle(), board.getIsPublic(),
+                            LocalDateTime.now())));
 
             Boolean isOwner = userId.equals(board.getUser().getId());
             return board.toReadBoardResDto(isOwner);

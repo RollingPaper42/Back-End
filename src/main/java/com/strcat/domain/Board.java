@@ -86,6 +86,6 @@ public class Board {
     }
 
     public ReadMyInfoResDto toReadMyInfoResDto() {
-        return new ReadMyInfoResDto(encryptedId, title);
+        return new ReadMyInfoResDto(encryptedId, title, isPublic);
     }
 }
