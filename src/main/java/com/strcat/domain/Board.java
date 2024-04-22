@@ -5,6 +5,7 @@ import com.strcat.dto.BoardResponse;
 import com.strcat.dto.ReadBoardResDto;
 import com.strcat.dto.ReadBoardSummaryResDto;
 import com.strcat.dto.ReadMyInfoResDto;
+import com.strcat.dto.ReadPublicBoardResDto;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -73,6 +74,17 @@ public class Board {
                 .sum();
     }
 
+    public LocalDateTime findLastContentCreatedTime() {
+        if (!contents.isEmpty()) {
+            return contents.stream()
+                    .map(Content::getCreatedAt)
+                    .max(LocalDateTime::compareTo)
+                    .orElse(null);
+        } else {
+            return createdAt;
+        }
+    }
+
     private BoardResponse toBoardResponse() {
         return new BoardResponse(encryptedId, title, theme, isPublic, contents);
     }
@@ -87,5 +99,10 @@ public class Board {
 
     public ReadMyInfoResDto toReadMyInfoResDto() {
         return new ReadMyInfoResDto(encryptedId, title, isPublic);
+    }
+
+    public ReadPublicBoardResDto toReadPublicBoardResDto() {
+        return new ReadPublicBoardResDto(encryptedId, title, theme, findLastContentCreatedTime(), contents.size(),
+                calculateTotalContentLength());
     }
 }
