@@ -17,6 +17,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Data;
@@ -75,13 +76,14 @@ public class Board {
     }
 
     public LocalDateTime findLastContentCreatedTime() {
+
         if (!contents.isEmpty()) {
             return contents.stream()
-                    .map(Content::getCreatedAt)
+                    .map(content -> content.getCreatedAt().atZone(ZoneId.of("Asia/Seoul")).toLocalDateTime())
                     .max(LocalDateTime::compareTo)
                     .orElse(null);
         } else {
-            return createdAt;
+            return createdAt.atZone(ZoneId.of("Asia/Seoul")).toLocalDateTime();
         }
     }
 
