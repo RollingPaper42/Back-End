@@ -30,7 +30,6 @@ public class UserServiceTest {
     private final UserService userService;
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
-    private final HistoryRepository historyRepository;
     private final SecureDataUtils secureDataUtils;
     private User me;
     private List<Board> boards;
@@ -40,7 +39,6 @@ public class UserServiceTest {
                            HistoryRepository historyRepository) {
         this.boardRepository = boardRepository;
         this.userRepository = userRepository;
-        this.historyRepository = historyRepository;
         this.secureDataUtils = new SecureDataUtils("testtesttesttesttesttesttesttest");
         JwtUtils jwtUtils = new JwtUtils("testtesttesttesttesttesttesttesttesttest");
         this.userService = new UserService(userRepository, boardRepository, historyRepository, jwtUtils);
@@ -55,7 +53,7 @@ public class UserServiceTest {
         userRepository.save(other);
 
         for (int i = 1; i <= 10; ++i) {
-            boardRepository.save(new Board("test_board" + i, "green", other));
+            boardRepository.save(new Board("test_board" + i, "green", other, false));
         }
 
         this.boards = boardRepository.findAll();
@@ -70,7 +68,8 @@ public class UserServiceTest {
     public void 최근기록저장_성공() {
         //given
         List<HistoryItem> history = boards.stream()
-                .map((board) -> new HistoryItem(board.getEncryptedId(), board.getTitle(), LocalDateTime.now()))
+                .map((board) -> new HistoryItem(board.getEncryptedId(), board.getTitle(), board.getIsPublic(),
+                        LocalDateTime.now()))
                 .toList();
         HistoryDto historyDto = new HistoryDto(history);
 
@@ -87,7 +86,8 @@ public class UserServiceTest {
         User user = userRepository.findById(me.getId()).orElseThrow();
         LocalDateTime now = LocalDateTime.now();
         List<HistoryItem> history = boards.stream()
-                .map((board) -> new HistoryItem(board.getEncryptedId(), board.getTitle(), now)).toList();
+                .map((board) -> new HistoryItem(board.getEncryptedId(), board.getTitle(), board.getIsPublic(), now))
+                .toList();
         HistoryDto historyDto = new HistoryDto(history);
         user.setHistories(boards.stream().map((board) -> new History(user, board, now)).toList());
         userService.postMyBoardHistory(user.getId(), historyDto);

@@ -1,11 +1,13 @@
 package com.strcat.controller;
 
+import com.strcat.domain.Board;
 import com.strcat.domain.User;
 import com.strcat.dto.CreateBoardReqDto;
 import com.strcat.dto.CreateContentReqDto;
 import com.strcat.dto.DeleteContentReqDto;
 import com.strcat.dto.ReadBoardResDto;
 import com.strcat.dto.ReadBoardSummaryResDto;
+import com.strcat.dto.ReadPublicBoardResDto;
 import com.strcat.service.BoardService;
 import com.strcat.service.ContentService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,7 +17,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.Optional;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.security.core.Authentication;
@@ -102,7 +104,7 @@ public class BoardController {
     @ApiResponse(responseCode = "401", description = "인증 실패", content = {
             @Content(examples = {@ExampleObject("인증 실패")})})
     public ReadBoardResDto deleteContents(@PathVariable(name = "boardId") String encryptedBoardId, @RequestBody
-            DeleteContentReqDto dto, Authentication authentication) {
+    DeleteContentReqDto dto, Authentication authentication) {
         if (authentication == null) {
             throw new ResponseStatusException(HttpStatusCode.valueOf(401));
         }
@@ -110,5 +112,10 @@ public class BoardController {
         User user = (User) authentication.getCredentials();
 
         return contentService.deleteContent(encryptedBoardId, dto, user);
+    }
+
+    @GetMapping("/public")
+    public List<ReadPublicBoardResDto> readPublicBoards() {
+        return boardService.readPublicBoard().stream().map(Board::toReadPublicBoardResDto).toList();
     }
 }

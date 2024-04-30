@@ -1,6 +1,5 @@
 package com.strcat.dto;
 
-import com.strcat.domain.Board;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

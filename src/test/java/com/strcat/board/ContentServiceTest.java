@@ -52,7 +52,7 @@ public class ContentServiceTest {
         userRepository.deleteAll();
         User user = new User();
         userRepository.save(user);
-        boardRepository.save(new Board("홍길동", "dsfds", user));
+        boardRepository.save(new Board("홍길동", "dsfds", user, false));
     }
 
     @Test
@@ -93,7 +93,7 @@ public class ContentServiceTest {
     public void content_삭제_성공() {
         //given
         User user = userRepository.findAll().get(0);
-        Board board = boardRepository.save(new Board("asd", "asd", user));
+        Board board = boardRepository.save(new Board("asd", "asd", user, false));
         String encryptedBoardId = secureDataUtils.encrypt(board.getId());
         CreateContentReqDto dto = new CreateContentReqDto(
                 "12345", "안녕! 만나서 반가워. 행복하길 바래~", "photo");

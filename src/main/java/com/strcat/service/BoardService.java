@@ -27,7 +27,7 @@ public class BoardService {
     public String createBoard(CreateBoardReqDto dto, Long userId) {
         Board board;
         User user = userRepository.findById(userId).orElseThrow(() -> new NotAcceptableException("유저가 존재하지 않습니다."));
-        board = new Board(dto.getTitle(), dto.getTheme(), user);
+        board = new Board(dto.getTitle(), dto.getTheme(), user, dto.getIsPublic());
         board = boardRepository.save(board);
 
         String encryptedBoardId = secureDataUtils.encrypt(board.getId());
@@ -41,7 +41,8 @@ public class BoardService {
                 .orElseThrow(() -> new NotAcceptableException("존재하지 않는 보드입니다."));
         if (userId != null) {
             recordHistoryUseCase.write(userId,
-                    List.of(new HistoryItem(encryptedBoardId, board.getTitle(), LocalDateTime.now())));
+                    List.of(new HistoryItem(encryptedBoardId, board.getTitle(), board.getIsPublic(),
+                            LocalDateTime.now())));
 
             Boolean isOwner = userId.equals(board.getUser().getId());
             return board.toReadBoardResDto(isOwner);
@@ -55,5 +56,7 @@ public class BoardService {
                 .toReadBoardSummaryDto();
     }
 
-
+    public List<Board> readPublicBoard() {
+        return boardRepository.findByIsPublicTrue();
+    }
 }
